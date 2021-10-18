@@ -10,7 +10,7 @@ namespace targil0
     {
         static partial void Welcome1626()
         {
-            Console.WriteLine("I am also here!")";"
+            Console.WriteLine("I am also here!");
         }
     }
 }
