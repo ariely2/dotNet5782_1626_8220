@@ -10,6 +10,7 @@ namespace IDAL
     {
         public struct Drone
         {
+            private int id { get; set; }
 
         };
     }
