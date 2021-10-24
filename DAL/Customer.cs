@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL
+namespace IDAL
 {
     namespace DO
     {
@@ -14,7 +14,12 @@ namespace DAL
             public string Name { get; set; }
             public string Phone { get; set; }
             public double Longitude { get; set; }
-            public double Lattitude { get; set; }
+            public double Latitude { get; set; }
+            public override string ToString()
+            {
+                return $" Customer Id: {Id}, Customer Name: {Name}, Customer Phone: {Phone}, " +
+                    $"Customer Longitude: {Longitude}, Customer Latitude: {Latitude}";
+            }
         };
     }
 }
