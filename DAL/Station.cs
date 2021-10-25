@@ -13,7 +13,7 @@ namespace IDAL
             public int Id { get; set; }
             public string Name{ get; set; }
             public double Longitude { get; set; }
-            public double Lattitude { get; set; }
+            public double Latitude { get; set; }
             public int ChargeSlots { get; set; }
 
             public override string ToString()
@@ -21,7 +21,7 @@ namespace IDAL
                 return $"Id:          {Id}" +
                        $"Name:        {Name}" +
                        $"Longitude:   {Longitude}" +
-                       $"Lattitude:   {Lattitude}" +
+                       $"Latitude:   {Latitude}" +
                        $"ChargeSlots: {ChargeSlots}\n";
             }
         }
