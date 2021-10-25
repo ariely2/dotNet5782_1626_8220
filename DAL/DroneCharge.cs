@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL
+namespace IDAL
 {
-    namespace Do
+    namespace DO
     {
         public struct DroneCharge
         {
