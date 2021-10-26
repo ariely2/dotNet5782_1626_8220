@@ -51,6 +51,30 @@ namespace IDAL
             {
                 DataSource.Parcels.Add(new Parcel() { SenderId = senderId, TargetId = targetId, Weight = weight, Priority = priority });
             }
+            public static void AssignParcel(int ParcelId, int DroneId)
+            {
+                Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
+                //if (P.Id == ParcelId && D.Id == DroneId)   do we need this?
+                P.DroneId = DroneId;
+                P.Scheduled = DateTime.Now;
+                Console.WriteLine("Parcel assigned to drone.");
+            }
+            public static void PickUpParcel(int ParcelId)
+            {
+                Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
+                D.Status = DroneStatuses.Delivery;
+                P.PickedUp = DateTime.Now;
+            }
+            public static void DeliverParcel(int ParcelId)
+            {
+                Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
+                double B = D.Battery;
+                //D.Status = DroneStatuses.;
+                P.Delivered = DateTime.Now;
+            }
         }
     }
 }

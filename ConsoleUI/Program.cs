@@ -105,7 +105,6 @@ namespace ConsoleUI
             switch (option)
             {
                 case 1:
-
                     ConnectParcelToDrone();
                     break;
                 case 2:
@@ -122,6 +121,7 @@ namespace ConsoleUI
                     break;
             }
         }
+
         static void SwitchDisplayOption()
         {
             PrintDisplayOption();
@@ -173,6 +173,26 @@ namespace ConsoleUI
                     break;
             }
         }
+        static void ConnectParcelToDrone()
+        {
+            Console.WriteLine("Enter Parcel ID and Drone ID");
+            Int32.TryParse(Console.ReadLine(), out int ParcelID);
+            Int32.TryParse(Console.ReadLine(), out int DroneID);
+            DalObject.AssignParcel(ParcelID, DroneID);
+        }
+        static void PickUpAParcel()
+        {
+            Console.WriteLine("Enter Parcel ID");
+            Int32.TryParse(Console.ReadLine(), out int ParcelID);
+            DalObject.PickUpParcel(ParcelID);
+        }
+        static void DeliverParcel()
+        {
+            Console.WriteLine("Enter Parcel ID");
+            Int32.TryParse(Console.ReadLine(), out int ParcelID);
+            DalObject.DeliverParcel(ParcelID);
+        }
+
         static void Main(string[] args)
         {
             int option;
