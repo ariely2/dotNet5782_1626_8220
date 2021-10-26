@@ -47,9 +47,9 @@ namespace IDAL
                     Latitude = latitude
                 });
             }
-            public static void AddParcel(int senderId, int recieverId, WeightCategories weight, Priorities priority, int droneId)
+            public static void AddParcel(int senderId, int targetId, WeightCategories weight, Priorities priority, int droneId)
             {
-
+                DataSource.Parcels.Add(new Parcel() { SenderId = senderId, TargetId = targetId, Weight = weight, Priority = priority });
             }
         }
     }
