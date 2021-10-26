@@ -18,7 +18,6 @@ namespace DalObject
         {
             static Random R = new Random();
             static int IdOfParcel = 1;
-            //some int?
             internal static void Initialize()
             {
                 ///initialize 10 customers
@@ -30,8 +29,8 @@ namespace DalObject
                         Name = CNames[i],///Name from the array
                         Phone = R.Next(111111, 999999).ToString("000000"),///Random phone number (adding zeroes in the front)
                         Longitude = (R.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
-                        Latitude = (R.NextDouble() * 180) - 90
-                    });///Random latitude between -90 and 90
+                        Latitude = (R.NextDouble() * 180) - 90///Random latitude between -90 and 90
+                    });
                 
                 ///initialize 3 stations
                 string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon" };
@@ -42,8 +41,8 @@ namespace DalObject
                         Name = SNames[i],///Name from Name array.
                         Longitude = (R.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
                         Latitude = (R.NextDouble() * 180) - 90,///Random Latitude between -90 and 90
-                        ChargeSlots = R.Next(4)
-                    });///Random number of available slots between 0 and 3
+                        ChargeSlots = R.Next(4)///Random number of available slots between 0 and 3
+                    });
 
                 ///initialize 5 drones
                 //need to add Model Names
@@ -55,8 +54,8 @@ namespace DalObject
                         Model = MNames[i],///Name from model array
                         MaxWeight = EnumExtension.RandomEnumValue<WeightCategories>(),///Random MaxWeight
                         Status = EnumExtension.RandomEnumValue<DroneStatuses>(),///Random Status
-                        Battery = R.Next(0, 101)
-                    });///Random battery percentage between 0 and 100
+                        Battery = R.Next(0, 101)///Random battery percentage between 0 and 100
+                    });
 
 
                 ///initialize 10 parcel
@@ -74,8 +73,8 @@ namespace DalObject
                             Model = Drones[j].Model,///same Model
                             Battery = Drones[j].Battery,///same Battery
                             MaxWeight = Drones[j].MaxWeight,///same MaxWeight
-                            Status = DroneStatuses.Delivery
-                        };///change the drone's status from avaliable to delivery
+                            Status = DroneStatuses.Delivery///change the drone's status from avaliable to delivery
+                        };
 
 
                     Parcels.Add(new Parcel()
