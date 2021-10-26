@@ -59,16 +59,40 @@ namespace ConsoleUI
             switch (option)
             {
                 case 1:
-
+                    Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
+                    Int32.TryParse(Console.ReadLine(), out int stationId);
+                    string name = Console.ReadLine();
+                    Int32.TryParse(Console.ReadLine(), out int chargeSlots);
+                    Int32.TryParse(Console.ReadLine(), out int longitude);
+                    Int32.TryParse(Console.ReadLine(), out int latitude);           
+                    DalObject.AddStation(stationId, name,chargeSlots,longitude,latitude);
                     break;
                 case 2:
-
+                    Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
+                    Int32.TryParse(Console.ReadLine(), out int droneId);
+                    name = Console.ReadLine();
+                    Enum.TryParse(Console.ReadLine(), out WeightCategories weight);
+                    Int32.TryParse(Console.ReadLine(), out int battery);
+                    Enum.TryParse(Console.ReadLine(), out DroneStatuses status);
+                    DalObject.AddDrone(droneId, name, weight, battery, status); ;
                     break;
                 case 3:
-
+                    Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
+                    Int32.TryParse(Console.ReadLine(), out int customerId);
+                    name = Console.ReadLine();
+                    string phone = Console.ReadLine();
+                    Int32.TryParse(Console.ReadLine(), out longitude);
+                    Int32.TryParse(Console.ReadLine(), out latitude);
+                    DalObject.AddCustomer(customerId, name, phone, longitude, latitude);
                     break;
                 case 4:
-
+                    Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
+                    Int32.TryParse(Console.ReadLine(),  out int senderId);
+                    Int32.TryParse(Console.ReadLine(), out int recieverId);
+                    Enum.TryParse(Console.ReadLine(), out weight);
+                    Enum.TryParse(Console.ReadLine(), out Priorities priority);
+                    Int32.TryParse(Console.ReadLine(), out droneId);
+                    DalObject.AddParcel(senderId, recieverId, weight, priority, droneId);
                     break;
             }
         }
@@ -82,17 +106,19 @@ namespace ConsoleUI
             {
                 case 1:
 
+                    ConnectParcelToDrone();
                     break;
                 case 2:
-
+                    PickUpAParcel();
                     break;
                 case 3:
-
+                    DeliverParcel();
                     break;
                 case 4:
-
+                    SendToDroneCharge();
                     break;
                 case 5:
+                    ReleaseDrone();
                     break;
             }
         }
@@ -105,16 +131,16 @@ namespace ConsoleUI
             switch (option)
             {
                 case 1:
-
+                    DisplayStation();
                     break;
                 case 2:
-
+                    DisplayDrone();
                     break;
                 case 3:
-
+                    DisplayCustomer();
                     break;
                 case 4:
-
+                    DisplayParcel();
                     break;
 
             }
@@ -128,20 +154,22 @@ namespace ConsoleUI
             switch (option)
             {
                 case 1:
-
+                    DisplayStationsList();
                     break;
                 case 2:
-
+                    DisplayDronesList();
                     break;
                 case 3:
-
+                    DisplayCustomersList();
                     break;
                 case 4:
-
+                    DisplayParcelList();
                     break;
                 case 5:
+                    DisplayParcelListWithoutDrone();
                     break;
                 case 6:
+                    DisplayStationAvaliablecharge();
                     break;
             }
         }

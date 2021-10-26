@@ -15,6 +15,7 @@ namespace IDAL
             internal static List<Parcel> Parcels = new List<Parcel>(1000);
             internal static List<Drone> Drones = new List<Drone>(10);
             internal static List<Station> Stations = new List<Station>(5);
+            internal static List<DroneCharge> DroneCharge = new List<DroneCharge>();
             internal class Config
             {
                 static Random R = new Random();
@@ -46,7 +47,7 @@ namespace IDAL
                         });
 
                     ///initialize 5 drones
-                    //need to add Model Names
+                    //need to add Model Names, if the status is maintain, then add DroneCharge
                     string[] MNames = new string[] { };
                     for (int i = 0; i < 5; i++)
                         Drones.Add(new Drone()
