@@ -80,15 +80,18 @@ namespace ConsoleUI
                     Enum.TryParse(Console.ReadLine(), out WeightCategories weight);
                     Int32.TryParse(Console.ReadLine(), out int battery);
                     Enum.TryParse(Console.ReadLine(), out DroneStatuses status);
+                    
                     DalObject.AddDrone(new Drone() 
                     { 
                         Id = InputInt(),
                         Model = Console.ReadLine(),
+                        MaxWeight = Enum.TryParse(Console.ReadLine(), )
 
                     }
                         ); 
                     break;
                 case 3:
+                    
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
                     Int32.TryParse(Console.ReadLine(), out int customerId);
                     name = Console.ReadLine();
