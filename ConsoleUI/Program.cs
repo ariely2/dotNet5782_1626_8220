@@ -212,7 +212,7 @@ namespace ConsoleUI
         {
             Console.WriteLine("Enter Drone ID");
             Int32.TryParse(Console.ReadLine(), out int DroneID);
-            DalObject.ReleaseDrone();
+            DalObject.ReleaseDrone(DroneID);
         }
         static void Main(string[] args)
         {
