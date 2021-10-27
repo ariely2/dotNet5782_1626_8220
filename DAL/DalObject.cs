@@ -44,7 +44,6 @@ namespace IDAL
                 //if (P.Id == ParcelId && D.Id == DroneId)   do we need this?
                 P.DroneId = DroneId;
                 P.Scheduled = DateTime.Now;
-                Console.WriteLine("Parcel assigned to drone.");
             }
             public static void PickUpParcel(int ParcelId)
             {
@@ -57,13 +56,38 @@ namespace IDAL
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-                double B = D.Battery;
-                //D.Status = DroneStatuses.;
+                D.Status = DroneStatuses.Avaliable;
                 P.Delivered = DateTime.Now;
+            }
+            public static void ChargeDrone(int DroneID, string name)
+            {
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
+                Station s = DataSource.Stations.Find(x => x.Name == name);
+                s.ChargeSlots--;
+                D.Status = DroneStatuses.Maintaince;
+                DataSource.DroneCharge.Add(new DroneCharge() { DroneId = DroneID, StationId = s.Id });
+            }
+            public static List<Station> GetAvailableStations()
+            {
+                List<Station> Available = StationsList();
+                foreach(Station s in Available)
+                {
+                    if (s.ChargeSlots == 0)
+                        Available.Remove(s);
+                }
+                return Available;
             }
             public static List<Station> StationsList()
             {
                 return DataSource.Stations.ToList();
+            }
+            public static void ReleaseDrone(int DroneID)
+            {
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
+                D.Status = DroneStatuses.Avaliable;
+                DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == DroneID);
+                Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
+                S.ChargeSlots++;
             }
             public static List<Drone> DronesList()
             {

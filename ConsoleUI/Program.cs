@@ -126,7 +126,7 @@ namespace ConsoleUI
                     DeliverParcel();
                     break;
                 case 4:
-                    SendToDroneCharge();
+                    SendDroneToCharge();
                     break;
                 case 5:
                     ReleaseDrone();
@@ -217,6 +217,28 @@ namespace ConsoleUI
             Console.WriteLine("Enter Parcel ID");
             Int32.TryParse(Console.ReadLine(), out int ParcelID);
             DalObject.DeliverParcel(ParcelID);
+        }
+        static void SendDroneToCharge()
+        {
+            Console.WriteLine("Enter Drone ID");
+            Int32.TryParse(Console.ReadLine(), out int DroneID);
+            Console.WriteLine("Choose an available station:");
+            DisplayAvailableStations();
+            string name = Console.ReadLine();
+            DalObject.ChargeDrone(DroneID, name);
+        }
+        static void DisplayAvailableStations()
+        {
+            foreach(Station s in DalObject.GetAvailableStations())
+            {
+                Console.WriteLine(s);
+            }
+        }
+        static void ReleaseDrone()
+        {
+            Console.WriteLine("Enter Drone ID");
+            Int32.TryParse(Console.ReadLine(), out int DroneID);
+            DalObject.ReleaseDrone();
         }
 
         static void DisplayStationsList()
