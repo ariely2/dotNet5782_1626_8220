@@ -58,7 +58,6 @@ namespace IDAL
                 //if (P.Id == ParcelId && D.Id == DroneId)   do we need this?
                 P.DroneId = DroneId;
                 P.Scheduled = DateTime.Now;
-                Console.WriteLine("Parcel assigned to drone.");
             }
             public static void PickUpParcel(int ParcelId)
             {
@@ -71,9 +70,19 @@ namespace IDAL
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-                double B = D.Battery;
-                //D.Status = DroneStatuses.;
+                D.Status = DroneStatuses.Avaliable;
                 P.Delivered = DateTime.Now;
+            }
+            public static void ChargeDrone(int ParcelId)
+            {
+                Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
+                D.Status = DroneStatuses.Avaliable;
+                P.Delivered = DateTime.Now;
+            }
+            public static List<Station> GetAvailableStations()
+            {
+                List<Station> Available = StationsList();
             }
         }
     }
