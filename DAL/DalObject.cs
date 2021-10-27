@@ -14,16 +14,9 @@ namespace IDAL
             {
                 DataSource.Config.Initialize();
             }
-            public static void AddStation(int id, string name, int chargeSlots, int longitude, int latitude)
+            public static void AddStation(Station station)
             {
-                DataSource.Stations.Add(new Station()
-                {
-                    Id = id,
-                    Name = name,
-                    ChargeSlots = chargeSlots,
-                    Longitude = longitude,
-                    Latitude = latitude
-                });
+                DataSource.Stations.Add(station);
             }
             public static void AddDrone(int id,string name, WeightCategories weight, int battery, DroneStatuses status)
             {
@@ -74,6 +67,10 @@ namespace IDAL
                 double B = D.Battery;
                 //D.Status = DroneStatuses.;
                 P.Delivered = DateTime.Now;
+            }
+            public static List<Station> StationsList()
+            {
+                return DataSource.Stations.ToList();
             }
         }
     }
