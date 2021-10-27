@@ -14,16 +14,9 @@ namespace IDAL
             {
                 DataSource.Config.Initialize();
             }
-            public static void AddStation(int stationId, string name, int chargeSlots, double longitude, double latitude)
+            public static void AddStation(Station station)
             {
-                DataSource.Stations.Add(new Station() 
-                {
-                    Id = stationId,
-                    ChargeSlots = chargeSlots,
-                    Name = name,
-                    Latitude = latitude,
-                    Longitude = longitude
-                });
+                DataSource.Stations.Add(station);
             }
             public static void AddDrone(Drone drone)
             {
@@ -84,6 +77,17 @@ namespace IDAL
                 }
                 return Available;
             }
+            public static List<Parcel> UnassignedParcels()
+            {
+                List<Parcel> Unassigned = ParcelList();
+                foreach (Parcel p in Unassigned)
+                {
+                    if (p.DroneId !=0)
+                        Unassigned.Remove(p);
+                }
+                return Unassigned;
+            }
+
             public static List<Station> StationsList()
             {
                 return DataSource.Stations.ToList();
@@ -107,6 +111,26 @@ namespace IDAL
             public static List<Parcel> ParcelList()
             {
                 return DataSource.Parcels.ToList();
+            }
+            public static void DisplayStation(int id)
+            {
+                Station S = DataSource.Stations.Find(x => x.Id == id);
+                Console.WriteLine(S);
+            }
+            public static void DisplayDrone(int id)
+            {
+                Drone D = DataSource.Drones.Find(x => x.Id == id);
+                Console.WriteLine(D);
+            }
+            public static void DisplayCustomer(int id)
+            {
+                Customer C = DataSource.Customers.Find(x => x.Id == id);
+                Console.WriteLine(C);
+            }
+            public static void DisplayParcel(int id)
+            {
+                Parcel P = DataSource.Parcels.Find(x => x.Id == id);
+                Console.WriteLine(P);
             }
         }
     }
