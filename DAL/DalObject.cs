@@ -22,20 +22,15 @@ namespace IDAL
             {
                 DataSource.Drones.Add(drone);
             }
-            public static void AddCustomer(int id, string name, string phone, int longtitude, int latitude)
+            public static void AddCustomer(Customer customer)
             {
-                DataSource.Customers.Add(new Customer()
-                {
-                    Id = id,
-                    Name = name,
-                    Phone = phone,
-                    Longitude = longtitude,
-                    Latitude = latitude
-                });
+                DataSource.Customers.Add(customer);
             }
-            public static void AddParcel(int senderId, int targetId, WeightCategories weight, Priorities priority, int droneId)
+            public static void AddParcel(Parcel parcel)
             {
-                DataSource.Parcels.Add(new Parcel() { SenderId = senderId, TargetId = targetId, Weight = weight, Priority = priority });
+                parcel.Id = DataSource.Config.IdOfParcel++;
+                parcel.Scheduled = parcel.DroneId == 0 ? DateTime.MinValue : parcel.Requested;
+                DataSource.Parcels.Add(parcel);
             }
             public static void AssignParcel(int ParcelId, int DroneId)
             {

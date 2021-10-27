@@ -22,16 +22,16 @@ namespace IDAL
             public DateTime Delivered { get; set; }
             public override string ToString()
             {
-                return $"Parcel Id:      {Id}" +
-                       $"Sender Id:      {SenderId}" +
-                       $"Target Id:      {TargetId}" +
-                       $"Weight:         {Weight}" +
-                       $"Priority:       {Priority}" +
-                       $"Drone Id:       {DroneId}" +
-                       $"Request Time:   {Requested}" +
-                       $"Scheduled Time: {Scheduled}" +
-                       $"Pick-up Time:   {PickedUp}" +
-                       $"Delivery Time:  {Delivered}"; 
+                return $"Parcel Id:      {Id}\n" +
+                       $"Sender Id:      {SenderId}\n" +
+                       $"Target Id:      {TargetId}\n" +
+                       $"Weight:         {Weight}\n" +
+                       $"Priority:       {Priority}\n" +
+                       $"Drone Id:       {DroneId}\n" +
+                       $"Request Time:   {Requested}\n" +
+                       $"Scheduled Time: {Scheduled}\n" +
+                       $"Pick-up Time:   {PickedUp}\n" +
+                       $"Delivery Time:  {Delivered}\n"; 
             }
 
         } 

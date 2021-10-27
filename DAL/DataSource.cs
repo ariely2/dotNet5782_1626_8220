@@ -16,11 +16,10 @@ namespace IDAL
             internal static List<Drone> Drones = new List<Drone>(10);
             internal static List<Station> Stations = new List<Station>(5);
             internal static List<DroneCharge> DroneCharge = new List<DroneCharge>();
-
             internal class Config
             {
+                public static int IdOfParcel = 1000000;
                 static Random R = new Random();
-                static int IdOfParcel = 1000000;
                 internal static void Initialize()
                 {
                     ///initialize 10 customers
@@ -89,7 +88,7 @@ namespace IDAL
                             Priority = EnumExtension.RandomEnumValue<Priorities>(),///Random priority
                             Requested = DateTime.Now,///the person requested the parcel now
                             Scheduled = (j == 5 ? DateTime.MinValue : DateTime.Now),///time that we assign a drone to the parcel, MinValue - if we didn't find a drone
-                            PickedUp = (j == 5 ? DateTime.MinValue : DateTime.Now),//not sure about the value.
+                            PickedUp = DateTime.MinValue,//not sure about the value.
                             Delivered = DateTime.MinValue///the drone didn't delivered the pacel yet, so the value is MinValue
                         });
 
