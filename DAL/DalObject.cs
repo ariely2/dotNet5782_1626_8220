@@ -66,20 +66,35 @@ namespace IDAL
                 D.Status = DroneStatuses.Avaliable;
                 P.Delivered = DateTime.Now;
             }
-            public static void ChargeDrone(int ParcelId)
+            public static void ChargeDrone(int DroneID, string name)
             {
-                Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
-                Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-                D.Status = DroneStatuses.Avaliable;
-                P.Delivered = DateTime.Now;
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
+                Station s = DataSource.Stations.Find(x => x.Name == name);
+                s.ChargeSlots--;
+                D.Status = DroneStatuses.Maintaince;
+                DataSource.DroneCharge.Add(new DroneCharge() { DroneId = DroneID, StationId = s.Id });
             }
             public static List<Station> GetAvailableStations()
             {
                 List<Station> Available = StationsList();
+                foreach(Station s in Available)
+                {
+                    if (s.ChargeSlots == 0)
+                        Available.Remove(s);
+                }
+                return Available;
             }
             public static List<Station> StationsList()
             {
                 return DataSource.Stations.ToList();
+            }
+            public static void ReleaseDrone(int DroneID)
+            {
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
+                D.Status = DroneStatuses.Avaliable;
+                DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == DroneID);
+                Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
+                S.ChargeSlots++;
             }
         }
     }

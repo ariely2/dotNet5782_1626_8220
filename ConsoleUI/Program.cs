@@ -197,12 +197,22 @@ namespace ConsoleUI
             Console.WriteLine("Enter Drone ID");
             Int32.TryParse(Console.ReadLine(), out int DroneID);
             Console.WriteLine("Choose an available station:");
-            
-            DalObject.ChargeDrone(DroneID);
+            DisplayAvailableStations();
+            string name = Console.ReadLine();
+            DalObject.ChargeDrone(DroneID, name);
         }
         static void DisplayAvailableStations()
         {
-            List<Station> Stations = DalObject.GetAvailableStations();
+            foreach(Station s in DalObject.GetAvailableStations())
+            {
+                Console.WriteLine(s);
+            }
+        }
+        static void ReleaseDrone()
+        {
+            Console.WriteLine("Enter Drone ID");
+            Int32.TryParse(Console.ReadLine(), out int DroneID);
+            DalObject.ReleaseDrone();
         }
         static void Main(string[] args)
         {
