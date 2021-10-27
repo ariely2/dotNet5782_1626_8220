@@ -21,8 +21,8 @@ namespace IDAL
                 return $"Id:          {Id}" +
                        $"Name:        {Name}" +
                        $"Longitude:   {Longitude}" +
-                       $"Latitude:   {Latitude}" +
-                       $"ChargeSlots: {ChargeSlots}\n";
+                       $"Latitude:    {Latitude}" +
+                       $"ChargeSlots: {ChargeSlots}";
             }
         }
     }

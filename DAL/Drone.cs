@@ -22,7 +22,7 @@ namespace IDAL
                        $"Model:     {Model}" +
                        $"MaxWeight: {MaxWeight}" +
                        $"Status:    {Status}" +
-                       $"Battery:   {Battery}\n";
+                       $"Battery:   {Battery}";
             }
         }
     }

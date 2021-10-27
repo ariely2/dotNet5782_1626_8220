@@ -16,10 +16,11 @@ namespace IDAL
             internal static List<Drone> Drones = new List<Drone>(10);
             internal static List<Station> Stations = new List<Station>(5);
             internal static List<DroneCharge> DroneCharge = new List<DroneCharge>();
+
             internal class Config
             {
                 static Random R = new Random();
-                static int IdOfParcel = 1;
+                static int IdOfParcel = 1000000;
                 internal static void Initialize()
                 {
                     ///initialize 10 customers
@@ -47,8 +48,7 @@ namespace IDAL
                         });
 
                     ///initialize 5 drones
-                    //need to add Model Names, if the status is maintain, then add DroneCharge
-                    string[] MNames = new string[] { };
+                    string[] MNames = new string[] { "A", "B", "c", "D", "E" };
                     for (int i = 0; i < 5; i++)
                         Drones.Add(new Drone()
                         {
@@ -78,12 +78,12 @@ namespace IDAL
                                 Status = DroneStatuses.Delivery///change the drone's status from avaliable to delivery
                             };
 
-
+                        int randomCustomer = R.Next(Customers.Count());
                         Parcels.Add(new Parcel()
                         {
                             Id = IdOfParcel++,///Id equals to IdOfParcle
-                            SenderId = Customers[R.Next(Customers.Count())].Id,///Random Id from customers list 
-                            TargetId = Customers[R.Next(Customers.Count())].Id,///Random Id from customers list, check that the sender is not the target
+                            SenderId = Customers[randomCustomer].Id,///Random Id from customers list 
+                            TargetId = Customers[(randomCustomer + 1) % Customers.Count()].Id,///Random Id from customers list
                             Weight = ParcelMaxWeight,///Random MaxWeight
                             DroneId = (j == 5 ? 0 : Drones[j].Id),///Id from drones's list (only if there is a drone that match the requirements)
                             Priority = EnumExtension.RandomEnumValue<Priorities>(),///Random priority
