@@ -17,8 +17,11 @@ namespace IDAL
             public double Latitude { get; set; }
             public override string ToString()
             {
-                return $" Customer Id: {Id}, Customer Name: {Name}, Customer Phone: {Phone}, " +
-                    $"Customer Longitude: {Longitude}, Customer Latitude: {Latitude}";
+                return $"Customer Id:        {Id}" +
+                       $"Customer Name:      {Name}" +
+                       $"Customer Phone:     {Phone}" +
+                       $"Customer Longitude: {Longitude}" +
+                       $"Customer Latitude:  {Latitude}";
             }
         };
     }

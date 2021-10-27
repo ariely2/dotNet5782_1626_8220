@@ -25,16 +25,9 @@ namespace IDAL
                     Longitude = longitude
                 });
             }
-            public static void AddDrone(int id,string name, WeightCategories weight, int battery, DroneStatuses status)
+            public static void AddDrone(Drone drone)
             {
-                DataSource.Drones.Add(new Drone()
-                {
-                    Id = id,
-                    Model = name,
-                    MaxWeight = weight,
-                    Battery = battery,
-                    Status = status
-                }) ;
+                DataSource.Drones.Add(drone);
             }
             public static void AddCustomer(int id, string name, string phone, int longtitude, int latitude)
             {
@@ -102,6 +95,18 @@ namespace IDAL
                 DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == DroneID);
                 Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
                 S.ChargeSlots++;
+            }
+            public static List<Drone> DronesList()
+            {
+                return DataSource.Drones.ToList();
+            }
+            public static List<Customer> CustomersList()
+            {
+                return DataSource.Customers.ToList();
+            }
+            public static List<Parcel> ParcelList()
+            {
+                return DataSource.Parcels.ToList();
             }
         }
     }

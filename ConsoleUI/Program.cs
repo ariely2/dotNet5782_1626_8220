@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using IDAL.DalObject;
 using IDAL.DO;
 namespace ConsoleUI
@@ -50,31 +51,42 @@ namespace ConsoleUI
 5)Display parcels list that aren't associated with a drone
 6)Display stations list with avaliable charging spots");
         }
-        static void SwitchAddOption() 
+        static void SwitchAddOption()
         {
+            bool valid;
+
             PrintAddOption();
             int option;
             Int32.TryParse(Console.ReadLine(), out option);
             Console.Clear();
             switch (option)
             {
+                //
                 case 1:
+
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    Int32.TryParse(Console.ReadLine(), out int stationId);
-                    string name = Console.ReadLine();
-                    Int32.TryParse(Console.ReadLine(), out int chargeSlots);
-                    Int32.TryParse(Console.ReadLine(), out int longitude);
-                    Int32.TryParse(Console.ReadLine(), out int latitude);           
-                    DalObject.AddStation(stationId, name,chargeSlots,longitude,latitude);
+                    DalObject.AddStation(new Station()
+                    {
+                        Id = InputInt(),
+                        Name = Console.ReadLine(),
+                        ChargeSlots = InputInt(),
+                        Longitude = InputInt(),
+                        Latitude = InputInt()
+                    }) ;
                     break;
+                //
                 case 2:
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    Int32.TryParse(Console.ReadLine(), out int droneId);
-                    name = Console.ReadLine();
                     Enum.TryParse(Console.ReadLine(), out WeightCategories weight);
                     Int32.TryParse(Console.ReadLine(), out int battery);
                     Enum.TryParse(Console.ReadLine(), out DroneStatuses status);
-                    DalObject.AddDrone(droneId, name, weight, battery, status); ;
+                    DalObject.AddDrone(new Drone() 
+                    { 
+                        Id = InputInt(),
+                        Model = Console.ReadLine(),
+
+                    }
+                        ); 
                     break;
                 case 3:
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
@@ -87,7 +99,7 @@ namespace ConsoleUI
                     break;
                 case 4:
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    Int32.TryParse(Console.ReadLine(),  out int senderId);
+                    Int32.TryParse(Console.ReadLine(), out int senderId);
                     Int32.TryParse(Console.ReadLine(), out int recieverId);
                     Enum.TryParse(Console.ReadLine(), out weight);
                     Enum.TryParse(Console.ReadLine(), out Priorities priority);
@@ -173,6 +185,20 @@ namespace ConsoleUI
                     break;
             }
         }
+        static int InputInt()
+        {
+            int num;
+            bool valid = false;
+            do
+            {
+                valid = Int32.TryParse(Console.ReadLine(), out num);
+                if (!valid)
+                {
+                    Console.WriteLine("Invalid value,try again");
+                }
+            } while (!valid);
+            return num;
+        }
         static void ConnectParcelToDrone()
         {
             Console.WriteLine("Enter Parcel ID and Drone ID");
@@ -214,6 +240,15 @@ namespace ConsoleUI
             Int32.TryParse(Console.ReadLine(), out int DroneID);
             DalObject.ReleaseDrone(DroneID);
         }
+
+        static void DisplayStationsList()
+        {
+            foreach (Station s in DalObject.StationsList())
+            {
+                Console.WriteLine(s);
+            }
+        }
+
         static void Main(string[] args)
         {
             int option;
