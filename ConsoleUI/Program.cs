@@ -58,8 +58,8 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                ///add a station
-                case 1:
+
+                case ((int)Add.AddStation):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
                     DalObject.AddStation(new Station()
@@ -71,8 +71,8 @@ namespace ConsoleUI
                         Latitude = InputDouble()
                     });
                     break;
-                ///add a drone
-                case 2:
+
+                case ((int)Add.AddDrone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
                     DalObject.AddDrone(new Drone()
                     {
@@ -83,8 +83,8 @@ namespace ConsoleUI
                         Status = InputEnum<DroneStatuses>()
                     });
                     break;
-                ///add a customer
-                case 3:
+
+                case ((int)Add.AddCustomer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
                     DalObject.AddCustomer(new Customer()
                     {
@@ -95,8 +95,8 @@ namespace ConsoleUI
                         Latitude = InputDouble()
                     });
                     break;
-                ///add a parcel
-                case 4:
+
+                case ((int)Add.AddParcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
                     DalObject.AddParcel(new Parcel()
                     {
@@ -110,6 +110,10 @@ namespace ConsoleUI
                         PickedUp = DateTime.MinValue
                     });
                     break;
+                default:
+                    Console.WriteLine("Invalid input, try again");
+                    break;
+
             }
         }
         static void SwitchUpdateOption()
@@ -119,19 +123,19 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case 1:
+                case ((int)Update.ConnectParceltoDrone):
                     ConnectParcelToDrone();
                     break;
-                case 2:
+                case ((int)Update.PickUpParcel):
                     PickUpAParcel();
                     break;
-                case 3:
+                case ((int)Update.DeliverParcel):
                     DeliverParcel();
                     break;
-                case 4:
+                case ((int)Update.SendDroneToCharge):
                     SendDroneToCharge();
                     break;
-                case 5:
+                case ((int)Update.ReleaseDrone):
                     ReleaseDrone();
                     break;
             }
