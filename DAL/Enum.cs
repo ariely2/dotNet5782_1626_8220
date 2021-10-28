@@ -26,5 +26,7 @@ namespace IDAL
         public enum WeightCategories { Light, Medium, Heavy}
         public enum Priorities { Normal, Fast, Emergency}
         public enum DroneStatuses { Available, Maintenance,Assigned, Delivery}
+        public enum Add { AddStation = 1, AddDrone, AddCustomer, AddParcel }
+        public enum Update { ConnectParceltoDrone = 1, PickUpParcel, DeliverParcel, SendDroneToCharge, ReleaseDrone }
     }
 }
