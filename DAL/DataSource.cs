@@ -65,7 +65,7 @@ namespace IDAL
                         int j = 0;
                         WeightCategories ParcelMaxWeight = EnumExtension.RandomEnumValue<WeightCategories>();
                         ///looking for an avaliable drone with enough battery and can carry the parcel
-                        for (; j < Drones.Count() && (Drones[j].Status != DroneStatuses.Avaliable || Drones[j].Battery == 0 || Drones[j].MaxWeight < ParcelMaxWeight); j++) ;
+                        for (; j < Drones.Count() && (Drones[j].Status != DroneStatuses.Available || Drones[j].Battery == 0 || Drones[j].MaxWeight < ParcelMaxWeight); j++) ;
 
                         if (j != 5)
                             Drones[j] = new Drone()

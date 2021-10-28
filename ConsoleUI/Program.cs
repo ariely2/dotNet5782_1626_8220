@@ -19,7 +19,7 @@ namespace ConsoleUI
         static void PrintAddOption()
         {
             Console.WriteLine(@"choose an option between 1 to 4:
-1)Add staion
+1)Add station
 2)Add Drone
 3)Add customer
 4)Add parcel");
@@ -30,7 +30,7 @@ namespace ConsoleUI
 1)Assign a parcel to a drone
 2)Pick up a parcel by a drone
 3)deliver a parcel to a customer
-4)send a drone to charge
+4)Send a drone to charge
 5)Release a drone from charging");
         }
         static void PrintDisplayOption()
@@ -136,7 +136,6 @@ namespace ConsoleUI
                     break;
             }
         }
-
         static void SwitchDisplayOption()
         {
             PrintDisplayOption();
@@ -188,14 +187,14 @@ namespace ConsoleUI
             }
         }
         //need to fix this function
-        static T InputEnum<T>()where T:struct,Enum
+        static T InputEnum<T>() where T : struct, Enum
         {
             T result;
             bool valid = false;
             do
             {
                 valid = Enum.TryParse<T>(Console.ReadLine(), out result);
-                if (valid && Enum.IsDefined(typeof(T), result))
+                if (valid && !Enum.IsDefined(typeof(T), result))
                     valid = false;
                 if (!valid)
                     Console.WriteLine("Invalid Enum, try again");

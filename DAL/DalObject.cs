@@ -51,7 +51,7 @@ namespace IDAL
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-                D.Status = DroneStatuses.Avaliable;
+                D.Status = DroneStatuses.Available;
                 P.Delivered = DateTime.Now;
             }
             public static void ChargeDrone(int DroneID, string name)
@@ -64,8 +64,8 @@ namespace IDAL
             }
             public static List<Station> GetAvailableStations()
             {
-                List<Station> Available = StationsList();
-                foreach(Station s in Available)
+                List<Station> Available = new List<Station>(StationsList());
+                foreach(Station s in StationsList())
                 {
                     if (s.ChargeSlots == 0)
                         Available.Remove(s);
@@ -74,8 +74,9 @@ namespace IDAL
             }
             public static List<Parcel> UnassignedParcels()
             {
-                List<Parcel> Unassigned = ParcelList();
-                foreach (Parcel p in Unassigned)
+                List<Parcel> Unassigned = new List<Parcel>(ParcelList());
+                //List<Parcel> Unassigned = ParcelList();
+                foreach (Parcel p in ParcelList())
                 {
                     if (p.DroneId !=0)
                         Unassigned.Remove(p);
@@ -90,7 +91,7 @@ namespace IDAL
             public static void ReleaseDrone(int DroneID)
             {
                 Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
-                D.Status = DroneStatuses.Avaliable;
+                D.Status = DroneStatuses.Available;
                 DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == DroneID);
                 Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
                 S.ChargeSlots++;
@@ -109,23 +110,48 @@ namespace IDAL
             }
             public static void DisplayStation(int id)
             {
-                Station S = DataSource.Stations.Find(x => x.Id == id);
-                Console.WriteLine(S);
+                bool check = DataSource.Stations.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Station S = DataSource.Stations.Find(x => x.Id == id);
+                    Console.WriteLine(S);
+                }
+                else
+                    Console.WriteLine("There isn't a Station with the entered ID.");
             }
             public static void DisplayDrone(int id)
             {
-                Drone D = DataSource.Drones.Find(x => x.Id == id);
-                Console.WriteLine(D);
+                bool check = DataSource.Drones.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Drone D = DataSource.Drones.Find(x => x.Id == id);
+                    Console.WriteLine(D);
+                }
+                   else
+                    Console.WriteLine("There isn't a drone with the entered ID.");
+
             }
             public static void DisplayCustomer(int id)
             {
-                Customer C = DataSource.Customers.Find(x => x.Id == id);
-                Console.WriteLine(C);
+                bool check = DataSource.Customers.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Customer C = DataSource.Customers.Find(x => x.Id == id);
+                    Console.WriteLine(C);
+                }
+                else
+                    Console.WriteLine("There isn't a customer with the entered ID.");
             }
             public static void DisplayParcel(int id)
             {
-                Parcel P = DataSource.Parcels.Find(x => x.Id == id);
-                Console.WriteLine(P);
+                bool check = DataSource.Parcels.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Parcel P = DataSource.Parcels.Find(x => x.Id == id);
+                    Console.WriteLine(P);
+                }
+                else
+                    Console.WriteLine("There isn't a parcel with the entered ID.");
             }
         }
     }
