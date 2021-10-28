@@ -8,9 +8,6 @@ namespace IDAL
 {
     namespace DO
     {
-        /// <summary>
-        /// A class for getting a random enum value
-        /// </summary>
         public static class EnumExtension
         {
             static Random R = new Random();
@@ -20,11 +17,8 @@ namespace IDAL
                 return (T)v.GetValue(R.Next(v.Length));
             }
         }
-        /// <summary>
-        /// All the enums required for the exercise.
-        /// </summary>
         public enum WeightCategories { Light, Medium, Heavy}
         public enum Priorities { Normal, Fast, Emergency}
-        public enum DroneStatuses { Available, Maintaince,Assigned, Delivery}
+        public enum DroneStatuses { Available, Maintaince, Delivery}
     }
 }

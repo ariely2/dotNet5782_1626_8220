@@ -253,10 +253,10 @@ namespace ConsoleUI
         {
             Console.WriteLine("Enter Drone ID");
             int DroneId = InputInt();
-            Console.WriteLine("Enter an ID of an available station:");
+            Console.WriteLine("Choose an available station:");
             DisplayAvailableStations();
-            int StationId = InputInt();
-            DalObject.ChargeDrone(DroneId, StationId);
+            string name = Console.ReadLine();
+            DalObject.ChargeDrone(DroneId, name);
         }
         static void ReleaseDrone()
         {

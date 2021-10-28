@@ -32,53 +32,40 @@ namespace IDAL
                 parcel.Scheduled = parcel.DroneId == 0 ? DateTime.MinValue : parcel.Requested;
                 DataSource.Parcels.Add(parcel);
             }
-            public static void Replace<T>(T Item, int index, List<T> list)
-            {
-                list.RemoveAt(index);
-                list.Insert(index, Item);
-            }
             public static void AssignParcel(int ParcelId, int DroneId)
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
-                D.Status = DroneStatuses.Assigned;
+                //if (P.Id == ParcelId && D.Id == DroneId)   do we need this?
                 P.DroneId = DroneId;
                 P.Scheduled = DateTime.Now;
-                Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-                Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
             }
             public static void PickUpParcel(int ParcelId)
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-                D.Status = DroneStatuses.Delivery; 
+                D.Status = DroneStatuses.Delivery;
                 P.PickedUp = DateTime.Now;
-                Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-                Replace(D, DataSource.Drones.FindIndex(x => x.Id == D.Id), DataSource.Drones);
             }
             public static void DeliverParcel(int ParcelId)
             {
                 Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
                 D.Status = DroneStatuses.Available;
-                P.Delivered = DateTime.Now; //change droneid to zero? or change function of parcels not assigned
-                Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-                Replace(D, DataSource.Drones.FindIndex(x => x.Id == D.Id), DataSource.Drones);
+                P.Delivered = DateTime.Now;
             }
-            public static void ChargeDrone(int DroneId, int StationId)
+            public static void ChargeDrone(int DroneID, string name)
             {
-                Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
-                Station S = DataSource.Stations.Find(x => x.Id == StationId);
-                S.ChargeSlots--;
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
+                Station s = DataSource.Stations.Find(x => x.Name == name);
+                s.ChargeSlots--;
                 D.Status = DroneStatuses.Maintaince;
-                DataSource.DroneCharge.Add(new DroneCharge() { DroneId = DroneId, StationId = S.Id });
-                Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
-                Replace(S, DataSource.Parcels.FindIndex(x => x.Id == StationId), DataSource.Stations);
+                DataSource.DroneCharge.Add(new DroneCharge() { DroneId = DroneID, StationId = s.Id });
             }
             public static List<Station> GetAvailableStations()
             {
                 List<Station> Available = new List<Station>(StationsList());
-                foreach (Station s in StationsList())
+                foreach(Station s in StationsList())
                 {
                     if (s.ChargeSlots == 0)
                         Available.Remove(s);
@@ -88,6 +75,7 @@ namespace IDAL
             public static List<Parcel> UnassignedParcels()
             {
                 List<Parcel> Unassigned = new List<Parcel>(ParcelList());
+                //List<Parcel> Unassigned = ParcelList();
                 foreach (Parcel p in ParcelList())
                 {
                     if (p.DroneId !=0)
@@ -100,16 +88,13 @@ namespace IDAL
             {
                 return DataSource.Stations.ToList();
             }
-            public static void ReleaseDrone(int DroneId)
+            public static void ReleaseDrone(int DroneID)
             {
-                Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
+                Drone D = DataSource.Drones.Find(x => x.Id == DroneID);
                 D.Status = DroneStatuses.Available;
-                DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == D.Id);
+                DroneCharge C = DataSource.DroneCharge.Find(x => x.DroneId == DroneID);
                 Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
                 S.ChargeSlots++;
-                Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
-                Replace(S, DataSource.Stations.FindIndex(x => x.Id == S.Id), DataSource.Stations);
-                Replace(C, DataSource.DroneCharge.FindIndex(x => x.DroneId == D.Id), DataSource.DroneCharge);
             }
             public static List<Drone> DronesList()
             {
@@ -125,23 +110,48 @@ namespace IDAL
             }
             public static void DisplayStation(int id)
             {
-                Station S = DataSource.Stations.Find(x => x.Id == id);
-                Console.WriteLine(S);
+                bool check = DataSource.Stations.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Station S = DataSource.Stations.Find(x => x.Id == id);
+                    Console.WriteLine(S);
+                }
+                else
+                    Console.WriteLine("There isn't a Station with the entered ID.");
             }
             public static void DisplayDrone(int id)
             {
-                Drone D = DataSource.Drones.Find(x => x.Id == id);
-                Console.WriteLine(D);
+                bool check = DataSource.Drones.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Drone D = DataSource.Drones.Find(x => x.Id == id);
+                    Console.WriteLine(D);
+                }
+                   else
+                    Console.WriteLine("There isn't a drone with the entered ID.");
+
             }
             public static void DisplayCustomer(int id)
             {
-                Customer C = DataSource.Customers.Find(x => x.Id == id);
-                Console.WriteLine(C);
+                bool check = DataSource.Customers.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Customer C = DataSource.Customers.Find(x => x.Id == id);
+                    Console.WriteLine(C);
+                }
+                else
+                    Console.WriteLine("There isn't a customer with the entered ID.");
             }
             public static void DisplayParcel(int id)
             {
-                Parcel P = DataSource.Parcels.Find(x => x.Id == id);
-                Console.WriteLine(P);
+                bool check = DataSource.Parcels.Exists(x => x.Id == id);
+                if (check)
+                {
+                    Parcel P = DataSource.Parcels.Find(x => x.Id == id);
+                    Console.WriteLine(P);
+                }
+                else
+                    Console.WriteLine("There isn't a parcel with the entered ID.");
             }
         }
     }
