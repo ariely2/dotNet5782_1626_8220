@@ -70,7 +70,7 @@ namespace IDAL
                 Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
                 Station S = DataSource.Stations.Find(x => x.Id == StationId);
                 S.ChargeSlots--;
-                D.Status = DroneStatuses.Maintaince;
+                D.Status = DroneStatuses.Maintenance;
                 DataSource.DroneCharge.Add(new DroneCharge() { DroneId = DroneId, StationId = S.Id });
                 Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
                 Replace(S, DataSource.Parcels.FindIndex(x => x.Id == StationId), DataSource.Stations);
