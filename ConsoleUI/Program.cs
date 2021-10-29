@@ -7,6 +7,9 @@ namespace ConsoleUI
     class Program
     {
         DalObject obj = new DalObject();
+        /// <summary>
+        /// print general option
+        /// </summary>
         static void PrintGeneralOption()
         {
             Console.WriteLine(@"choose an option between 1 to 5:
@@ -16,6 +19,9 @@ namespace ConsoleUI
 4)Display list
 5)exit");
         }
+        /// <summary>
+        /// print add options
+        /// </summary>
         static void PrintAddOption()
         {
             Console.WriteLine(@"choose an option between 1 to 4:
@@ -24,6 +30,9 @@ namespace ConsoleUI
 3)Add customer
 4)Add parcel");
         }
+        /// <summary>
+        /// print update option
+        /// </summary>
         static void PrintUpdateOption()
         {
             Console.WriteLine(@"choose an option between 1 to 5:
@@ -33,6 +42,9 @@ namespace ConsoleUI
 4)Send a drone to charge
 5)Release a drone from charging");
         }
+        /// <summary>
+        /// print display option
+        /// </summary>
         static void PrintDisplayOption()
         {
             Console.WriteLine(@"choose an option between 1 to 4:
@@ -41,6 +53,9 @@ namespace ConsoleUI
 3)Display customer
 4)Display parcel");
         }
+        /// <summary>
+        /// print display list option
+        /// </summary>
         static void PrintDisplayListOption()
         {
             Console.WriteLine(@"choose an option between 1 to 6:
@@ -51,6 +66,9 @@ namespace ConsoleUI
 5)Display parcels list that aren't associated with a drone
 6)Display stations list with avaliable charging spots");
         }
+        /// <summary>
+        /// switch about add option
+        /// </summary>
         static void SwitchAddOption()
         {
             PrintAddOption();
@@ -78,9 +96,9 @@ namespace ConsoleUI
                     {
                         Id = InputInt(),
                         Model = Console.ReadLine(),
-                        MaxWeight = InputEnum<WeightCategories>(),
+                        MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
                         Battery = InputInt(),
-                        Status = InputEnum<DroneStatuses>()
+                        Status = EnumExtension.InputEnum<DroneStatuses>()
                     });
                     break;
 
@@ -102,8 +120,8 @@ namespace ConsoleUI
                     {
                         SenderId = InputInt(),
                         TargetId = InputInt(),
-                        Weight = InputEnum<WeightCategories>(),
-                        Priority = InputEnum<Priorities>(),
+                        Weight = EnumExtension.InputEnum<WeightCategories>(),
+                        Priority = EnumExtension.InputEnum<Priorities>(),
                         DroneId = InputInt(),
                         Requested = DateTime.Now,
                         Delivered = DateTime.MinValue,
@@ -116,6 +134,9 @@ namespace ConsoleUI
 
             }
         }
+        /// <summary>
+        /// switch about update option
+        /// </summary>
         static void SwitchUpdateOption()
         {
             PrintUpdateOption();
@@ -140,6 +161,9 @@ namespace ConsoleUI
                     break;
             }
         }
+        /// <summary>
+        /// switch about display option
+        /// </summary>
         static void SwitchDisplayOption()
         {
             PrintDisplayOption();
@@ -147,21 +171,24 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case 1:
+                case ((int)Display.DisplayStation):
                     DisplayStation();
                     break;
-                case 2:
+                case ((int)Display.DisplayDrone):
                     DisplayDrone();
                     break;
-                case 3:
+                case ((int)Display.DisplayCustomer):
                     DisplayCustomer();
                     break;
-                case 4:
+                case ((int)Display.DisplayParcel):
                     DisplayParcel();
                     break;
 
             }
         }
+        /// <summary>
+        /// switch about display list option
+        /// </summary>
         static void SwitchDisplayListOption()
         {
             PrintDisplayListOption();
@@ -170,41 +197,34 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case 1:
+                case ((int)DisplayList.DisplayStations):
                     DisplayStationList();
                     break;
-                case 2:
+                case ((int)DisplayList.DisplayDrones):
                     DisplayDroneList();
                     break;
-                case 3:
+                case ((int)DisplayList.DisplayCustomers):
                     DisplayCustomerList();
                     break;
-                case 4:
+                case ((int)DisplayList.DisplayParcels):
                     DisplayParcelList();
                     break;
-                case 5:
+                case ((int)DisplayList.DisplayUnassignParcles):
                     DisplayUnassignedParcels();
                     break;
-                case 6:
+                case ((int)DisplayList.DisplayAvailableStations):
                     DisplayAvailableStations();
                     break;
             }
         }
-        //need to fix this function
-        static T InputEnum<T>() where T : struct, Enum
-        {
-            T result;
-            bool valid = false;
-            do
-            {
-                valid = Enum.TryParse<T>(Console.ReadLine(), out result);
-                if (valid && !Enum.IsDefined(typeof(T), result))
-                    valid = false;
-                if (!valid)
-                    Console.WriteLine("Invalid Enum, try again");
-            } while (!valid);
-            return result;
-        }
+
+        /// <summary>
+        /// the function get an int number from user,
+        /// and check if it valid (not have letter for example)
+        /// </summary>
+        /// <returns>
+        /// return the input from the user
+        /// </returns>
         static int InputInt()
         {
             int num;
@@ -219,6 +239,13 @@ namespace ConsoleUI
             } while (!valid);
             return num;
         }
+        /// <summary>
+        /// the function get an double number from user,
+        /// and check if it valid (not have letter for example)
+        /// </summary>
+        /// <returns>
+        /// return the input from the user
+        /// </returns>
         static double InputDouble()
         {
             double num;
@@ -233,22 +260,39 @@ namespace ConsoleUI
             } while (!valid);
             return num;
         }
+
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void ConnectParcelToDrone()
         {
             Console.WriteLine("Enter Parcel ID and Drone ID");
             DalObject.AssignParcel(InputInt(),///Parcel Id
                 InputInt());///Drone Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void PickUpAParcel()
         {
             Console.WriteLine("Enter Parcel ID");
             DalObject.PickUpParcel(InputInt());///Parcel Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void DeliverParcel()
         {
             Console.WriteLine("Enter Parcel ID");
             DalObject.DeliverParcel(InputInt());///parcel Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void SendDroneToCharge()
         {
             Console.WriteLine("Enter Drone ID");
@@ -258,31 +302,54 @@ namespace ConsoleUI
             int StationId = InputInt();
             DalObject.ChargeDrone(DroneId, StationId);
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void ReleaseDrone()
         {
             Console.WriteLine("Enter Drone ID");
             DalObject.ReleaseDrone(InputInt());///Drone Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void DisplayStation()
         {
             Console.WriteLine("Enter Station ID");
             DalObject.DisplayStation(InputInt());///Station Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void DisplayDrone()
         {
             Console.WriteLine("Enter Drone ID");
             DalObject.DisplayDrone(InputInt());///Drone Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void DisplayCustomer()
         {
             Console.WriteLine("Enter Customer ID");
             DalObject.DisplayCustomer(InputInt());///Customer Id
         }
+        /// <summary>
+        /// The function receives data from the user,
+        /// and transmits them to function in DalObject
+        /// </summary>
         static void DisplayParcel()
         {
             Console.WriteLine("Enter Parcel ID");
             DalObject.DisplayParcel(InputInt());///Parcel Id
         }
+        /// <summary>
+        /// The function prints all stations that it get from the function in DalObject
+        /// </summary>
         static void DisplayStationList()
         {
             foreach (Station s in DalObject.StationsList())
@@ -290,6 +357,9 @@ namespace ConsoleUI
                 Console.WriteLine(s);
             }
         }
+        /// <summary>
+        /// The function prints all Drones that it get from the function in DalObject
+        /// </summary>
         static void DisplayDroneList()
         {
             foreach (Drone d in DalObject.DronesList())
@@ -297,6 +367,9 @@ namespace ConsoleUI
                 Console.WriteLine(d);
             }
         }
+        /// <summary>
+        /// The function prints all customers that it get from the function in DalObject
+        /// </summary>
         static void DisplayCustomerList()
         {
             foreach (Customer c in DalObject.CustomersList())
@@ -304,6 +377,9 @@ namespace ConsoleUI
                 Console.WriteLine(c);
             }
         }
+        /// <summary>
+        /// The function prints all parcels that it get from the function in DalObject
+        /// </summary>
         static void DisplayParcelList()
         {
             foreach (Parcel s in DalObject.ParcelList())
@@ -311,6 +387,9 @@ namespace ConsoleUI
                 Console.WriteLine(s);
             }
         }
+        /// <summary>
+        /// The function prints all parcels that it get from the function in DalObject
+        /// </summary>
         static void DisplayUnassignedParcels()
         {
             foreach (Parcel p in DalObject.UnassignedParcels())
@@ -318,6 +397,9 @@ namespace ConsoleUI
                 Console.WriteLine(p);
             }
         }
+        /// <summary>
+        /// The function prints all stations that it get from the function in DalObject
+        /// </summary>
         static void DisplayAvailableStations()
         {
             foreach (Station s in DalObject.GetAvailableStations())
@@ -325,6 +407,10 @@ namespace ConsoleUI
                 Console.WriteLine(s);
             }
         }
+        /// <summary>
+        /// main function
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             DalObject a = new DalObject();
@@ -336,19 +422,19 @@ namespace ConsoleUI
                 Console.Clear();
                 switch (option)
                 {
-                    case 1:
+                    case ((int)Option.Add):
                         SwitchAddOption();
                         break;
-                    case 2:
+                    case ((int)Option.Update):
                         SwitchUpdateOption();
                         break;
-                    case 3:
+                    case ((int)Option.Display):
                         SwitchDisplayOption();
                         break;
-                    case 4:
+                    case ((int)Option.DisplayList):
                         SwitchDisplayListOption();
                         break;
-                    case 5:
+                    case ((int)Option.Exit):
                         break;
                 }
             } while (option != 5);
