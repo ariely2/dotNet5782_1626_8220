@@ -51,7 +51,10 @@ namespace ConsoleUI
 1)Display station
 2)Display drone
 3)Display customer
-4)Display parcel");
+4)Display parcel
+5)Distance from station
+6)Distance from customer"
+);
         }
         /// <summary>
         /// print display list option
@@ -182,6 +185,14 @@ namespace ConsoleUI
                     break;
                 case ((int)Display.DisplayParcel):
                     DisplayParcel();
+                    break;
+                case ((int)Display.DistanceFromStation):
+                    Console.WriteLine("enter longitude, latitude and station id");
+                    Console.WriteLine("The distance is: ",DalObject.GetDistanceFromStation(InputDouble(), InputDouble(), InputInt()));
+                    break;
+                case ((int)Display.DistanceFromCustomer):
+                    Console.WriteLine("enter longitude, latitude and station id");
+                    Console.WriteLine("The distance is: ",DalObject.GetDistanceFromCustomer(InputDouble(), InputDouble(), InputInt()));
                     break;
 
             }
@@ -397,6 +408,7 @@ namespace ConsoleUI
                 Console.WriteLine(p);
             }
         }
+
         /// <summary>
         /// The function prints all stations that it get from the function in DalObject
         /// </summary>
@@ -407,6 +419,7 @@ namespace ConsoleUI
                 Console.WriteLine(s);
             }
         }
+
         /// <summary>
         /// main function
         /// </summary>

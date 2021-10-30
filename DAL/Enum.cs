@@ -13,19 +13,18 @@ namespace IDAL
         /// </summary>
         public static class EnumExtension
         {
-            static Random R = new Random();
+            private static Random random = new Random();
 
             /// <summary>
             /// create a random enum which type is T
-            /// from stackoverflow
-            /// https://stackoverflow.com/questions/3132126
+            /// was taken from: https://stackoverflow.com/questions/3132126
             /// </summary>
             /// <typeparam name="T">represent the enum type, for example WeightCategories</typeparam>
             /// <returns></returns>return the random value
             public static T RandomEnumValue<T>()
             {
                 var v = Enum.GetValues(typeof(T));
-                return (T)v.GetValue(R.Next(v.Length));
+                return (T)v.GetValue(random.Next(v.Length));
             }
 
 
@@ -55,27 +54,60 @@ namespace IDAL
             }
         }
         /// <summary>
-        /// All the enums required for the exercise.
+        /// All the enums required for the exercise plus enum for the switches.
         /// </summary>
-        public enum WeightCategories { Light, Medium, Heavy}
-        public enum Priorities { Normal, Fast, Emergency}
-        public enum DroneStatuses { Available, Maintenance, Assigned, Delivery}
-        public enum Add { AddStation = 1, AddDrone, AddCustomer, AddParcel }
-        public enum Update { ConnectParceltoDrone = 1,
+        public enum WeightCategories
+        { 
+            Light,
+            Medium,
+            Heavy
+        }
+        public enum Priorities
+        {
+            Normal,
+            Fast,
+            Emergency
+        }
+        public enum DroneStatuses
+        {
+            Available,
+            Maintenance,
+            Assigned,
+            Delivery
+        }
+        public enum Add 
+        { 
+            AddStation = 1,
+            AddDrone,
+            AddCustomer,
+            AddParcel
+        }
+        public enum Update 
+        { 
+            ConnectParceltoDrone = 1,
             PickUpParcel,
             DeliverParcel,
             SendDroneToCharge,
-            ReleaseDrone }
-        public enum Display { DisplayStation = 1,
+            ReleaseDrone
+        }
+        public enum Display 
+        { 
+            DisplayStation = 1,
             DisplayDrone,
             DisplayCustomer,
-            DisplayParcel}
-        public enum DisplayList { DisplayStations = 1,
+            DisplayParcel,
+            DistanceFromStation,
+            DistanceFromCustomer
+        }
+        public enum DisplayList
+        {
+            DisplayStations = 1,
             DisplayDrones,
             DisplayCustomers,
             DisplayParcels,
             DisplayUnassignParcles,
-            DisplayAvailableStations}
+            DisplayAvailableStations
+        }
         public enum Option
         {
             Add = 1,
