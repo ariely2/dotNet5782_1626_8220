@@ -426,7 +426,7 @@ namespace ConsoleUI
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            DalObject a = new DalObject();
+            DalObject DataBase = new DalObject();
             int option;
             do
             {
