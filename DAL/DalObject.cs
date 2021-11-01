@@ -207,65 +207,64 @@ namespace IDAL
 			/// return Station with the same id as the parameter
 			/// </summary>
 			/// <param name="id">id of station</param>
+			/// <returns>return an instance of the station</returns>
 			public static Station DisplayStation(int id)
 			{
-				Station S = DataSource.Stations.Find(x => x.Id == id);
-				return S;
+				return DataSource.Stations.Find(x => x.Id == id);
 			}
 
 			/// <summary>
 			/// return Drone with the same id as the parameter id
 			/// </summary>
 			/// <param name="id">id of drone</param>
+			/// <returns>return an instance of the drone</returns>
 			public static Drone DisplayDrone(int id)
 			{
-				Drone D = DataSource.Drones.Find(x => x.Id == id);
-				return D;
+				return DataSource.Drones.Find(x => x.Id == id);
 			}
 
 			/// <summary>
 			/// return Customer with the same id as the parameter id
 			/// </summary>
 			/// <param name="id">id of customer</param>
+			/// <returns>return an instance of the cutomer</returns>
 			public static Customer DisplayCustomer(int id)
 			{
-				Customer C = DataSource.Customers.Find(x => x.Id == id);
-				return C;
+				return DataSource.Customers.Find(x => x.Id == id);
 			}
 
 			/// <summary>
 			/// return parcel with the same id as the parameter id
 			/// </summary>
 			/// <param name="id">id of parcel</param>
+			/// <returns>return an instance of teh parcel</returns>
 			public static Parcel DisplayParcel(int id)
 			{
-				Parcel P = DataSource.Parcels.Find(x => x.Id == id);
-				return P;
+				return DataSource.Parcels.Find(x => x.Id == id);
 			}
 
 			/// <summary>
-			/// convert the angle to radians
-			/// was taken from: https://www.geeksforgeeks.org/program-distance-two-points-earth/
+			/// calculate the distance between a coordiante and a station
 			/// </summary>
-			/// <param name="angleIn10thofaDegree">the angle</param>
-			/// <returns>radian</returns>
-			public static double GetDistanceFromStation(double longitude, double latitude, int id)
+			/// <param name="geo">represent a coordinate</param>
+			/// <param name="id">id of a station</param>
+			/// <returns>reutrn the distance between the coordinate and the station</returns>
+			public static double GetDistanceFromStation(GeoCoordinate geo, int id)
 			{
 				Station s = DataSource.Stations.Find(x => x.Id == id);
-				return GeoCoordinate.distance(longitude, latitude, s.Longitude, s.Latitude);
+				return GeoCoordinate.distance(geo, s.Coordinate);
 			}
 
 			/// <summary>
 			/// calculate the distance between a coordinate and a customer
 			/// </summary>
-			/// <param name="longitude">longitude of a cooridnate</param>
-			/// <param name="latitude">latitude of a coordinate</param>
+			/// <param name="geo">represent a coordiante</param>
 			/// <param name="id">id of the station</param>
 			/// <returns>the distance between the coordinate and the customer</returns>
-			public static double GetDistanceFromCustomer(double longitude, double latitude, int id)
+			public static double GetDistanceFromCustomer(GeoCoordinate geo, int id)
             {
 				Customer c = DataSource.Customers.Find(x => x.Id == id);
-				return GeoCoordinate.distance(longitude, latitude, c.Longitude, c.Latitude);
+				return GeoCoordinate.distance(geo, c.Coordinate);
             }
 		}
 	}

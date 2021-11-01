@@ -13,15 +13,13 @@ namespace IDAL
             public int Id { get; set; }
             public string Name { get; set; }
             public string Phone { get; set; }
-            public double Longitude { get; set; }
-            public double Latitude { get; set; }
+            public GeoCoordinate Coordinate { set; get; }
             public override string ToString()
             {
-                return $"Customer Id:        {Id}\n" +
-                       $"Customer Name:      {Name}\n" +
-                       $"Customer Phone:     {Phone}\n" +
-                       $"Customer Longitude: {Longitude}\n" +
-                       $"Customer Latitude:  {Latitude}\n";
+                return $"Id:        {Id}\n" +
+                       $"Name:      {Name}\n" +
+                       $"Phone:     {Phone}\n" +
+                       $"{Coordinate.ToString()}";
             }
         };
     }

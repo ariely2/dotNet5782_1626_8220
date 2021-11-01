@@ -8,6 +8,9 @@ namespace IDAL
 {
     namespace DO
     {
+        /// <summary>
+        /// the struct represent a parcel
+        /// </summary>
         public struct Parcel
         {
             public int Id { get; set; }
@@ -15,7 +18,7 @@ namespace IDAL
             public int TargetId { get; set; }
             public WeightCategories Weight { get; set; }
             public Priorities Priority { get; set; }
-            public int DroneId { get; set; } //check if default value is 0
+            public int DroneId { get; set; }
             public DateTime Requested { get; set; }
             public DateTime Scheduled { get; set; }
             public DateTime PickedUp { get; set; }

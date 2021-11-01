@@ -88,8 +88,9 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         ChargeSlots = InputInt(),
-                        Longitude = InputDouble(),
-                        Latitude = InputDouble()
+                        Coordinate = new GeoCoordinate() { 
+                            Latitude = InputDouble(),
+                            Longitude = InputDouble()}
                     });
                     break;
 
@@ -112,8 +113,9 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         Phone = Console.ReadLine(),
-                        Longitude = InputDouble(),
-                        Latitude = InputDouble()
+                        Coordinate = new GeoCoordinate() { 
+                            Latitude = InputDouble(),
+                            Longitude = InputDouble()}
                     });
                     break;
 
@@ -188,11 +190,25 @@ namespace ConsoleUI
                     break;
                 case ((int)Display.DistanceFromStation):
                     Console.WriteLine("enter longitude, latitude and station id");
-                    Console.WriteLine("The distance is: ",DalObject.GetDistanceFromStation(InputDouble(), InputDouble(), InputInt()));
+                    Console.WriteLine("The distance is: ",
+                        DalObject.GetDistanceFromStation(
+                            new GeoCoordinate()
+                            {
+                                Longitude = InputDouble(),
+                                Latitude = InputDouble()
+                            },
+                            InputInt()));//station id
                     break;
                 case ((int)Display.DistanceFromCustomer):
-                    Console.WriteLine("enter longitude, latitude and station id");
-                    Console.WriteLine("The distance is: ",DalObject.GetDistanceFromCustomer(InputDouble(), InputDouble(), InputInt()));
+                    Console.WriteLine("enter longitude, latitude and customer id");
+                    Console.WriteLine("The distance is: ",
+                        DalObject.GetDistanceFromCustomer(
+                            new GeoCoordinate()
+                            {
+                                Longitude = InputDouble(),
+                                Latitude = InputDouble()
+                            },
+                            InputInt()));//customer id
                     break;
 
             }

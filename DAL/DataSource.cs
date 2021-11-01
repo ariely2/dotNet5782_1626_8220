@@ -36,9 +36,12 @@ namespace IDAL
                             Id = random.Next(1000000000),///Random Id between 1 and 1000000000
                             Name = CNames[i],///Name from the array
                             Phone = random.Next(111111, 999999).ToString("000000"),///Random phone number (adding zeroes in the front)
-                            Longitude = (random.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
-                            Latitude = (random.NextDouble() * 180) - 90///Random latitude between -90 and 90
-                        });
+                            Coordinate = new GeoCoordinate()
+                            {
+                                Longitude = (random.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
+                                Latitude = (random.NextDouble() * 180) - 90///Random latitude between -90 and 90
+                            }
+                        }); 
 
                     ///initialize 3 stations
                     string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon" };
@@ -47,8 +50,11 @@ namespace IDAL
                         {
                             Id = random.Next(100, 1000),///Random Id with 3 digits
                             Name = SNames[i],///Name from Name array.
-                            Longitude = (random.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
-                            Latitude = (random.NextDouble() * 180) - 90,///Random Latitude between -90 and 90
+                            Coordinate = new GeoCoordinate()
+                            {
+                                Longitude = (random.NextDouble() * 260) - 180,///Random Longitude between -180 and 80
+                                Latitude = (random.NextDouble() * 180) - 90///Random Latitude between -90 and 90
+                            },
                             ChargeSlots = random.Next(1, 4)///Random number of available slots between 1 and 3
                         });
 
@@ -79,8 +85,7 @@ namespace IDAL
                             {
                                 Id = s.Id,
                                 ChargeSlots = s.ChargeSlots - 1,
-                                Latitude = s.Latitude,
-                                Longitude = s.Longitude,
+                                Coordinate = s.Coordinate,
                                 Name = s.Name
                             });
                             DroneCharges.Add(new DroneCharge() { DroneId = Drones[i].Id, StationId = s.Id });
