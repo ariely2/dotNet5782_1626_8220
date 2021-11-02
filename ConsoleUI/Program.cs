@@ -6,7 +6,6 @@ namespace ConsoleUI
 {
     class Program
     {
-        DalObject obj = new DalObject();
         /// <summary>
         /// print general option
         /// </summary>
