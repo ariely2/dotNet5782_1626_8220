@@ -293,9 +293,8 @@ namespace ConsoleUI
         /// </summary>
         static void ConnectParcelToDrone()
         {
-            Console.WriteLine("Enter Parcel ID and Drone ID");
-            DalObject.AssignParcel(InputInt(),///Parcel Id
-                InputInt());///Drone Id
+            Console.WriteLine("Enter Parcel ID");
+            DalObject.AssignParcel(InputInt()); //Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -304,7 +303,7 @@ namespace ConsoleUI
         static void PickUpAParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.PickUpParcel(InputInt());///Parcel Id
+            DalObject.PickUpParcel(InputInt());//Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -335,7 +334,7 @@ namespace ConsoleUI
         static void ReleaseDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            DalObject.ReleaseDrone(InputInt());///Drone Id
+            DalObject.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
         }
         /// <summary>
         /// The function receives data from the user,
@@ -344,7 +343,9 @@ namespace ConsoleUI
         static void DisplayStation()
         {
             Console.WriteLine("Enter Station ID");
-            DalObject.DisplayStation(InputInt());///Station Id
+            Station s = DalObject.DisplayStation(InputInt()));//getting Station Id  and printing Station's details
+            if (!s.Equals(default(Station)))
+                Console.WriteLine(s);
         }
         /// <summary>
         /// The function receives data from the user,
@@ -353,7 +354,9 @@ namespace ConsoleUI
         static void DisplayDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            DalObject.DisplayDrone(InputInt());///Drone Id
+            Drone d = DalObject.DisplayDrone(InputInt());//getting Drone Id and printing Drone's details
+            if (!d.Equals(default(Drone)))
+                Console.WriteLine(d);
         }
         /// <summary>
         /// The function receives data from the user,
@@ -362,7 +365,9 @@ namespace ConsoleUI
         static void DisplayCustomer()
         {
             Console.WriteLine("Enter Customer ID");
-            DalObject.DisplayCustomer(InputInt());///Customer Id
+            Customer c = DalObject.DisplayCustomer(InputInt());// getting Customer Id and printing customer's details
+            if (!c.Equals(default(Customer)))
+                Console.WriteLine(c);
         }
         /// <summary>
         /// The function receives data from the user,
@@ -371,7 +376,10 @@ namespace ConsoleUI
         static void DisplayParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.DisplayParcel(InputInt());///Parcel Id
+            Parcel p =DalObject.DisplayParcel(InputInt());// getting Parcel Id and printing parcel's details
+            if (!p.Equals(default(Parcel)))
+                Console.WriteLine(p);
+
         }
         /// <summary>
         /// The function prints all stations that it get from the function in DalObject

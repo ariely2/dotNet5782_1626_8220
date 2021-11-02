@@ -77,15 +77,19 @@ namespace IDAL
 			/// </summary>
 			/// <param name="ParcelId">id of the parcel</param>
 			/// <param name="DroneId">id of the drone</param>
-			public static void AssignParcel(int ParcelId, int DroneId)
+			public static void AssignParcel(int ParcelId)
 			{
-				Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
-				Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
-				D.Status = DroneStatuses.Assigned;
-				P.DroneId = DroneId;
-				P.Scheduled = DateTime.Now;
-				Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-				Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
+				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+				Drone d = DataSource.Drones.Find(x => x.MaxWeight >= p.Weight && x.Status==DroneStatuses.Available);
+				d.Status = DroneStatuses.Assigned;
+				p.DroneId = d.Id;
+				p.Scheduled = DateTime.Now;
+				int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
+				int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				if (a < 0 || b < 0)
+					return;
+				Replace(p, a, DataSource.Parcels);
+				Replace(d, b, DataSource.Drones);
 			}
 
 			/// <summary>
@@ -94,12 +98,16 @@ namespace IDAL
 			/// <param name="ParcelId">id of the parcel</param>
 			public static void PickUpParcel(int ParcelId)
 			{
-				Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
-				Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-				D.Status = DroneStatuses.Delivery;
-				P.PickedUp = DateTime.Now;
-				Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-				Replace(D, DataSource.Drones.FindIndex(x => x.Id == D.Id), DataSource.Drones);
+				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+				Drone d = DataSource.Drones.Find(x => x.Id == p.DroneId);
+				d.Status = DroneStatuses.Delivery;
+				p.PickedUp = DateTime.Now;
+				int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
+				int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				if (a < 0 || b < 0)
+					return;
+				Replace(p, a, DataSource.Parcels);
+				Replace(d, b, DataSource.Drones);
 			}
 
 			/// <summary>
@@ -108,12 +116,16 @@ namespace IDAL
 			/// <param name="ParcelId">id of the parcel</param>
 			public static void DeliverParcel(int ParcelId)
 			{
-				Parcel P = DataSource.Parcels.Find(x => x.Id == ParcelId);
-				Drone D = DataSource.Drones.Find(x => x.Id == P.DroneId);
-				D.Status = DroneStatuses.Available;
-				P.Delivered = DateTime.Now; //change droneid to zero? or change function of parcels not assigned
-				Replace(P, DataSource.Parcels.FindIndex(x => x.Id == ParcelId), DataSource.Parcels);
-				Replace(D, DataSource.Drones.FindIndex(x => x.Id == D.Id), DataSource.Drones);
+				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+				Drone d = DataSource.Drones.Find(x => x.Id == p.DroneId);
+				int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
+				int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				if (a < 0 || b < 0)
+					return;
+				d.Status = DroneStatuses.Available;
+				p.Delivered = DateTime.Now; 
+				Replace(p, a, DataSource.Parcels);
+				Replace(d, b, DataSource.Drones);
 			}
 
 			/// <summary>
@@ -123,13 +135,17 @@ namespace IDAL
 			/// <param name="StationId">id of the station</param>
 			public static void ChargeDrone(int DroneId, int StationId)
 			{
-				Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
-				Station S = DataSource.Stations.Find(x => x.Id == StationId);
-				S.ChargeSlots--;
-				D.Status = DroneStatuses.Maintenance;
-				DataSource.DroneCharges.Add(new DroneCharge() { DroneId = DroneId, StationId = S.Id });
-				Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
-				Replace(S, DataSource.Parcels.FindIndex(x => x.Id == StationId), DataSource.Stations);
+				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
+				Station s = DataSource.Stations.Find(x => x.Id == StationId);
+				s.ChargeSlots--;
+				d.Status = DroneStatuses.Maintenance;
+				int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
+				if (a < 0 || b < 0)
+					return;
+				DataSource.DroneCharges.Add(new DroneCharge() { DroneId = DroneId, StationId = s.Id });
+				Replace(d, a, DataSource.Drones);
+				Replace(s, b, DataSource.Stations);
 			}
 
 			/// <summary>
@@ -150,21 +166,24 @@ namespace IDAL
 				return DataSource.Parcels.FindAll(x => x.DroneId == 0);
 			}
 
-			//need to fix
 			/// <summary>
 			/// The function releases the drone from the station where it is charged
 			/// </summary>
 			/// <param name="DroneId">id of drone to release</param>
 			public static void ReleaseDrone(int DroneId)
 			{
-				Drone D = DataSource.Drones.Find(x => x.Id == DroneId);
-				D.Status = DroneStatuses.Available;
-				DroneCharge C = DataSource.DroneCharges.Find(x => x.DroneId == D.Id);
-				Station S = DataSource.Stations.Find(x => x.Id == C.StationId);
-				S.ChargeSlots++;
-				Replace(D, DataSource.Drones.FindIndex(x => x.Id == DroneId), DataSource.Drones);
-				Replace(S, DataSource.Stations.FindIndex(x => x.Id == S.Id), DataSource.Stations);
-				DataSource.DroneCharges.Remove(C);
+				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
+				d.Status = DroneStatuses.Available;
+				DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
+				Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
+				s.ChargeSlots++;
+				int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
+				if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
+					return;
+				Replace(d, a, DataSource.Drones);
+				Replace(s, b, DataSource.Stations);
+				DataSource.DroneCharges.Remove(c);
 			}
 
 			/// <summary>
