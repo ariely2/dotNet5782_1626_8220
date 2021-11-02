@@ -7,6 +7,50 @@ namespace ConsoleUI
     class Program
     {
         /// <summary>
+        /// the function get an int number from user,
+        /// and check if it valid (not have letter for example)
+        /// </summary>
+        /// <returns>
+        /// return the input from the user
+        /// </returns>
+        static int InputInt()
+        {
+            int num;
+            bool valid = false;
+            do
+            {
+                valid = Int32.TryParse(Console.ReadLine(), out num);
+                if (!valid)
+                {
+                    Console.WriteLine("Invalid value,try again");
+                }
+            } while (!valid);
+            return num;
+        }
+
+        /// <summary>
+        /// the function get an double number from user,
+        /// and check if it valid (not have letter for example)
+        /// </summary>
+        /// <returns>
+        /// return the input from the user
+        /// </returns>
+        static double InputDouble()
+        {
+            double num;
+            bool valid = false;
+            do
+            {
+                valid = Double.TryParse(Console.ReadLine(), out num);
+                if (!valid)
+                {
+                    Console.WriteLine("Invalid value,try again");
+                }
+            } while (!valid);
+            return num;
+        }
+
+        /// <summary>
         /// print general option
         /// </summary>
         static void PrintGeneralOption()
@@ -19,6 +63,39 @@ namespace ConsoleUI
 5)exit");
         }
         /// <summary>
+        /// main function
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+            DalObject DataBase = new DalObject();
+            int option;
+            do
+            {
+                PrintGeneralOption();
+                option = InputInt();
+                Console.Clear();
+                switch (option)
+                {
+                    case ((int)Option.Add):
+                        SwitchAddOption();
+                        break;
+                    case ((int)Option.Update):
+                        SwitchUpdateOption();
+                        break;
+                    case ((int)Option.Display):
+                        SwitchDisplayOption();
+                        break;
+                    case ((int)Option.DisplayList):
+                        SwitchDisplayListOption();
+                        break;
+                    case ((int)Option.Exit):
+                        break;
+                }
+            } while (option != 5);
+        }
+
+        /// <summary>
         /// print add options
         /// </summary>
         static void PrintAddOption()
@@ -29,45 +106,7 @@ namespace ConsoleUI
 3)Add customer
 4)Add parcel");
         }
-        /// <summary>
-        /// print update option
-        /// </summary>
-        static void PrintUpdateOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 5:
-1)Assign a parcel to a drone
-2)Pick up a parcel by a drone
-3)deliver a parcel to a customer
-4)Send a drone to charge
-5)Release a drone from charging");
-        }
-        /// <summary>
-        /// print display option
-        /// </summary>
-        static void PrintDisplayOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 4:
-1)Display station
-2)Display drone
-3)Display customer
-4)Display parcel
-5)Distance from station
-6)Distance from customer"
-);
-        }
-        /// <summary>
-        /// print display list option
-        /// </summary>
-        static void PrintDisplayListOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 6:
-1)Display stations list
-2)Display Drones list
-3)Display customers list
-4)Display parcels list
-5)Display parcels list that aren't associated with a drone
-6)Display stations list with avaliable charging spots");
-        }
+
         /// <summary>
         /// switch about add option
         /// </summary>
@@ -87,9 +126,11 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         ChargeSlots = InputInt(),
-                        Coordinate = new GeoCoordinate() { 
+                        Coordinate = new GeoCoordinate()
+                        {
                             Latitude = InputDouble(),
-                            Longitude = InputDouble()}
+                            Longitude = InputDouble()
+                        }
                     });
                     break;
 
@@ -112,9 +153,11 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         Phone = Console.ReadLine(),
-                        Coordinate = new GeoCoordinate() { 
+                        Coordinate = new GeoCoordinate()
+                        {
                             Latitude = InputDouble(),
-                            Longitude = InputDouble()}
+                            Longitude = InputDouble()
+                        }
                     });
                     break;
 
@@ -138,6 +181,20 @@ namespace ConsoleUI
 
             }
         }
+
+        /// <summary>
+        /// print update option
+        /// </summary>
+        static void PrintUpdateOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 5:
+1)Assign a parcel to a drone
+2)Pick up a parcel by a drone
+3)deliver a parcel to a customer
+4)Send a drone to charge
+5)Release a drone from charging");
+        }
+
         /// <summary>
         /// switch about update option
         /// </summary>
@@ -165,6 +222,23 @@ namespace ConsoleUI
                     break;
             }
         }
+
+
+        /// <summary>
+        /// print display option
+        /// </summary>
+        static void PrintDisplayOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 4:
+1)Display station
+2)Display drone
+3)Display customer
+4)Display parcel
+5)Distance from station
+6)Distance from customer"
+);
+        }
+
         /// <summary>
         /// switch about display option
         /// </summary>
@@ -212,8 +286,25 @@ namespace ConsoleUI
 
             }
         }
+
+
         /// <summary>
-        /// switch about display list option
+        /// print display list option
+        /// </summary>
+        static void PrintDisplayListOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 6:
+1)Display stations list
+2)Display Drones list
+3)Display customers list
+4)Display parcels list
+5)Display parcels list that aren't associated with a drone
+6)Display stations list with avaliable charging spots");
+        }
+
+
+        /// <summary>
+        /// switch display list option
         /// </summary>
         static void SwitchDisplayListOption()
         {
@@ -245,49 +336,6 @@ namespace ConsoleUI
         }
 
         /// <summary>
-        /// the function get an int number from user,
-        /// and check if it valid (not have letter for example)
-        /// </summary>
-        /// <returns>
-        /// return the input from the user
-        /// </returns>
-        static int InputInt()
-        {
-            int num;
-            bool valid = false;
-            do
-            {
-                valid = Int32.TryParse(Console.ReadLine(), out num);
-                if (!valid)
-                {
-                    Console.WriteLine("Invalid value,try again");
-                }
-            } while (!valid);
-            return num;
-        }
-        /// <summary>
-        /// the function get an double number from user,
-        /// and check if it valid (not have letter for example)
-        /// </summary>
-        /// <returns>
-        /// return the input from the user
-        /// </returns>
-        static double InputDouble()
-        {
-            double num;
-            bool valid = false;
-            do
-            {
-                valid = Double.TryParse(Console.ReadLine(), out num);
-                if (!valid)
-                {
-                    Console.WriteLine("Invalid value,try again");
-                }
-            } while (!valid);
-            return num;
-        }
-
-        /// <summary>
         /// The function receives data from the user,
         /// and transmits them to function in DalObject
         /// </summary>
@@ -312,7 +360,7 @@ namespace ConsoleUI
         static void DeliverParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.DeliverParcel(InputInt());///parcel Id
+            DalObject.DeliverParcel(InputInt());//parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -387,9 +435,7 @@ namespace ConsoleUI
         static void DisplayStationList()
         {
             foreach (Station s in DalObject.StationsList())
-            {
                 Console.WriteLine(s);
-            }
         }
         /// <summary>
         /// The function prints all Drones that it get from the function in DalObject
@@ -397,9 +443,7 @@ namespace ConsoleUI
         static void DisplayDroneList()
         {
             foreach (Drone d in DalObject.DronesList())
-            {
                 Console.WriteLine(d);
-            }
         }
         /// <summary>
         /// The function prints all customers that it get from the function in DalObject
@@ -407,9 +451,7 @@ namespace ConsoleUI
         static void DisplayCustomerList()
         {
             foreach (Customer c in DalObject.CustomersList())
-            {
                 Console.WriteLine(c);
-            }
         }
         /// <summary>
         /// The function prints all parcels that it get from the function in DalObject
@@ -417,9 +459,7 @@ namespace ConsoleUI
         static void DisplayParcelList()
         {
             foreach (Parcel s in DalObject.ParcelList())
-            {
                 Console.WriteLine(s);
-            }
         }
         /// <summary>
         /// The function prints all parcels that it get from the function in DalObject
@@ -427,9 +467,7 @@ namespace ConsoleUI
         static void DisplayUnassignedParcels()
         {
             foreach (Parcel p in DalObject.UnassignedParcels())
-            {
                 Console.WriteLine(p);
-            }
         }
 
         /// <summary>
@@ -438,42 +476,7 @@ namespace ConsoleUI
         static void DisplayAvailableStations()
         {
             foreach (Station s in DalObject.GetAvailableStations())
-            {
                 Console.WriteLine(s);
-            }
-        }
-
-        /// <summary>
-        /// main function
-        /// </summary>
-        /// <param name="args"></param>
-        static void Main(string[] args)
-        {
-            DalObject DataBase = new DalObject();
-            int option;
-            do
-            {
-                PrintGeneralOption();
-                option = InputInt();
-                Console.Clear();
-                switch (option)
-                {
-                    case ((int)Option.Add):
-                        SwitchAddOption();
-                        break;
-                    case ((int)Option.Update):
-                        SwitchUpdateOption();
-                        break;
-                    case ((int)Option.Display):
-                        SwitchDisplayOption();
-                        break;
-                    case ((int)Option.DisplayList):
-                        SwitchDisplayListOption();
-                        break;
-                    case ((int)Option.Exit):
-                        break;
-                }
-            } while (option != 5);
         }
     }
 }

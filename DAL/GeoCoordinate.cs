@@ -14,7 +14,7 @@ namespace IDAL
 			public double Latitude { set; get; }
 
 			/// <summary>
-			/// the function return a string with longitude and latitude in sexagesimal
+			/// the function return a string with longitude and latitude in sexagesimal representation
 			/// </summary>
 			/// <returns>string of longitude and latitude</returns>
 			public override string ToString()
