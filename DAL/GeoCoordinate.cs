@@ -86,9 +86,9 @@ Latitude:  {SexagesimalRepresentation(Latitude, false)}" + '\n';
 				double c = 2 * Math.Asin(Math.Sqrt(a));
 
 				// Radius of earth in
-				// kilometers. Use 3956
-				// for miles
-				double r = 6371;
+				// kilometers.
+
+				double r = 3956;
 
 				// calculate the result
 				return (c * r);

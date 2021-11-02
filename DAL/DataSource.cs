@@ -122,7 +122,7 @@ namespace IDAL
                                 Model = d.Model,//same Model
                                 Battery = d.Battery,//same Battery
                                 MaxWeight = d.MaxWeight,//same MaxWeight
-                                Status = DroneStatuses.Delivery//change the drone's status from avaliable to delivery
+                                Status = DroneStatuses.Assigned//change the drone's status from avaliable to delivery
                             });
                             Drones.Remove(d);
                         }

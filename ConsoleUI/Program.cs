@@ -263,7 +263,7 @@ namespace ConsoleUI
                     break;
                 case ((int)Display.DistanceFromStation):
                     Console.WriteLine("enter longitude, latitude and station id");
-                    Console.WriteLine("The distance is: ",
+                    Console.WriteLine("The distance is: {0} km",
                         DalObject.GetDistanceFromStation(
                             new GeoCoordinate()
                             {
@@ -274,7 +274,7 @@ namespace ConsoleUI
                     break;
                 case ((int)Display.DistanceFromCustomer):
                     Console.WriteLine("enter longitude, latitude and customer id");
-                    Console.WriteLine("The distance is: ",
+                    Console.WriteLine("The distance is: {0} km",
                         DalObject.GetDistanceFromCustomer(
                             new GeoCoordinate()
                             {
@@ -391,7 +391,7 @@ namespace ConsoleUI
         static void DisplayStation()
         {
             Console.WriteLine("Enter Station ID");
-            Station s = DalObject.DisplayStation(InputInt()));//getting Station Id  and printing Station's details
+            Station s = DalObject.DisplayStation(InputInt());//getting Station Id  and printing Station's details
             if (!s.Equals(default(Station)))
                 Console.WriteLine(s);
         }
