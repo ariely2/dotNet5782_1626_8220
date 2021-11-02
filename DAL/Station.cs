@@ -12,7 +12,7 @@ namespace IDAL
         /// </summary>
         public struct Station
         {
-            public int Id { get; set; }
+            public int Id { get; set; }//id with 3 digit
             public string Name { get; set; }
             public GeoCoordinate Coordinate { set; get; }
             public int ChargeSlots { get; set; }

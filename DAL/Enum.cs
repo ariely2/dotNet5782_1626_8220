@@ -9,7 +9,7 @@ namespace IDAL
     namespace DO
     {
         /// <summary>
-        /// A class for getting a random enum value
+        /// class for enum function
         /// </summary>
         public static class EnumExtension
         {
@@ -20,7 +20,7 @@ namespace IDAL
             /// was taken from: https://stackoverflow.com/questions/3132126
             /// </summary>
             /// <typeparam name="T">represent the enum type, for example WeightCategories</typeparam>
-            /// <returns></returns>return the random value
+            /// <returns>return a rnadom value of enum T</returns>
             public static T RandomEnumValue<T>()
             {
                 var v = Enum.GetValues(typeof(T));
@@ -32,12 +32,8 @@ namespace IDAL
             /// get an enum type from user,
             /// and check if the input is valid and exist in T
             /// </summary>
-            /// <typeparam name="T">
-            /// T represent enum type. for example: WeightCategories
-            /// </type>
-            /// <returns>
-            /// the function return the input from the user
-            /// </returns>
+            /// <typeparam name="T">T represent enum type. for example: WeightCategories</type>
+            /// <returns>the function return the input from the user</returns>
             public static T InputEnum<T>() where T : struct, Enum
             {
                 T result;

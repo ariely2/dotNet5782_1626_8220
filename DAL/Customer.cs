@@ -10,7 +10,7 @@ namespace IDAL
     {
         public struct Customer
         {
-            public int Id { get; set; }
+            public int Id { get; set; }//id number with 9 digit
             public string Name { get; set; }
             public string Phone { get; set; }
             public GeoCoordinate Coordinate { set; get; }
@@ -19,7 +19,7 @@ namespace IDAL
                 return $"Id:        {Id}\n" +
                        $"Name:      {Name}\n" +
                        $"Phone:     {Phone}\n" +
-                       $"{Coordinate.ToString()}";
+                       $"{Coordinate}";
             }
         };
     }

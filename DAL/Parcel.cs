@@ -13,16 +13,16 @@ namespace IDAL
         /// </summary>
         public struct Parcel
         {
-            public int Id { get; set; }
+            public int Id { get; set; }//id with 8 digit
             public int SenderId { get; set; }
             public int TargetId { get; set; }
             public WeightCategories Weight { get; set; }
             public Priorities Priority { get; set; }
             public int DroneId { get; set; }
             public DateTime Requested { get; set; }
-            public DateTime Scheduled { get; set; }
-            public DateTime PickedUp { get; set; }
-            public DateTime Delivered { get; set; }
+            public DateTime Scheduled { get; set; }//min value if not scheduled
+            public DateTime PickedUp { get; set; }//min value if not picked up
+            public DateTime Delivered { get; set; }//min value if not delivered
             public override string ToString()
             {
                 return $"Parcel Id:      {Id}\n" +
