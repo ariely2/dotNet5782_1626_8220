@@ -24,7 +24,7 @@ namespace IDAL
 			/// add station to the list
 			/// </summary>
 			/// <param name="station">station to add</param>
-			public static void AddStation(Station station)
+			public   void AddStation(Station station)
 			{
 				DataSource.Stations.Add(station);
 			}
@@ -33,7 +33,7 @@ namespace IDAL
 			/// add drone to the list
 			/// </summary>
 			/// <param name="drone">drone to add</param>
-			public static void AddDrone(Drone drone)
+			public   void AddDrone(Drone drone)
 			{
 				DataSource.Drones.Add(drone);
 			}
@@ -42,7 +42,7 @@ namespace IDAL
 			/// add customer to the list
 			/// </summary>
 			/// <param name="customer">customer to add</param>
-			public static void AddCustomer(Customer customer)
+			public   void AddCustomer(Customer customer)
 			{
 				DataSource.Customers.Add(customer);
 			}
@@ -51,7 +51,7 @@ namespace IDAL
 			/// add parcel to the list
 			/// </summary>
 			/// <param name="parcel">parcel to add</param>
-			public static void AddParcel(Parcel parcel)
+			public   void AddParcel(Parcel parcel)
 			{
 				parcel.Id = DataSource.Config.IdOfParcel;
 				parcel.Scheduled = parcel.DroneId == 0 ? DateTime.MinValue : parcel.Requested;
@@ -65,7 +65,7 @@ namespace IDAL
 			/// <param name="Item">Item to add to the list</param>
 			/// <param name="index">index to remove </param>
 			/// <param name="list">list of T</param>
-			public static void Replace<T>(T Item, int index, List<T> list)
+			public   void Replace<T>(T Item, int index, List<T> list)
 			{
 
 				list.RemoveAt(index);
@@ -77,7 +77,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="ParcelId">id of the parcel</param>
 			/// <param name="DroneId">id of the drone</param>
-			public static void AssignParcel(int ParcelId)
+			public   void AssignParcel(int ParcelId)
 			{
 				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
 				Drone d = DataSource.Drones.Find(x => x.MaxWeight >= p.Weight && x.Status==DroneStatuses.Available);
@@ -96,7 +96,7 @@ namespace IDAL
 			/// the function responsible for pick up a parcel by a drone
 			/// </summary>
 			/// <param name="ParcelId">id of the parcel</param>
-			public static void PickUpParcel(int ParcelId)
+			public   void PickUpParcel(int ParcelId)
 			{
 				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
 				Drone d = DataSource.Drones.Find(x => x.Id == p.DroneId);
@@ -114,7 +114,7 @@ namespace IDAL
 			/// the function responsible for deliver a parcel to a customer
 			/// </summary>
 			/// <param name="ParcelId">id of the parcel</param>
-			public static void DeliverParcel(int ParcelId)
+			public   void DeliverParcel(int ParcelId)
 			{
 				Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
 				Drone d = DataSource.Drones.Find(x => x.Id == p.DroneId);
@@ -133,7 +133,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="DroneId">id of the drone</param>
 			/// <param name="StationId">id of the station</param>
-			public static void ChargeDrone(int DroneId, int StationId)
+			public   void ChargeDrone(int DroneId, int StationId)
 			{
 				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
 				Station s = DataSource.Stations.Find(x => x.Id == StationId);
@@ -152,7 +152,7 @@ namespace IDAL
 			/// find station with available charge slots
 			/// </summary>
 			/// <returns>list of station with chargeSlots >0</returns>
-			public static List<Station> GetAvailableStations()
+			public   List<Station> GetAvailableStations()
 			{
 				return DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
 			}
@@ -161,7 +161,7 @@ namespace IDAL
 			/// The function returns parcels without a drone assigned with them
 			/// </summary>
 			/// <returns>list of parcels</returns>
-			public static List<Parcel> UnassignedParcels()
+			public   List<Parcel> UnassignedParcels()
 			{
 				return DataSource.Parcels.FindAll(x => x.DroneId == 0);
 			}
@@ -170,7 +170,7 @@ namespace IDAL
 			/// The function releases the drone from the station where it is charged
 			/// </summary>
 			/// <param name="DroneId">id of drone to release</param>
-			public static void ReleaseDrone(int DroneId)
+			public   void ReleaseDrone(int DroneId)
 			{
 				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
 				d.Status = DroneStatuses.Available;
@@ -190,7 +190,7 @@ namespace IDAL
 			/// the function return list of Station
 			/// </summary>
 			/// <returns>list of Station</returns>
-			public static List<Station> StationsList()
+			public   List<Station> StationsList()
 			{
 				return DataSource.Stations.ToList();
 			}
@@ -199,7 +199,7 @@ namespace IDAL
 			/// the function return list of Drone
 			/// </summary>
 			/// <returns>list of Drone</returns>
-			public static List<Drone> DronesList()
+			public   List<Drone> DronesList()
 			{
 				return DataSource.Drones.ToList();
 			}
@@ -208,7 +208,7 @@ namespace IDAL
 			/// the function return list of Customer
 			/// </summary>
 			/// <returns>list of Customer</returns>
-			public static List<Customer> CustomersList()
+			public   List<Customer> CustomersList()
 			{
 				return DataSource.Customers.ToList();
 			}
@@ -217,7 +217,7 @@ namespace IDAL
 			/// the function return list of Parcel
 			/// </summary>
 			/// <returns>list of Parcel</returns>
-			public static List<Parcel> ParcelList()
+			public   List<Parcel> ParcelList()
 			{
 				return DataSource.Parcels.ToList();
 			}
@@ -227,7 +227,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="id">id of station</param>
 			/// <returns>return an instance of the station</returns>
-			public static Station DisplayStation(int id)
+			public   Station DisplayStation(int id)
 			{
 				return DataSource.Stations.Find(x => x.Id == id);
 			}
@@ -237,7 +237,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="id">id of drone</param>
 			/// <returns>return an instance of the drone</returns>
-			public static Drone DisplayDrone(int id)
+			public   Drone DisplayDrone(int id)
 			{
 				return DataSource.Drones.Find(x => x.Id == id);
 			}
@@ -247,7 +247,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="id">id of customer</param>
 			/// <returns>return an instance of the cutomer</returns>
-			public static Customer DisplayCustomer(int id)
+			public   Customer DisplayCustomer(int id)
 			{
 				return DataSource.Customers.Find(x => x.Id == id);
 			}
@@ -257,7 +257,7 @@ namespace IDAL
 			/// </summary>
 			/// <param name="id">id of parcel</param>
 			/// <returns>return an instance of teh parcel</returns>
-			public static Parcel DisplayParcel(int id)
+			public   Parcel DisplayParcel(int id)
 			{
 				return DataSource.Parcels.Find(x => x.Id == id);
 			}
@@ -268,7 +268,7 @@ namespace IDAL
 			/// <param name="geo">represent a coordinate</param>
 			/// <param name="id">id of a station</param>
 			/// <returns>reutrn the distance between the coordinate and the station</returns>
-			public static double GetDistanceFromStation(GeoCoordinate geo, int id)
+			public   double GetDistanceFromStation(GeoCoordinate geo, int id)
 			{
 				Station s = DataSource.Stations.Find(x => x.Id == id);
 				return GeoCoordinate.distance(geo, s.Coordinate);
@@ -280,7 +280,7 @@ namespace IDAL
 			/// <param name="geo">represent a coordiante</param>
 			/// <param name="id">id of the station</param>
 			/// <returns>the distance between the coordinate and the customer</returns>
-			public static double GetDistanceFromCustomer(GeoCoordinate geo, int id)
+			public   double GetDistanceFromCustomer(GeoCoordinate geo, int id)
             {
 				Customer c = DataSource.Customers.Find(x => x.Id == id);
 				return GeoCoordinate.distance(geo, c.Coordinate);
