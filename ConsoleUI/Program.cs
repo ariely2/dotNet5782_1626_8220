@@ -6,6 +6,9 @@ namespace ConsoleUI
 {
     class Program
     {
+        //the data base isntance
+        static DalObject DataBase = new DalObject();
+
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
@@ -62,13 +65,13 @@ namespace ConsoleUI
 4)Display list
 5)exit");
         }
+
         /// <summary>
         /// main function
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            DalObject DataBase = new DalObject();
             int option;
             do
             {
@@ -121,7 +124,7 @@ namespace ConsoleUI
                 case ((int)Add.AddStation):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    DalObject.AddStation(new Station()
+                    DataBase.AddStation(new Station()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -136,7 +139,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddDrone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    DalObject.AddDrone(new Drone()
+                    DataBase.AddDrone(new Drone()
                     {
                         Id = InputInt(),
                         Model = Console.ReadLine(),
@@ -148,7 +151,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddCustomer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-                    DalObject.AddCustomer(new Customer()
+                    DataBase.AddCustomer(new Customer()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -163,7 +166,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddParcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    DalObject.AddParcel(new Parcel()
+                    DataBase.AddParcel(new Parcel()
                     {
                         SenderId = InputInt(),
                         TargetId = InputInt(),
@@ -264,7 +267,7 @@ namespace ConsoleUI
                 case ((int)Display.DistanceFromStation):
                     Console.WriteLine("enter longitude, latitude and station id");
                     Console.WriteLine("The distance is: {0} km",
-                        DalObject.GetDistanceFromStation(
+                        DataBase.GetDistanceFromStation(
                             new GeoCoordinate()
                             {
                                 Longitude = InputDouble(),
@@ -275,7 +278,7 @@ namespace ConsoleUI
                 case ((int)Display.DistanceFromCustomer):
                     Console.WriteLine("enter longitude, latitude and customer id");
                     Console.WriteLine("The distance is: {0} km",
-                        DalObject.GetDistanceFromCustomer(
+                        DataBase.GetDistanceFromCustomer(
                             new GeoCoordinate()
                             {
                                 Longitude = InputDouble(),
@@ -342,7 +345,7 @@ namespace ConsoleUI
         static void ConnectParcelToDrone()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.AssignParcel(InputInt()); //Parcel Id
+            DataBase.AssignParcel(InputInt()); //Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -351,7 +354,7 @@ namespace ConsoleUI
         static void PickUpAParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.PickUpParcel(InputInt());//Parcel Id
+            DataBase.PickUpParcel(InputInt());//Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -360,7 +363,7 @@ namespace ConsoleUI
         static void DeliverParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DalObject.DeliverParcel(InputInt());//parcel Id
+            DataBase.DeliverParcel(InputInt());//parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -373,7 +376,7 @@ namespace ConsoleUI
             Console.WriteLine("Enter an ID of an available station:");
             DisplayAvailableStations();
             int StationId = InputInt();
-            DalObject.ChargeDrone(DroneId, StationId);
+            DataBase.ChargeDrone(DroneId, StationId);
         }
         /// <summary>
         /// The function receives data from the user,
@@ -382,7 +385,7 @@ namespace ConsoleUI
         static void ReleaseDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            DalObject.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
+            DataBase.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
         }
         /// <summary>
         /// The function receives data from the user,
@@ -391,7 +394,7 @@ namespace ConsoleUI
         static void DisplayStation()
         {
             Console.WriteLine("Enter Station ID");
-            Station s = DalObject.DisplayStation(InputInt());//getting Station Id  and printing Station's details
+            Station s = DataBase.DisplayStation(InputInt());//getting Station Id  and printing Station's details
             if (!s.Equals(default(Station)))
                 Console.WriteLine(s);
         }
@@ -402,7 +405,7 @@ namespace ConsoleUI
         static void DisplayDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            Drone d = DalObject.DisplayDrone(InputInt());//getting Drone Id and printing Drone's details
+            Drone d = DataBase.DisplayDrone(InputInt());//getting Drone Id and printing Drone's details
             if (!d.Equals(default(Drone)))
                 Console.WriteLine(d);
         }
@@ -413,7 +416,7 @@ namespace ConsoleUI
         static void DisplayCustomer()
         {
             Console.WriteLine("Enter Customer ID");
-            Customer c = DalObject.DisplayCustomer(InputInt());// getting Customer Id and printing customer's details
+            Customer c = DataBase.DisplayCustomer(InputInt());// getting Customer Id and printing customer's details
             if (!c.Equals(default(Customer)))
                 Console.WriteLine(c);
         }
@@ -424,7 +427,7 @@ namespace ConsoleUI
         static void DisplayParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            Parcel p =DalObject.DisplayParcel(InputInt());// getting Parcel Id and printing parcel's details
+            Parcel p =DataBase.DisplayParcel(InputInt());// getting Parcel Id and printing parcel's details
             if (!p.Equals(default(Parcel)))
                 Console.WriteLine(p);
 
@@ -434,7 +437,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayStationList()
         {
-            foreach (Station s in DalObject.StationsList())
+            foreach (Station s in DataBase.StationsList())
                 Console.WriteLine(s);
         }
         /// <summary>
@@ -442,7 +445,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayDroneList()
         {
-            foreach (Drone d in DalObject.DronesList())
+            foreach (Drone d in DataBase.DronesList())
                 Console.WriteLine(d);
         }
         /// <summary>
@@ -450,7 +453,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayCustomerList()
         {
-            foreach (Customer c in DalObject.CustomersList())
+            foreach (Customer c in DataBase.CustomersList())
                 Console.WriteLine(c);
         }
         /// <summary>
@@ -458,7 +461,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayParcelList()
         {
-            foreach (Parcel s in DalObject.ParcelList())
+            foreach (Parcel s in DataBase.ParcelList())
                 Console.WriteLine(s);
         }
         /// <summary>
@@ -466,7 +469,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayUnassignedParcels()
         {
-            foreach (Parcel p in DalObject.UnassignedParcels())
+            foreach (Parcel p in DataBase.UnassignedParcels())
                 Console.WriteLine(p);
         }
 
@@ -475,7 +478,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayAvailableStations()
         {
-            foreach (Station s in DalObject.GetAvailableStations())
+            foreach (Station s in DataBase.GetAvailableStations())
                 Console.WriteLine(s);
         }
     }
