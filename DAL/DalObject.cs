@@ -148,78 +148,78 @@ namespace IDAL
                 Replace(s, b, DataSource.Stations);
             }
 
-            /// <summary>
-            /// find station with available charge slots
-            /// </summary>
-            /// <returns>list of station with chargeSlots >0</returns>
-            public IEnumerable<List<Station>> GetAvailableStations()
+			/// <summary>
+			/// find station with available charge slots
+			/// </summary>
+			/// <returns>list of station with chargeSlots >0</returns>
+			public IEnumerable<Station> GetAvailableStations()
+			{
+				return (IEnumerable<Station>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
+			}
+
+			/// <summary>
+			/// The function returns parcels without a drone assigned with them
+			/// </summary>
+			/// <returns>list of parcels</returns>
+			public IEnumerable<List<Parcel>> UnassignedParcels()
+			{
+				return (IEnumerable<List<Parcel>>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
+			}
+
+			/// <summary>
+			/// The function releases the drone from the station where it is charged
+			/// </summary>
+			/// <param name="DroneId">id of drone to release</param>
+			public void ReleaseDrone(int DroneId)
+			{
+				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
+				//d.Status = DroneStatuses.Available;
+				DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
+				Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
+				s.ChargeSlots++;
+				int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+				int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
+				if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
+					return;
+				Replace(d, a, DataSource.Drones);
+				Replace(s, b, DataSource.Stations);
+				DataSource.DroneCharges.Remove(c);
+			}
+
+			/// <summary>
+			/// the function return list of Station
+			/// </summary>
+			/// <returns>list of Station</returns>
+			public IEnumerable<List<Station>> StationsList()
+			{
+				return (IEnumerable<List<Station>>)DataSource.Stations.ToList();
+			}
+
+			/// <summary>
+			/// the function return list of Drone
+			/// </summary>
+			/// <returns>list of Drone</returns>
+			public IEnumerable<List<Drone>> DronesList()
             {
-                return (IEnumerable<List<Station>>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
+                return (IEnumerable<Drone>)DataSource.Drones;
             }
 
-            /// <summary>
-            /// The function returns parcels without a drone assigned with them
-            /// </summary>
-            /// <returns>list of parcels</returns>
-            public IEnumerable<List<Parcel>> UnassignedParcels()
+			/// <summary>
+			/// the function return list of Customer
+			/// </summary>
+			/// <returns>list of Customer</returns>
+			public IEnumerable<List<Customer>> CustomersList()
             {
-                return (IEnumerable<List<Parcel>>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
+                return (IEnumerable<Customer>)DataSource.Customers;
             }
 
-            /// <summary>
-            /// The function releases the drone from the station where it is charged
-            /// </summary>
-            /// <param name="DroneId">id of drone to release</param>
-            public void ReleaseDrone(int DroneId)
+			/// <summary>
+			/// the function return list of Parcel
+			/// </summary>
+			/// <returns>list of Parcel</returns>
+			public IEnumerable<List<Parcel>> ParcelList()
             {
-                Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
-                //d.Status = DroneStatuses.Available;
-                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
-                Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
-                s.ChargeSlots++;
-                int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-                int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
-                if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
-                    return;
-                Replace(d, a, DataSource.Drones);
-                Replace(s, b, DataSource.Stations);
-                DataSource.DroneCharges.Remove(c);
-            }
-
-            /// <summary>
-            /// the function return list of Station
-            /// </summary>
-            /// <returns>list of Station</returns>
-            public IEnumerable<List<Station>> StationsList()
-            {
-                return (IEnumerable<List<Station>>)DataSource.Stations.ToList();
-            }
-
-            /// <summary>
-            /// the function return list of Drone
-            /// </summary>
-            /// <returns>list of Drone</returns>
-            public IEnumerable<List<Drone>> DronesList()
-            {
-                return (IEnumerable<List<Drone>>)DataSource.Drones.ToList();
-            }
-
-            /// <summary>
-            /// the function return list of Customer
-            /// </summary>
-            /// <returns>list of Customer</returns>
-            public IEnumerable<List<Customer>> CustomersList()
-            {
-                return (IEnumerable<List<Customer>>)DataSource.Customers.ToList();
-            }
-
-            /// <summary>
-            /// the function return list of Parcel
-            /// </summary>
-            /// <returns>list of Parcel</returns>
-            public IEnumerable<List<Parcel>> ParcelList()
-            {
-                return (IEnumerable<List<Parcel>>)DataSource.Parcels.ToList();
+                return (IEnumerable<Parcel>)DataSource.Parcels;
             }
 
             /// <summary>

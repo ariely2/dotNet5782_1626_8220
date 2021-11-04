@@ -437,16 +437,16 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayStationList()
         {
-            foreach (Station s in DataBase.StationsList())
-                Console.WriteLine(s);
+            //foreach (Station s in DataBase.StationsList())
+            //    Console.WriteLine(s);
         }
         /// <summary>
         /// The function prints all Drones that it get from the function in DalObject
         /// </summary>
         static void DisplayDroneList()
         {
-            foreach (Drone d in DataBase.DronesList())
-                Console.WriteLine(d);
+            //foreach (Drone d in DataBase.DronesList())
+            //    Console.WriteLine(d);
         }
         /// <summary>
         /// The function prints all customers that it get from the function in DalObject
