@@ -144,8 +144,8 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Model = Console.ReadLine(),
                         MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                        Battery = InputInt(),
-                        Status = EnumExtension.InputEnum<DroneStatuses>()
+                        //Battery = InputInt(),
+                        //Status = EnumExtension.InputEnum<DroneStatuses>()
                     });
                     break;
 

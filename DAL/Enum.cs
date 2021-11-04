@@ -64,13 +64,13 @@ namespace IDAL
             Fast,
             Emergency
         }
-        public enum DroneStatuses
+        /*public enum DroneStatuses
         {
             Available,
             Maintenance,
             Assigned,
             Delivery
-        }
+        }*/
         public enum Add 
         { 
             AddStation = 1,

@@ -64,20 +64,22 @@ namespace IDAL
                     {
                         //if the status is assigned or delivery, then we change it to available
                         //becauce it can't be assigned or delivery if there is no parcels
-                        DroneStatuses status = EnumExtension.RandomEnumValue<DroneStatuses>();
-                        status = ((status == DroneStatuses.Assigned||status == DroneStatuses.Delivery) ? DroneStatuses.Available : status);
+                        
+
+                        //DroneStatuses status = EnumExtension.RandomEnumValue<DroneStatuses>();
+                        //status = ((status == DroneStatuses.Assigned||status == DroneStatuses.Delivery) ? DroneStatuses.Available : status);
 
                         Drones.Add(new Drone()
                         {
                             Id = random.Next(10000, 100000),
                             Model = MNames[i],//Name from model array
                             MaxWeight = EnumExtension.RandomEnumValue<WeightCategories>(),//Random MaxWeight
-                            Status = status,//Random Status
-                            Battery = random.Next(0, 101)//Random battery percentage between 0 and 100
+                            //Status = status,//Random Status
+                            //Battery = random.Next(0, 101)//Random battery percentage between 0 and 100
                         });
 
                         //if the drone status is maintenance, then it must be charge in some station
-                        if (status == DroneStatuses.Maintenance)
+                        /*if (status == DroneStatuses.Maintenance)
                         {
                             //seach for station with available charge slots
                             Station s = Stations.Find(x => x.ChargeSlots != 0);
@@ -91,7 +93,7 @@ namespace IDAL
                             DroneCharges.Add(new DroneCharge() { DroneId = Drones[i].Id, StationId = s.Id });
                             //we changed the station chargeslots attribute
                             Stations.Remove(s);
-                        }
+                        }*/
                     }
 
                     //initialize 10 parcels
@@ -99,7 +101,7 @@ namespace IDAL
                     {
                         WeightCategories ParcelMaxWeight = EnumExtension.RandomEnumValue<WeightCategories>();
                         //looking for an avaliable drone with enough battery and can carry the parcel
-                        Drone d = Drones.Find(x => x.Status == DroneStatuses.Available && x.Battery != 0 && x.MaxWeight >= ParcelMaxWeight);
+                        Drone d = Drones.Find(x => /*x.Status == DroneStatuses.Available && x.Battery != 0 && */x.MaxWeight >= ParcelMaxWeight);
                         int randomCustomer = random.Next(Customers.Count());
                         Parcels.Add(new Parcel()
                         {
@@ -120,9 +122,9 @@ namespace IDAL
                             {
                                 Id = d.Id,//same id
                                 Model = d.Model,//same Model
-                                Battery = d.Battery,//same Battery
+                                //Battery = d.Battery,//same Battery
                                 MaxWeight = d.MaxWeight,//same MaxWeight
-                                Status = DroneStatuses.Assigned//change the drone's status from avaliable to delivery
+                                //Status = DroneStatuses.Assigned//change the drone's status from avaliable to delivery
                             });
                             Drones.Remove(d);
                         }
