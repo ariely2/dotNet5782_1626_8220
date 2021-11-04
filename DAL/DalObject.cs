@@ -152,18 +152,18 @@ namespace IDAL
 			/// find station with available charge slots
 			/// </summary>
 			/// <returns>list of station with chargeSlots >0</returns>
-			public IEnumerable<List<Station>> GetAvailableStations()
+			public IEnumerable<Station> GetAvailableStations()
 			{
-				return (IEnumerable<List<Station>>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
+				return (IEnumerable<Station>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
 			}
 
 			/// <summary>
 			/// The function returns parcels without a drone assigned with them
 			/// </summary>
 			/// <returns>list of parcels</returns>
-			public IEnumerable<List<Parcel>> UnassignedParcels()
+			public IEnumerable<Parcel> UnassignedParcels()
 			{
-				return (IEnumerable<List<Parcel>>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
+				return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
 			}
 
 			/// <summary>
@@ -173,7 +173,8 @@ namespace IDAL
 			public void ReleaseDrone(int DroneId)
 			{
 				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
-				//d.Status = DroneStatuses.Available;
+				//if(d.Equals(default(Drone)))
+				//	throw ""
 				DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
 				Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
 				s.ChargeSlots++;
@@ -190,36 +191,36 @@ namespace IDAL
 			/// the function return list of Station
 			/// </summary>
 			/// <returns>list of Station</returns>
-			public IEnumerable<List<Station>> StationsList()
+			public IEnumerable<Station> StationsList()
 			{
-				return (IEnumerable<List<Station>>)DataSource.Stations.ToList();
+				return (IEnumerable<Station>)DataSource.Stations;
 			}
 
 			/// <summary>
 			/// the function return list of Drone
 			/// </summary>
 			/// <returns>list of Drone</returns>
-			public IEnumerable<List<Drone>> DronesList()
+			public IEnumerable<Drone> DronesList()
             {
-                return (IEnumerable<List<Drone>>)DataSource.Drones.ToList();
+                return (IEnumerable<Drone>)DataSource.Drones;
             }
 
 			/// <summary>
 			/// the function return list of Customer
 			/// </summary>
 			/// <returns>list of Customer</returns>
-			public IEnumerable<List<Customer>> CustomersList()
+			public IEnumerable<Customer> CustomersList()
             {
-                return (IEnumerable<List<Customer>>)DataSource.Customers.ToList();
+                return (IEnumerable<Customer>)DataSource.Customers;
             }
 
 			/// <summary>
 			/// the function return list of Parcel
 			/// </summary>
 			/// <returns>list of Parcel</returns>
-			public IEnumerable<List<Parcel>> ParcelList()
+			public IEnumerable<Parcel> ParcelList()
             {
-                return (IEnumerable<List<Parcel>>)DataSource.Parcels.ToList();
+                return (IEnumerable<Parcel>)DataSource.Parcels;
             }
 
 			/// <summary>
