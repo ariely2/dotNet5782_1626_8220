@@ -20,6 +20,12 @@ namespace IDAL
             {
                 //id of parcel - number with 8 digit
                 public static int IdOfParcel { private set; get; } = 1000000;
+                public static double AvailableUse = 10; //an available drone uses 10% battery per kilometer
+                public static double LightUse = 15; //a drone carrying light weight uses 15% battery per kilometer
+                public static double MediumUse = 20; //a drone carrying medium weight uses 20% battery per kilometer
+                public static double HeavyUse = 25; //a drone carrying heavy weight uses 25% battery per kilometer
+                public static double ChargeRate = 15; //a drone charges 15% per hour
+
                 private static Random random = new Random();
 
                 /// <summary>

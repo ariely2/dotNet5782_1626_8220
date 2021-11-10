@@ -161,9 +161,9 @@ namespace IDAL
 			/// The function returns parcels without a drone assigned with them
 			/// </summary>
 			/// <returns>list of parcels</returns>
-			public IEnumerable<List<Parcel>> UnassignedParcels()
+			public IEnumerable<Parcel> UnassignedParcels()
 			{
-				return (IEnumerable<List<Parcel>>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
+				return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
 			}
 
 			/// <summary>
@@ -190,16 +190,16 @@ namespace IDAL
 			/// the function return list of Station
 			/// </summary>
 			/// <returns>list of Station</returns>
-			public IEnumerable<List<Station>> StationsList()
+			public IEnumerable<Station> StationsList()
 			{
-				return (IEnumerable<List<Station>>)DataSource.Stations.ToList();
+				return (IEnumerable<Station>)DataSource.Stations;
 			}
 
 			/// <summary>
 			/// the function return list of Drone
 			/// </summary>
 			/// <returns>list of Drone</returns>
-			public IEnumerable<List<Drone>> DronesList()
+			public IEnumerable<Drone> DronesList()
             {
                 return (IEnumerable<Drone>)DataSource.Drones;
             }
@@ -208,7 +208,7 @@ namespace IDAL
 			/// the function return list of Customer
 			/// </summary>
 			/// <returns>list of Customer</returns>
-			public IEnumerable<List<Customer>> CustomersList()
+			public IEnumerable<Customer> CustomersList()
             {
                 return (IEnumerable<Customer>)DataSource.Customers;
             }
@@ -217,7 +217,7 @@ namespace IDAL
 			/// the function return list of Parcel
 			/// </summary>
 			/// <returns>list of Parcel</returns>
-			public IEnumerable<List<Parcel>> ParcelList()
+			public IEnumerable<Parcel> ParcelList()
             {
                 return (IEnumerable<Parcel>)DataSource.Parcels;
             }
