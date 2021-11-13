@@ -285,6 +285,16 @@ namespace IDAL
                 Customer c = DataSource.Customers.Find(x => x.Id == id);
                 return GeoCoordinate.distance(geo, c.Coordinate);
             }
+            public double[] GetBatteryUsageInfo()
+            {
+                double[] info = 
+                    {DataSource.Config.AvailableUse,
+                    DataSource.Config.LightUse,
+                    DataSource.Config.MediumUse,
+                    DataSource.Config.HeavyUse,
+                    DataSource.Config.ChargeRate };
+                return info;
+            }
         }
     }
 }

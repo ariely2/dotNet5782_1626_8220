@@ -8,7 +8,6 @@ namespace ConsoleUI
     {
         //the data base isntance
         static DalObject DataBase = new DalObject();
-
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
