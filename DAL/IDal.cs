@@ -1,7 +1,7 @@
 ﻿using IDAL.DO;
 using System.Collections.Generic;
 
-namespace IDAL //is this correct?
+namespace IDAL 
 {
     public interface IDal
     {

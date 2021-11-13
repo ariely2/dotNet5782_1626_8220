@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using IDAL.DalObject;
 using IDAL.DO;
+using IDAL;
 namespace ConsoleUI
 {
     class Program
     {
         //the data base isntance
         static DalObject DataBase = new DalObject();
+        static IDal Data = new DalObject(); //is this correct?
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
