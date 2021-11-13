@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUI", "ConsoleUI\Cons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{D8DBE5C4-81F1-4322-BABF-135A70020C45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{81A5FBCC-21AF-4F04-864B-6DF6FD830015}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{81A5FBCC-21AF-4F04-864B-6DF6FD830015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
