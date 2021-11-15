@@ -125,7 +125,7 @@ namespace ConsoleUI
                 case ((int)Add.AddStation):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    DataBase.Add<Station>(new Station()
+                    DataBase.Create<Station>(new Station()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -140,7 +140,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddDrone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    DataBase.Add<Drone>(new Drone()
+                    DataBase.Create<Drone>(new Drone()
                     {
                         Id = InputInt(),
                         Model = Console.ReadLine(),
@@ -152,7 +152,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddCustomer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-                    DataBase.Add<Customer>(new Customer()
+                    DataBase.Create<Customer>(new Customer()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -167,7 +167,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddParcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    DataBase.Add<Parcel>(new Parcel()
+                    DataBase.Create<Parcel>(new Parcel()
                     {
                         SenderId = InputInt(),
                         TargetId = InputInt(),

@@ -47,5 +47,24 @@ namespace IDAL
             {
             }
         }
+
+        internal class ExistId : Exception
+        {
+            public ExistId()
+            {
+            }
+
+            public ExistId(string message) : base(message)
+            {
+            }
+
+            public ExistId(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected ExistId(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
+        }
     }
 }

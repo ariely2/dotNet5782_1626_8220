@@ -5,7 +5,7 @@ namespace IDAL
 {
     public interface IDal
     {
-        void Add<T>(T t) where T : struct;
+        void Create<T>(T t) where T : struct;
         public IEnumerable<T> RequestList<T>() where T : struct;
         public T Request<T>(int id) where T : struct;
         void AssignParcel(int ParcelId);
