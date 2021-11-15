@@ -20,26 +20,31 @@ namespace IDAL
             {
                 DataSource.Config.Initialize();
             }
-            public void Add<T>(T t) where T : struct
+            public void Create<T>(T t) where T : struct
             {
                 switch (t)
                 {
                     case Station s:
+                        if (!DataSource.Stations.Find(x => x.Id == s.Id).Equals(default(Station)))
+                            throw new ExistId("Station id already exist");
                         DataSource.Stations.Add(s);
                         break;
                     case Drone d:
+                        if (!DataSource.Drones.Find(x => x.Id == d.Id).Equals(default(Drone)))
+                            throw new ExistId("Drone id already exist");
                         DataSource.Drones.Add(d);
                         break;
                     case Customer c:
+                        if (!DataSource.Customers.Find(x => x.Id == c.Id).Equals(default(Customer)))
+                            throw new ExistId("Customer id already exist");
                         DataSource.Customers.Add(c);
                         break;
                     case Parcel p:
                         p.Id = DataSource.Config.IdOfParcel;
-                        p.Scheduled = p.DroneId == 0 ? DateTime.MinValue : p.Requested;
                         DataSource.Parcels.Add(p);
                         break;
                     default:
-                        break;
+                        throw new NotExistStruct("struct isn't exist");
                 }
             }
             public IEnumerable<T> RequestList<T>() where T : struct
@@ -60,6 +65,7 @@ namespace IDAL
                 return null;
 
             }
+
             public T Request<T>(int id)where T:struct
             {
                 T ans;
@@ -78,10 +84,10 @@ namespace IDAL
                         ans = (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
                         break;
                     default:
-                        throw new NotExistStruct("not exist struct");
+                        throw new NotExistStruct("struct isn't exist");
                 }
                 if (ans.Equals(default(T)))
-                    throw new NotExistId("not exist id");
+                    throw new NotExistId("id isn't exist");
                 return ans;
             }
 
@@ -107,15 +113,14 @@ namespace IDAL
             /// <param name="ParcelId">id of the parcel</param>
             public void AssignParcel(int ParcelId)
             {
-                Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                Parcel p = Request<Parcel>(ParcelId);
+
                 Drone d = DataSource.Drones.Find(x => x.MaxWeight >= p.Weight /*&& x.Status==DroneStatuses.Available*/);
                 //d.Status = DroneStatuses.Assigned;
                 p.DroneId = d.Id;
                 p.Scheduled = DateTime.Now;
                 int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
                 int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-                if (a < 0 || b < 0)
-                    return;
                 Replace(p, a, DataSource.Parcels);
                 Replace(d, b, DataSource.Drones);
             }

@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using IDAL.DalObject;
-using IDAL.DO;
-using IDAL;
-namespace ConsoleUI
+using IBL.BO;
+namespace ConsoleUI_BL
 {
     class Program
     {
-        //the data base isntance
-        static DalObject DataBase = new DalObject();
-        static IDal Data = new DalObject(); //is this correct?
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
@@ -73,6 +67,7 @@ namespace ConsoleUI
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            BL DataBase = new BL();
             int option;
             do
             {
@@ -125,7 +120,8 @@ namespace ConsoleUI
                 case ((int)Add.AddStation):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    DataBase.Create<Station>(new Station()
+
+                    DataBase.DataMethods.Add<Station>(new Station()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -140,7 +136,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddDrone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    DataBase.Create<Drone>(new Drone()
+                    DataBase.Add<Drone>(new Drone()
                     {
                         Id = InputInt(),
                         Model = Console.ReadLine(),
@@ -152,7 +148,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddCustomer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-                    DataBase.Create<Customer>(new Customer()
+                    DataBase.Add<Customer>(new Customer()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -167,7 +163,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddParcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    DataBase.Create<Parcel>(new Parcel()
+                    DataBase.Add<Parcel>(new Parcel()
                     {
                         SenderId = InputInt(),
                         TargetId = InputInt(),
@@ -314,7 +310,7 @@ namespace ConsoleUI
         {
             PrintDisplayListOption();
             int option = InputInt();
-            
+
             Console.Clear();
             switch (option)
             {
@@ -396,7 +392,7 @@ namespace ConsoleUI
             Console.WriteLine(DataBase.Request<T>(InputInt()));
         }
 
-        static void RequestList<T>()where T:struct
+        static void RequestList<T>() where T : struct
         {
             foreach (T t in DataBase.RequestList<T>())
                 Console.WriteLine(t);
@@ -422,3 +418,4 @@ namespace ConsoleUI
         }
     }
 }
+
