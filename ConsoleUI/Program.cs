@@ -125,7 +125,7 @@ namespace ConsoleUI
                 case ((int)Add.AddStation):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    DataBase.AddStation(new Station()
+                    DataBase.Add<Station>(new Station()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -140,7 +140,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddDrone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    DataBase.AddDrone(new Drone()
+                    DataBase.Add<Drone>(new Drone()
                     {
                         Id = InputInt(),
                         Model = Console.ReadLine(),
@@ -152,7 +152,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddCustomer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-                    DataBase.AddCustomer(new Customer()
+                    DataBase.Add<Customer>(new Customer()
                     {
                         Id = InputInt(),
                         Name = Console.ReadLine(),
@@ -167,7 +167,7 @@ namespace ConsoleUI
 
                 case ((int)Add.AddParcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    DataBase.AddParcel(new Parcel()
+                    DataBase.Add<Parcel>(new Parcel()
                     {
                         SenderId = InputInt(),
                         TargetId = InputInt(),
@@ -395,7 +395,7 @@ namespace ConsoleUI
         static void DisplayStation()
         {
             Console.WriteLine("Enter Station ID");
-            Station s = DataBase.DisplayStation(InputInt());//getting Station Id  and printing Station's details
+            Station s = DataBase.Request<Station>(InputInt());//getting Station Id  and printing Station's details
             if (!s.Equals(default(Station)))
                 Console.WriteLine(s);
         }
@@ -406,7 +406,7 @@ namespace ConsoleUI
         static void DisplayDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            Drone d = DataBase.DisplayDrone(InputInt());//getting Drone Id and printing Drone's details
+            Drone d = DataBase.Request<Drone>(InputInt());//getting Drone Id and printing Drone's details
             if (!d.Equals(default(Drone)))
                 Console.WriteLine(d);
         }
@@ -417,7 +417,7 @@ namespace ConsoleUI
         static void DisplayCustomer()
         {
             Console.WriteLine("Enter Customer ID");
-            Customer c = DataBase.DisplayCustomer(InputInt());// getting Customer Id and printing customer's details
+            Customer c = DataBase.Request<Customer>(InputInt());// getting Customer Id and printing customer's details
             if (!c.Equals(default(Customer)))
                 Console.WriteLine(c);
         }
@@ -428,7 +428,7 @@ namespace ConsoleUI
         static void DisplayParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            Parcel p =DataBase.DisplayParcel(InputInt());// getting Parcel Id and printing parcel's details
+            Parcel p =DataBase.Request<Parcel>(InputInt());// getting Parcel Id and printing parcel's details
             if (!p.Equals(default(Parcel)))
                 Console.WriteLine(p);
 
@@ -438,23 +438,23 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayStationList()
         {
-            //foreach (Station s in DataBase.StationsList())
-            //    Console.WriteLine(s);
+            foreach (Station s in DataBase.RequestList<Station>())
+                Console.WriteLine(s);
         }
         /// <summary>
         /// The function prints all Drones that it get from the function in DalObject
         /// </summary>
         static void DisplayDroneList()
         {
-            //foreach (Drone d in DataBase.DronesList())
-            //    Console.WriteLine(d);
+            foreach (Drone d in DataBase.RequestList<Drone>())
+                Console.WriteLine(d);
         }
         /// <summary>
         /// The function prints all customers that it get from the function in DalObject
         /// </summary>
         static void DisplayCustomerList()
         {
-            foreach (Customer c in DataBase.CustomersList())
+            foreach (Customer c in DataBase.RequestList<Customer>())
                 Console.WriteLine(c);
         }
         /// <summary>
@@ -462,7 +462,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayParcelList()
         {
-            foreach (Parcel s in DataBase.ParcelList())
+            foreach (Parcel s in DataBase.RequestList<Parcel>())
                 Console.WriteLine(s);
         }
         /// <summary>

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using IDAL.DO;
 namespace IDAL
 {
-	namespace DalObject
-	{
+    namespace DalObject
+    {
 
         public class DalObject : IDal
         {
@@ -19,44 +19,66 @@ namespace IDAL
             {
                 DataSource.Config.Initialize();
             }
-
-            /// <summary>
-            /// add station to the list
-            /// </summary>
-            /// <param name="station">station to add</param>
-            public void AddStation(Station station)
+            public void Add<T>(T t) where T : struct
             {
-                DataSource.Stations.Add(station);
+                switch (t)
+                {
+                    case Station s:
+                        DataSource.Stations.Add(s);
+                        break;
+                    case Drone d:
+                        DataSource.Drones.Add(d);
+                        break;
+                    case Customer c:
+                        DataSource.Customers.Add(c);
+                        break;
+                    case Parcel p:
+                        p.Id = DataSource.Config.IdOfParcel;
+                        p.Scheduled = p.DroneId == 0 ? DateTime.MinValue : p.Requested;
+                        DataSource.Parcels.Add(p);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            public IEnumerable<T> RequestList<T>() where T : struct
+            {
+                switch (typeof(T).Name)
+                {
+                    case nameof(Station):
+                        return (IEnumerable<T>)DataSource.Stations;
+                    case nameof(Customer):
+                        return (IEnumerable<T>)DataSource.Customers;
+                    case nameof(Drone):
+                        return (IEnumerable<T>)DataSource.Drones;
+                    case nameof(Parcel):
+                        return (IEnumerable<T>)DataSource.Parcels;
+                    default:
+                        break;
+                }
+                return null;
+
             }
 
-            /// <summary>
-            /// add drone to the list
-            /// </summary>
-            /// <param name="drone">drone to add</param>
-            public void AddDrone(Drone drone)
+            public T Request<T>(int id)where T:struct
             {
-                DataSource.Drones.Add(drone);
+                switch (typeof(T).Name)
+                {
+                    case nameof(Station):
+                        return (T)Convert.ChangeType(DataSource.Stations.Find(s=>s.Id==id), typeof(T));
+                    case nameof(Customer):
+                        return (T)Convert.ChangeType(DataSource.Customers.Find(c => c.Id == id), typeof(T));
+                    case nameof(Drone):
+                        return (T)Convert.ChangeType(DataSource.Drones.Find(d=> d.Id == id), typeof(T));
+                    case nameof(Parcel):
+                        return (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
+                    default:
+                        break;
+                }
+                //throw;
+                return default(T);
             }
 
-            /// <summary>
-            /// add customer to the list
-            /// </summary>
-            /// <param name="customer">customer to add</param>
-            public void AddCustomer(Customer customer)
-            {
-                DataSource.Customers.Add(customer);
-            }
-
-            /// <summary>
-            /// add parcel to the list
-            /// </summary>
-            /// <param name="parcel">parcel to add</param>
-            public void AddParcel(Parcel parcel)
-            {
-                parcel.Id = DataSource.Config.IdOfParcel;
-                parcel.Scheduled = parcel.DroneId == 0 ? DateTime.MinValue : parcel.Requested;
-                DataSource.Parcels.Add(parcel);
-            }
 
             /// <summary>
             /// replace the value at index index with the item T
@@ -65,6 +87,7 @@ namespace IDAL
             /// <param name="Item">Item to add to the list</param>
             /// <param name="index">index to remove </param>
             /// <param name="list">list of T</param>
+
             public void Replace<T>(T Item, int index, List<T> list)
             {
 
@@ -148,118 +171,42 @@ namespace IDAL
                 Replace(s, b, DataSource.Stations);
             }
 
-			/// <summary>
-			/// find station with available charge slots
-			/// </summary>
-			/// <returns>list of station with chargeSlots >0</returns>
-			public IEnumerable<Station> GetAvailableStations()
-			{
-				return (IEnumerable<Station>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
-			}
-
-			/// <summary>
-			/// The function returns parcels without a drone assigned with them
-			/// </summary>
-			/// <returns>list of parcels</returns>
-			public IEnumerable<Parcel> UnassignedParcels()
-			{
-				return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
-			}
-
-			/// <summary>
-			/// The function releases the drone from the station where it is charged
-			/// </summary>
-			/// <param name="DroneId">id of drone to release</param>
-			public void ReleaseDrone(int DroneId)
-			{
-				Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
-				//d.Status = DroneStatuses.Available;
-				DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
-				Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
-				s.ChargeSlots++;
-				int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-				int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
-				if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
-					return;
-				Replace(d, a, DataSource.Drones);
-				Replace(s, b, DataSource.Stations);
-				DataSource.DroneCharges.Remove(c);
-			}
-
-			/// <summary>
-			/// the function return list of Station
-			/// </summary>
-			/// <returns>list of Station</returns>
-			public IEnumerable<Station> StationsList()
-			{
-				return (IEnumerable<Station>)DataSource.Stations;
-			}
-
-			/// <summary>
-			/// the function return list of Drone
-			/// </summary>
-			/// <returns>list of Drone</returns>
-			public IEnumerable<Drone> DronesList()
+            /// <summary>
+            /// find station with available charge slots
+            /// </summary>
+            /// <returns>list of station with chargeSlots >0</returns>
+            public IEnumerable<Station> GetAvailableStations()
             {
-                return (IEnumerable<Drone>)DataSource.Drones;
-            }
-
-			/// <summary>
-			/// the function return list of Customer
-			/// </summary>
-			/// <returns>list of Customer</returns>
-			public IEnumerable<Customer> CustomersList()
-            {
-                return (IEnumerable<Customer>)DataSource.Customers;
-            }
-
-			/// <summary>
-			/// the function return list of Parcel
-			/// </summary>
-			/// <returns>list of Parcel</returns>
-			public IEnumerable<Parcel> ParcelList()
-            {
-                return (IEnumerable<Parcel>)DataSource.Parcels;
+                return (IEnumerable<Station>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
             }
 
             /// <summary>
-            /// return Station with the same id as the parameter
+            /// The function returns parcels without a drone assigned with them
             /// </summary>
-            /// <param name="id">id of station</param>
-            /// <returns>return an instance of the station</returns>
-            public Station DisplayStation(int id)
+            /// <returns>list of parcels</returns>
+            public IEnumerable<Parcel> UnassignedParcels()
             {
-                return DataSource.Stations.Find(x => x.Id == id);
+                return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
             }
 
             /// <summary>
-            /// return Drone with the same id as the parameter id
+            /// The function releases the drone from the station where it is charged
             /// </summary>
-            /// <param name="id">id of drone</param>
-            /// <returns>return an instance of the drone</returns>
-            public Drone DisplayDrone(int id)
+            /// <param name="DroneId">id of drone to release</param>
+            public void ReleaseDrone(int DroneId)
             {
-                return DataSource.Drones.Find(x => x.Id == id);
-            }
-
-            /// <summary>
-            /// return Customer with the same id as the parameter id
-            /// </summary>
-            /// <param name="id">id of customer</param>
-            /// <returns>return an instance of the cutomer</returns>
-            public Customer DisplayCustomer(int id)
-            {
-                return DataSource.Customers.Find(x => x.Id == id);
-            }
-
-            /// <summary>
-            /// return parcel with the same id as the parameter id
-            /// </summary>
-            /// <param name="id">id of parcel</param>
-            /// <returns>return an instance of teh parcel</returns>
-            public Parcel DisplayParcel(int id)
-            {
-                return DataSource.Parcels.Find(x => x.Id == id);
+                Drone d = DataSource.Drones.Find(x => x.Id == DroneId);
+                //d.Status = DroneStatuses.Available;
+                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
+                Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
+                s.ChargeSlots++;
+                int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+                int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
+                if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
+                    return;
+                Replace(d, a, DataSource.Drones);
+                Replace(s, b, DataSource.Stations);
+                DataSource.DroneCharges.Remove(c);
             }
 
             /// <summary>
@@ -287,7 +234,7 @@ namespace IDAL
             }
             public double[] GetBatteryUsageInfo()
             {
-                double[] info = 
+                double[] info =
                     {DataSource.Config.AvailableUse,
                     DataSource.Config.LightUse,
                     DataSource.Config.MediumUse,
@@ -298,4 +245,5 @@ namespace IDAL
         }
     }
 }
+
 
