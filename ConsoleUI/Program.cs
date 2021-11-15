@@ -254,16 +254,16 @@ namespace ConsoleUI
             switch (option)
             {
                 case ((int)Display.DisplayStation):
-                    DisplayStation();
+                    Request<Station>();
                     break;
                 case ((int)Display.DisplayDrone):
-                    DisplayDrone();
+                    Request<Drone>();
                     break;
                 case ((int)Display.DisplayCustomer):
-                    DisplayCustomer();
+                    Request<Customer>();
                     break;
                 case ((int)Display.DisplayParcel):
-                    DisplayParcel();
+                    Request<Parcel>();
                     break;
                 case ((int)Display.DistanceFromStation):
                     Console.WriteLine("enter longitude, latitude and station id");
@@ -319,16 +319,16 @@ namespace ConsoleUI
             switch (option)
             {
                 case ((int)DisplayList.DisplayStations):
-                    DisplayStationList();
+                    RequestList<Station>();
                     break;
                 case ((int)DisplayList.DisplayDrones):
-                    DisplayDroneList();
+                    RequestList<Drone>();
                     break;
                 case ((int)DisplayList.DisplayCustomers):
-                    DisplayCustomerList();
+                    RequestList<Customer>();
                     break;
                 case ((int)DisplayList.DisplayParcels):
-                    DisplayParcelList();
+                    RequestList<Parcel>();
                     break;
                 case ((int)DisplayList.DisplayUnassignParcles):
                     DisplayUnassignedParcels();
@@ -388,83 +388,21 @@ namespace ConsoleUI
             Console.WriteLine("Enter Drone ID");
             DataBase.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
         }
-        /// <summary>
-        /// The function receives data from the user,
-        /// and transmits them to function in DalObject
-        /// </summary>
-        static void DisplayStation()
-        {
-            Console.WriteLine("Enter Station ID");
-            Station s = DataBase.Request<Station>(InputInt());//getting Station Id  and printing Station's details
-            if (!s.Equals(default(Station)))
-                Console.WriteLine(s);
-        }
-        /// <summary>
-        /// The function receives data from the user,
-        /// and transmits them to function in DalObject
-        /// </summary>
-        static void DisplayDrone()
-        {
-            Console.WriteLine("Enter Drone ID");
-            Drone d = DataBase.Request<Drone>(InputInt());//getting Drone Id and printing Drone's details
-            if (!d.Equals(default(Drone)))
-                Console.WriteLine(d);
-        }
-        /// <summary>
-        /// The function receives data from the user,
-        /// and transmits them to function in DalObject
-        /// </summary>
-        static void DisplayCustomer()
-        {
-            Console.WriteLine("Enter Customer ID");
-            Customer c = DataBase.Request<Customer>(InputInt());// getting Customer Id and printing customer's details
-            if (!c.Equals(default(Customer)))
-                Console.WriteLine(c);
-        }
-        /// <summary>
-        /// The function receives data from the user,
-        /// and transmits them to function in DalObject
-        /// </summary>
-        static void DisplayParcel()
-        {
-            Console.WriteLine("Enter Parcel ID");
-            Parcel p =DataBase.Request<Parcel>(InputInt());// getting Parcel Id and printing parcel's details
-            if (!p.Equals(default(Parcel)))
-                Console.WriteLine(p);
 
-        }
-        /// <summary>
-        /// The function prints all stations that it get from the function in DalObject
-        /// </summary>
-        static void DisplayStationList()
+
+        static void Request<T>() where T : struct
         {
-            foreach (Station s in DataBase.RequestList<Station>())
-                Console.WriteLine(s);
+            Console.WriteLine($"Enter {nameof(T)} ID");
+            Console.WriteLine(DataBase.Request<T>(InputInt()));
         }
-        /// <summary>
-        /// The function prints all Drones that it get from the function in DalObject
-        /// </summary>
-        static void DisplayDroneList()
+
+        static void RequestList<T>()where T:struct
         {
-            foreach (Drone d in DataBase.RequestList<Drone>())
-                Console.WriteLine(d);
+            foreach (T t in DataBase.RequestList<T>())
+                Console.WriteLine(t);
         }
-        /// <summary>
-        /// The function prints all customers that it get from the function in DalObject
-        /// </summary>
-        static void DisplayCustomerList()
-        {
-            foreach (Customer c in DataBase.RequestList<Customer>())
-                Console.WriteLine(c);
-        }
-        /// <summary>
-        /// The function prints all parcels that it get from the function in DalObject
-        /// </summary>
-        static void DisplayParcelList()
-        {
-            foreach (Parcel s in DataBase.RequestList<Parcel>())
-                Console.WriteLine(s);
-        }
+
+
         /// <summary>
         /// The function prints all parcels that it get from the function in DalObject
         /// </summary>

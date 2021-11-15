@@ -9,6 +9,7 @@ namespace IDAL
 {
     namespace DO
     {
+      
         [Serializable]
         public class NotExistId : Exception
         {
