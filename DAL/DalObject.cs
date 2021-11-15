@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using IDAL.DO;
@@ -59,24 +60,29 @@ namespace IDAL
                 return null;
 
             }
-
             public T Request<T>(int id)where T:struct
             {
+                T ans;
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
-                        return (T)Convert.ChangeType(DataSource.Stations.Find(s=>s.Id==id), typeof(T));
-                    case nameof(Customer):
-                        return (T)Convert.ChangeType(DataSource.Customers.Find(c => c.Id == id), typeof(T));
-                    case nameof(Drone):
-                        return (T)Convert.ChangeType(DataSource.Drones.Find(d=> d.Id == id), typeof(T));
-                    case nameof(Parcel):
-                        return (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
-                    default:
+                        ans = (T)Convert.ChangeType(DataSource.Stations.Find(s=>s.Id==id), typeof(T));
                         break;
+                    case nameof(Customer):
+                        ans = (T)Convert.ChangeType(DataSource.Customers.Find(c => c.Id == id), typeof(T));
+                        break;
+                    case nameof(Drone):
+                        ans = (T)Convert.ChangeType(DataSource.Drones.Find(d=> d.Id == id), typeof(T));
+                        break;
+                    case nameof(Parcel):
+                        ans = (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
+                        break;
+                    default:
+                        throw new NotExistStruct("not exist struct");
                 }
-                //throw;
-                return default(T);
+                if (ans.Equals(default(T)))
+                    throw new NotExistId("not exist id");
+                return ans;
             }
 
 
@@ -99,7 +105,6 @@ namespace IDAL
             /// the function reponsible for assign a drone to a parcel
             /// </summary>
             /// <param name="ParcelId">id of the parcel</param>
-            /// <param name="DroneId">id of the drone</param>
             public void AssignParcel(int ParcelId)
             {
                 Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
@@ -202,8 +207,6 @@ namespace IDAL
                 s.ChargeSlots++;
                 int a = DataSource.Drones.FindIndex(x => x.Id == d.Id);
                 int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
-                if (a < 0 || b < 0 || !DataSource.DroneCharges.Exists(x => x.DroneId == d.Id))
-                    return;
                 Replace(d, a, DataSource.Drones);
                 Replace(s, b, DataSource.Stations);
                 DataSource.DroneCharges.Remove(c);
@@ -243,6 +246,8 @@ namespace IDAL
                 return info;
             }
         }
+
+
     }
 }
 
