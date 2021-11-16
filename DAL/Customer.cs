@@ -13,13 +13,13 @@ namespace IDAL
             public int Id { get; set; }//id number with 9 digit
             public string Name { get; set; }
             public string Phone { get; set; }
-            public GeoCoordinate Coordinate { set; get; }
+            public Location location { set; get; }
             public override string ToString()
             {
                 return $"Id:        {Id}\n" +
                        $"Name:      {Name}\n" +
                        $"Phone:     {Phone}\n" +
-                       $"Location:  {Coordinate}";
+                       $"Location:  {location}";
             }
         };
     }

@@ -41,12 +41,12 @@ namespace IBL.BO
             throw new NotImplementedException();
         }
 
-        public T Request<T>(int id) where T : class
+        public T Request<T>(int id) where T : struct
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> RequestList<T>() where T : class
+        public IEnumerable<T> RequestList<T>() where T : struct
         {
             throw new NotImplementedException();
         }
@@ -56,19 +56,5 @@ namespace IBL.BO
             throw new NotImplementedException();
         }
 
-        public void UpdateCustomer(Customer c)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateDroneName(Drone d)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateStation(Station s)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

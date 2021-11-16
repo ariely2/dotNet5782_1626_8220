@@ -14,13 +14,13 @@ namespace IDAL
         {
             public int Id { get; set; }//id with 3 digit
             public string Name { get; set; }
-            public GeoCoordinate Coordinate { set; get; }
+            public Location location { set; get; }
             public int ChargeSlots { get; set; }
             public override string ToString()
             {
                 return $"Id:          {Id}\n" +
                        $"Name:        {Name}\n" +
-                       $"Location:    {Coordinate}" +
+                       $"Location:    {location}" +
                        $"ChargeSlots: {ChargeSlots}\n";
             }
         }

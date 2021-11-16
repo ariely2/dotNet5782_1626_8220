@@ -8,7 +8,7 @@ namespace IDAL
 {
 	namespace DO
 	{
-		public struct GeoCoordinate
+		public struct Location
 		{
 			public double Longitude { set; get; }
 			public double Latitude { set; get; }
@@ -63,7 +63,7 @@ namespace IDAL
 			/// <param name="g1">geo coordinate 1</param>
 			/// <param name="g2">geo coordinate 2</param>
 			/// <returns>the distance between the 2 coordinates</returns>
-			public static double distance(GeoCoordinate g1,GeoCoordinate g2)
+			public static double distance(Location g1,Location g2)
 			{
 
 				// The math module contains

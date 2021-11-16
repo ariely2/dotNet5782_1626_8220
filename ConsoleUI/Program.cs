@@ -128,7 +128,7 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         ChargeSlots = InputInt(),
-                        Coordinate = new GeoCoordinate()
+                        location = new Location()
                         {
                             Latitude = InputDouble(),
                             Longitude = InputDouble()
@@ -155,7 +155,7 @@ namespace ConsoleUI
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         Phone = Console.ReadLine(),
-                        Coordinate = new GeoCoordinate()
+                        location = new Location()
                         {
                             Latitude = InputDouble(),
                             Longitude = InputDouble()
@@ -264,26 +264,10 @@ namespace ConsoleUI
                     Request<Parcel>();
                     break;
                 case ((int)Display.DistanceFromStation):
-                    Console.WriteLine("enter longitude, latitude and station id");
-                    Console.WriteLine("The distance is: {0} km",
-                        DataBase.GetDistanceFromStation(
-                            new GeoCoordinate()
-                            {
-                                Longitude = InputDouble(),
-                                Latitude = InputDouble()
-                            },
-                            InputInt()));//station id
+                    GetDistanceFrom<Station>();
                     break;
                 case ((int)Display.DistanceFromCustomer):
-                    Console.WriteLine("enter longitude, latitude and customer id");
-                    Console.WriteLine("The distance is: {0} km",
-                        DataBase.GetDistanceFromCustomer(
-                            new GeoCoordinate()
-                            {
-                                Longitude = InputDouble(),
-                                Latitude = InputDouble()
-                            },
-                            InputInt()));//customer id
+                    GetDistanceFrom<Customer>();
                     break;
 
             }
@@ -312,7 +296,7 @@ namespace ConsoleUI
         {
             PrintDisplayListOption();
             int option = InputInt();
-            
+
             Console.Clear();
             switch (option)
             {
@@ -394,12 +378,11 @@ namespace ConsoleUI
             Console.WriteLine(DataBase.Request<T>(InputInt()));
         }
 
-        static void RequestList<T>()where T:struct
+        static void RequestList<T>() where T : struct
         {
             foreach (T t in DataBase.RequestList<T>())
                 Console.WriteLine(t);
         }
-
 
         /// <summary>
         /// The function prints all parcels that it get from the function in DalObject
@@ -418,5 +401,19 @@ namespace ConsoleUI
             foreach (Station s in DataBase.GetAvailableStations())
                 Console.WriteLine(s);
         }
+        static void GetDistanceFrom<T>() where T:struct
+        {
+            Console.WriteLine("enter longitude, latitude and" + typeof(T).Name + "id");
+            Console.WriteLine("The distance is: {0} km",
+                DataBase.GetDistanceFrom<T>(
+                    new Location()
+                    {
+                        Longitude = InputDouble(),
+                        Latitude = InputDouble()
+                    },
+                    InputInt()));
+        }
     }
+
 }
+

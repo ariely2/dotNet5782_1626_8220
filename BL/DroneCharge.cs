@@ -9,14 +9,14 @@ namespace IBL.BO
     /// <summary>
     /// this class represents a drone that's currently charging
     /// </summary>
-    public class ChargingDrone
+    public class DroneCharge
     {
         public int Id { get; set; }
         public double Battery { get; set; }
         public override string ToString()
         {
-            return $"Id:          {Id}\n" +
-                   $"Battery:     {Battery}\n";
+            return $"Id:       {Id}\n" +
+                   $"Battery:  {Battery}\n";
             }
     }
 }

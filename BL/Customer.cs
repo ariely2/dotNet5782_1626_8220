@@ -18,13 +18,15 @@ namespace IBL
             public List<ParcelAtCustomer> To { set; get; }
             public List<ParcelAtCustomer> From { set; get; }
 
-            //need to add to and from
             public override string ToString()
             {
                 return $"Id:        {Id}\n" +
                        $"Name:      {Name}\n" +
                        $"Phone:     {Phone}\n" +
-                       $"Location:  {Location}";
+                       $"Location:  {Location}\n" +
+                       $"From:      " + string.Join("\n\t\t   ", (IEnumerable<ParcelAtCustomer>)From.ToArray()) +
+                       $"To:        " + string.Join("\n\t\t   ", (IEnumerable<ParcelAtCustomer>)To.ToArray());
+
             }
         };
     }
