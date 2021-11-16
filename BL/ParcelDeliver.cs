@@ -16,8 +16,8 @@ namespace IBL.BO
         public CustomerParcel Sender { set; get; }
         public CustomerParcel Receiver { set; get; }
         
-        public GeoCoordinate Source { set; get; }
-        public GeoCoordinate Destination { set; get; }
+        public Location Source { set; get; }
+        public Location Destination { set; get; }
         public double Distance { set; get; }
         public override string ToString()
         {

@@ -13,7 +13,7 @@ namespace IBL
             public int Id { get; set; }//id number with 9 digit
             public string Name { get; set; }
             public string Phone { get; set; }
-            public GeoCoordinate Location { set; get; }
+            public Location Location { set; get; }
 
             public List<ParcelAtCustomer> To { set; get; }
             public List<ParcelAtCustomer> From { set; get; }

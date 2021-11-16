@@ -12,7 +12,7 @@ namespace IBL.BO
         {
             public int Id { get; set; }//id with 3 digits
             public string Name { get; set; }
-            public GeoCoordinate Location { set; get; }
+            public Location Location { set; get; }
             public int ChargeSlots { get; set; }
             public List<DroneCharge> Charging { get; set; }
             public override string ToString()

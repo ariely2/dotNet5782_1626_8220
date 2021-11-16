@@ -126,7 +126,7 @@ namespace ConsoleUI_BL
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         ChargeSlots = InputInt(),
-                        Coordinate = new GeoCoordinate()
+                        Coordinate = new Location()
                         {
                             Latitude = InputDouble(),
                             Longitude = InputDouble()
@@ -153,7 +153,7 @@ namespace ConsoleUI_BL
                         Id = InputInt(),
                         Name = Console.ReadLine(),
                         Phone = Console.ReadLine(),
-                        Coordinate = new GeoCoordinate()
+                        Coordinate = new Location()
                         {
                             Latitude = InputDouble(),
                             Longitude = InputDouble()
@@ -265,7 +265,7 @@ namespace ConsoleUI_BL
                     Console.WriteLine("enter longitude, latitude and station id");
                     Console.WriteLine("The distance is: {0} km",
                         DataBase.GetDistanceFromStation(
-                            new GeoCoordinate()
+                            new Location()
                             {
                                 Longitude = InputDouble(),
                                 Latitude = InputDouble()
@@ -276,7 +276,7 @@ namespace ConsoleUI_BL
                     Console.WriteLine("enter longitude, latitude and customer id");
                     Console.WriteLine("The distance is: {0} km",
                         DataBase.GetDistanceFromCustomer(
-                            new GeoCoordinate()
+                            new Location()
                             {
                                 Longitude = InputDouble(),
                                 Latitude = InputDouble()

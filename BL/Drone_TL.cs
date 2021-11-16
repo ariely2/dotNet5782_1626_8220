@@ -13,7 +13,7 @@ namespace IBL.BO
         public WeightCategories Weight { set; get; }
         public double Battery { set; get; }
         public DroneStatuses Status { set; get; }
-        public GeoCoordinate Location { set; get; }
+        public Location Location { set; get; }
         public int ParcelId { set; get; }
 
         public override string ToString()

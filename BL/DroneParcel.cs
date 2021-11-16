@@ -10,7 +10,7 @@ namespace IBL.BO
     {
         public int Id { set; get; }
         public double Baterry { set; get; }
-        public GeoCoordinate Location { set; get; }
+        public Location Location { set; get; }
         public override string ToString()
         {
             return $"Id:       {Id}\n" +
