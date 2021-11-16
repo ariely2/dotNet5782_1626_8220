@@ -12,5 +12,11 @@ namespace IBL.BO
         public string SenderName { get; set; }
         public string ReceiverName { get; set; }
 
+        public override string ToString()
+        {
+            return $"Id:           {Id}\n" +
+                   $"SenderName:   {SenderName}\n" +
+                   $"ReceiverName: {ReceiverName}\n";
+        }
     }
 }

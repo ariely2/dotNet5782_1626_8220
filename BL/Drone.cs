@@ -16,7 +16,6 @@ namespace IBL.BO
             public WeightCategories MaxWeight { get; set; }
             public DroneStatuses Status { get; set; }
             public double Battery { get; set; }
-            
             public  GeoCoordinate Current { get; set; } //current location
 
             public override string ToString()
@@ -26,7 +25,7 @@ namespace IBL.BO
                    $"MaxWeight: {MaxWeight}\n" +
                    $"Status:    {Status}\n" +
                    $"Battery:   {Battery}\n" +
-                   $"Location:  {Current}\n";
+                   $"Location:  {Current}";
             }
     }
 }

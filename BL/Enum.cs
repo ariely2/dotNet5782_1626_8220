@@ -23,6 +23,13 @@ namespace IBL
             Assigned,
             Delivery
         }
+        public enum ParcelStatuses
+        {
+            Craeted,
+            Assignd,
+            PickedUp,
+            Delivered
+        }
         public enum Add
         {
             AddStation = 1,

@@ -24,8 +24,6 @@ namespace IDAL
                 return $"Id:        {Id}\n" +
                        $"Model:     {Model}\n" +
                        $"MaxWeight: {MaxWeight}\n";
-                       //$"Status:    {Status}\n" +
-                       //$"Battery:   {Battery}\n";
             }
         }
     }

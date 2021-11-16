@@ -13,17 +13,18 @@ namespace IBL
             public int Id { get; set; }//id number with 9 digit
             public string Name { get; set; }
             public string Phone { get; set; }
-            public GeoCoordinate Coordinate { set; get; }
+            public GeoCoordinate Location { set; get; }
 
-            //parcel or parcelTL
-            public List<Parcel> To { set; get; }
-            public List<Parcel> From { set; get; }
+            public List<ParcelAtCustomer> To { set; get; }
+            public List<ParcelAtCustomer> From { set; get; }
+
+            //need to add to and from
             public override string ToString()
             {
                 return $"Id:        {Id}\n" +
                        $"Name:      {Name}\n" +
                        $"Phone:     {Phone}\n" +
-                       $"{Coordinate}";
+                       $"Location:  {Location}";
             }
         };
     }

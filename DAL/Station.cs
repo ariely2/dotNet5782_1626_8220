@@ -20,7 +20,7 @@ namespace IDAL
             {
                 return $"Id:          {Id}\n" +
                        $"Name:        {Name}\n" +
-                       $"{Coordinate}" +
+                       $"Location:    {Coordinate}" +
                        $"ChargeSlots: {ChargeSlots}\n";
             }
         }

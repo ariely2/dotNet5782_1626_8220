@@ -19,7 +19,7 @@ namespace IDAL
                 return $"Id:        {Id}\n" +
                        $"Name:      {Name}\n" +
                        $"Phone:     {Phone}\n" +
-                       $"{Coordinate}";
+                       $"Location:  {Coordinate}";
             }
         };
     }
