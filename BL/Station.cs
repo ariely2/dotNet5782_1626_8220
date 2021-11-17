@@ -13,14 +13,14 @@ namespace IBL.BO
             public int Id { get; set; }//id with 3 digits
             public string Name { get; set; }
             public Location Location { set; get; }
-            public int ChargeSlots { get; set; }
+            public int AvailableSlots { get; set; }
             public List<DroneCharge> Charging { get; set; }
             public override string ToString()
             {
             return $"Id:                {Id}\n" +
                    $"Name:              {Name}\n" +
                    $"Location:          {Location}\n" +
-                   $"ChargeSlots:       {ChargeSlots}\n" +
+                   $"ChargeSlots:       {AvailableSlots}\n" +
                    "Charging Drones:    " + string.Join("\n\t\t\t\t\t ", (IEnumerable<DroneCharge>)Charging.ToArray());
                        
             }

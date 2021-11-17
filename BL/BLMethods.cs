@@ -56,5 +56,9 @@ namespace IBL.BO
             throw new NotImplementedException();
         }
 
+        public void Update<T>(int id, T t) where T : struct
+        {
+            throw new NotImplementedException();
+        }
     }
 }

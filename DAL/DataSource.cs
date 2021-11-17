@@ -42,7 +42,7 @@ namespace IDAL
                             Id = random.Next(100000000,1000000000),
                             Name = CNames[i],//Name from the array
                             Phone = random.Next(111111, 999999).ToString("000000"),//Random phone number (adding zeroes in the front)
-                            Coordinate = new Location()
+                            location = new Location()
                             {
                                 Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
                                 Latitude = (random.NextDouble() * 180) - 90//Random latitude between -90 and 90
@@ -56,7 +56,7 @@ namespace IDAL
                         {
                             Id = random.Next(100, 1000),
                             Name = SNames[i],//Name from Name array.
-                            Coordinate = new Location()
+                            location = new Location()
                             {
                                 Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
                                 Latitude = (random.NextDouble() * 180) - 90//Random Latitude between -90 and 90
