@@ -173,6 +173,7 @@ namespace ConsoleUI
                         Priority = EnumExtension.InputEnum<Priorities>(),
                         DroneId = InputInt(),
                         Requested = DateTime.Now,
+                        Scheduled = DateTime.MinValue,
                         Delivered = DateTime.MinValue,
                         PickedUp = DateTime.MinValue
                     });

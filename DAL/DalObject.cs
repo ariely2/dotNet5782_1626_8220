@@ -72,10 +72,10 @@ namespace IDAL
                         ans = (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
                         break;
                     default:
-                        throw new NotExistStruct("struct isn't exist\n");
+                        throw new NotExistStruct("struct doesn't exist\n");
                 }
                 if (ans.Equals(default(T)))
-                    throw new NotExistId("id isn't exist\n");
+                    throw new NotExistId("id doesn't exist\n");
                 return ans;
             }
             public IEnumerable<T> RequestList<T>() where T : struct
