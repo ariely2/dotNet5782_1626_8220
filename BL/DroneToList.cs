@@ -10,7 +10,7 @@ namespace IBL.BO
     {
         public int Id { set; get; }
         public string Model { set; get; }
-        public WeightCategories Weight { set; get; }
+        public WeightCategories MaxWeight { set; get; }
         public double Battery { set; get; }
         public DroneStatuses Status { set; get; }
         public Location Location { set; get; }
@@ -20,7 +20,7 @@ namespace IBL.BO
         {
             return $"Id:       {Id}\n" +
                    $"Model:    {Model}\n" +
-                   $"Weight:   {Weight}\n" +
+                   $"Max Weight:   {MaxWeight}\n" +
                    $"Battery:  {Battery}\n" +
                    $"Status:   {Status}\n" +
                    $"Location: {Location}" +

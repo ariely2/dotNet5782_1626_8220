@@ -185,27 +185,62 @@ namespace ConsoleUI_BL
                     }
                     catch (Exception ex)
                     {
-                        throw new ExistObjectIdException("exist station id", ex);
+                        throw new ExistObjectIdException("Station id exists", ex);
                     }
                     break;
 
                 case ((int)Add.AddDrone):
-                    Console.WriteLine("Enter Id, Model, ");
-                    BL.Create<Drone>(new Drone()
-                    {
-                        Id = InputInt(),
-                        MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                        s
-                    })
+                    Console.WriteLine("Enter Id, Model, Max Weight, Initial Station");
+                    try {
+                        BL.Create<Drone>(new Drone()
+                        {
+                            Id = InputInt(),
+                            MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
 
+                        });
+                            }
+                    catch (Exception ex)
+                    {
+                        throw new ExistObjectIdException("Drone id exists", ex);
+                    }
                     break;
 
                 case ((int)Add.AddCustomer):
-                    
+                    Console.WriteLine("Enter Id, Name, Phone, Longitude and Latitude");
+                    try
+                    {
+                        BL.Create<Customer>(new Customer()
+                        {
+                            Id = InputInt(),
+                            Name = Console.ReadLine(),
+                            Phone = Console.ReadLine(),
+                            location = new Location()
+                            {
+                                Latitude = InputDouble(),
+                                Longitude = InputDouble()
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ExistObjectIdException("Customer id exists", ex);
+                    }
+
                     break;
 
                 case ((int)Add.AddParcel):
-                    
+                    Console.WriteLine("Enter Sender Id, Receiver Id, Weight, Priority");
+                    try
+                    {
+                        BL.Create<Parcel>(new Parcel()
+                        {
+                            
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ExistObjectIdException("????????????", ex); 
+                    }
                     break;
                 default:
                     Console.WriteLine("Invalid input, try again");

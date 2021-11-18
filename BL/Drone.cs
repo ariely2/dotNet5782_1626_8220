@@ -22,7 +22,7 @@ namespace IBL.BO
             {
             return $"Id:        {Id}\n" +
                    $"Model:     {Model}\n" +
-                   $"MaxWeight: {MaxWeight}\n" +
+                   $"Max Weight: {MaxWeight}\n" +
                    $"Battery:   {Battery}\n" +
                    $"Status:    {Status}\n" +
                    $"Parcel:    {Parcel}" +

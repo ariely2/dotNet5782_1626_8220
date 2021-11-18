@@ -8,9 +8,9 @@ namespace IBL.BO
 {
     public partial class BL : IBL
     {
-        public void AssignDrone(Drone d)//not drone id? same for deliver and pickup
+        public void AssignDrone(int id)
         {
-           // Drone d = dal.Request<IDAL.DO.Drone>(id);
+           //Drone d = dal.Request<IDAL.DO.Drone>(id);
            //if(d.Status == DroneStatuses.Available)
         }
 
@@ -48,7 +48,7 @@ namespace IBL.BO
                         });
                         break;
                     case Drone d:
-                        dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone()
+                        dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone() //might need to also add drone to BL drone list
                         {
                             Id = d.Id,
                             Model = d.Model,
@@ -80,17 +80,17 @@ namespace IBL.BO
             }
         }
         #endregion Create
-        public void Deliver(Drone d)
+        public void Deliver(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void PickUp(Drone d)
+        public void PickUp(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void ReleaseDrone(Drone d, double t)
+        public void ReleaseDrone(int id, double t)
         {
             throw new NotImplementedException();
         }
@@ -150,7 +150,7 @@ namespace IBL.BO
         }
         #endregion Request
 
-        public void SendDroneToCharge(Drone d)
+        public void SendDroneToCharge(int id)
         {
             throw new NotImplementedException();
         }

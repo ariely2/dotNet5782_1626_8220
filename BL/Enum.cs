@@ -58,15 +58,19 @@ namespace IBL
         {
             Available,
             Maintenance,
-            Assigned,
             Delivery
         }
         public enum ParcelStatuses
         {
-            Craeted,
-            Assignd,
+            Created,
+            Assigned,
             PickedUp,
             Delivered
+        }
+        public enum ShippingStatus
+        {
+            Waiting,
+            EnRoute
         }
         public enum Add
         {
