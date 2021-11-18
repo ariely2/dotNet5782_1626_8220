@@ -8,6 +8,7 @@ namespace ConsoleUI
     {
         //the data base isntance
         static DalObject DataBase = new DalObject();
+        #region InputMethods
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
@@ -51,7 +52,8 @@ namespace ConsoleUI
             } while (!valid);
             return num;
         }
-
+        #endregion InputMethods
+        #region PrintOptions
         /// <summary>
         /// print general option
         /// </summary>
@@ -64,7 +66,62 @@ namespace ConsoleUI
 4)Display list
 5)exit");
         }
+        /// <summary>
+        /// print add options
+        /// </summary>
+        static void PrintAddOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 4:
+1)Add station
+2)Add Drone
+3)Add customer
+4)Add parcel");
+        }
 
+        /// <summary>
+        /// print update option
+        /// </summary>
+        static void PrintUpdateOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 5:
+1)Assign a parcel to a drone
+2)Pick up a parcel by a drone
+3)deliver a parcel to a customer
+4)Send a drone to charge
+5)Release a drone from charging");
+        }
+        /// <summary>
+        /// print display option
+        /// </summary>
+        static void PrintDisplayOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 4:
+1)Display station
+2)Display drone
+3)Display customer
+4)Display parcel
+5)Distance from station
+6)Distance from customer"
+);
+        }
+
+        /// <summary>
+        /// print display list option
+        /// </summary>
+        static void PrintDisplayListOption()
+        {
+            Console.WriteLine(@"choose an option between 1 to 6:
+1)Display stations list
+2)Display Drones list
+3)Display customers list
+4)Display parcels list
+5)Display parcels list that aren't associated with a drone
+6)Display stations list with avaliable charging spots");
+        }
+
+
+        #endregion PrintOption
+        #region Switches
         /// <summary>
         /// main function
         /// </summary>
@@ -97,17 +154,7 @@ namespace ConsoleUI
             } while (option != 5);
         }
 
-        /// <summary>
-        /// print add options
-        /// </summary>
-        static void PrintAddOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 4:
-1)Add station
-2)Add Drone
-3)Add customer
-4)Add parcel");
-        }
+       
 
         /// <summary>
         /// switch about add option
@@ -185,18 +232,6 @@ namespace ConsoleUI
             }
         }
 
-        /// <summary>
-        /// print update option
-        /// </summary>
-        static void PrintUpdateOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 5:
-1)Assign a parcel to a drone
-2)Pick up a parcel by a drone
-3)deliver a parcel to a customer
-4)Send a drone to charge
-5)Release a drone from charging");
-        }
 
         /// <summary>
         /// switch about update option
@@ -227,20 +262,7 @@ namespace ConsoleUI
         }
 
 
-        /// <summary>
-        /// print display option
-        /// </summary>
-        static void PrintDisplayOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 4:
-1)Display station
-2)Display drone
-3)Display customer
-4)Display parcel
-5)Distance from station
-6)Distance from customer"
-);
-        }
+
 
         /// <summary>
         /// switch about display option
@@ -276,21 +298,6 @@ namespace ConsoleUI
 
 
         /// <summary>
-        /// print display list option
-        /// </summary>
-        static void PrintDisplayListOption()
-        {
-            Console.WriteLine(@"choose an option between 1 to 6:
-1)Display stations list
-2)Display Drones list
-3)Display customers list
-4)Display parcels list
-5)Display parcels list that aren't associated with a drone
-6)Display stations list with avaliable charging spots");
-        }
-
-
-        /// <summary>
         /// switch display list option
         /// </summary>
         static void SwitchDisplayListOption()
@@ -321,7 +328,8 @@ namespace ConsoleUI
                     break;
             }
         }
-
+        #endregion Switches
+        #region UpdateMethods
         /// <summary>
         /// The function receives data from the user,
         /// and transmits them to function in DalObject
@@ -371,14 +379,27 @@ namespace ConsoleUI
             Console.WriteLine("Enter Drone ID");
             DataBase.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
         }
-
-
+        #endregion UpdateMethods
+        #region RequestMethods
         static void Request<T>() where T : struct
         {
             Console.WriteLine($"Enter {nameof(T)} ID");
             Console.WriteLine(DataBase.Request<T>(InputInt()));
         }
-
+        static void GetDistanceFrom<T>() where T : struct
+        {
+            Console.WriteLine("enter longitude, latitude and" + typeof(T).Name + "id");
+            Console.WriteLine("The distance is: {0} km",
+                DataBase.GetDistanceFrom<T>(
+                    new Location()
+                    {
+                        Longitude = InputDouble(),
+                        Latitude = InputDouble()
+                    },
+                    InputInt()));
+        }
+        #endregion RequestMethods
+        #region RequestListMethods
         static void RequestList<T>() where T : struct
         {
             foreach (T t in DataBase.RequestList<T>())
@@ -402,19 +423,8 @@ namespace ConsoleUI
             foreach (Station s in DataBase.GetAvailableStations())
                 Console.WriteLine(s);
         }
-        static void GetDistanceFrom<T>() where T:struct
-        {
-            Console.WriteLine("enter longitude, latitude and" + typeof(T).Name + "id");
-            Console.WriteLine("The distance is: {0} km",
-                DataBase.GetDistanceFrom<T>(
-                    new Location()
-                    {
-                        Longitude = InputDouble(),
-                        Latitude = InputDouble()
-                    },
-                    InputInt()));
-        }
-    }
 
+    }
+    #endregion RequestListMethods
 }
 

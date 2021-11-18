@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using IBL.BO;
 namespace IBL
 {
-    interface IBL
+    public interface IBL
     {
         public void Create<T>(T t) where T : class;
         public T Request<T>(int id) where T : class;
