@@ -82,12 +82,41 @@ namespace IBL.BO
         #endregion Create
         public void Deliver(int id)
         {
-            throw new NotImplementedException();
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.ParcelId != 0)
+            {
+                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue)
+                {
+                    //battery
+                    p.Delivered = DateTime.Now;
+                    var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
+                    d.Location.Latitude = c.location.Latitude;
+                    d.Location.Longitude = c.location.Longitude;
+                    d.Status = DroneStatuses.Available;
+                }
+
+            }
+            //throw cant pick up?();
         }
 
         public void PickUp(int id)
         {
-            throw new NotImplementedException();
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.ParcelId != 0)
+            {
+                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                if (p.PickedUp == DateTime.MinValue)
+                {
+                    //battery
+                    p.PickedUp = DateTime.Now;
+                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    d.Location.Latitude = c.location.Latitude;
+                    d.Location.Longitude = c.location.Longitude;
+                }
+
+            }
+            //throw cant pick up?();
         }
 
         public void ReleaseDrone(int id, double t)
@@ -150,7 +179,7 @@ namespace IBL.BO
         }
         #endregion Request
 
-        public void SendDroneToCharge(int id)
+        public void SendDroneToCharge(int id, int stationID = 0)
         {
             throw new NotImplementedException();
         }
@@ -159,5 +188,28 @@ namespace IBL.BO
         {
             throw new NotImplementedException();
         }
+        public bool isDroneAssigned(DroneToList d)
+        {
+            var p = dal.RequestList<IDAL.DO.Parcel>();
+            for(int i = 0; i < p.Count(); i++)
+            {
+                if(p.ElementAt(i).DroneId == d.Id) // if the drone is assigned to a parcel
+                {
+                    if (p.ElementAt(i).Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
+                    {
+                        d.ParcelId = p.ElementAt(i).Id;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public Location ClosestStation(DroneToList d)
+        {
+
+        }
+
+
     }
 }

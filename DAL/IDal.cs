@@ -17,6 +17,7 @@ namespace IDAL
         void DeliverParcel(int ParcelId);
         void PickUpParcel(int ParcelId);
         void ReleaseDrone(int DroneId);
+        int[] Receivers();
 
     }
 }

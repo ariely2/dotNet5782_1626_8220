@@ -37,28 +37,43 @@ namespace IBL.BO
                     Model = d.Model,
                     MaxWeight = (BO.WeightCategories)d.MaxWeight
                 });
-                //if(....)
-                //{
-                //    drones.Last().Status = DroneStatuses.Delivery;
-                //    if(p.Status = ParcelStatuses.Assigned)
-                //        drones.Last().Location = ClosestStation();
-                //    else
-                //        drones.Last().Location = p.Sender.location;
-                //    //battery
-                //}
-                //else
-                //{
-                //    drones.Last().Status = (DroneStatuses)r.Next(0, 2);
-                //    if(drones.Last().Status == DroneStatuses.Maintenance)
-                //    {
-                //        //location
-                //        drones.Last().Battery = r.Next(0, 21);
-                //    }
-                //    else // if the drone's status is "Available"
-                //    {
-                            //location
-                            //battery
-                //    }
+                DroneToList Current = drones.Last();
+                if (isDroneAssigned(Current))
+                {
+                    Current.Status = DroneStatuses.Delivery;
+                    var p = dal.Request<IDAL.DO.Parcel>(Current.ParcelId); //the parcel assigned to the current drone
+                    if (p.PickedUp == DateTime.MinValue)
+                        Current.Location = ClosestStation(Current);
+                    else
+                    {
+                        var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                        Current.Location.Latitude = c.location.Latitude;
+                        Current.Location.Longitude = c.location.Longitude;
+                        //battery
+
+                    }
+                }
+                else
+                {
+                    Current.Status = (DroneStatuses)r.Next(0, 2);
+                    if (Current.Status == DroneStatuses.Maintenance)
+                    {
+                        var Stations = dal.GetAvailableStations(); // we need an availble station to charge the drone
+                        var l = Stations.ElementAt(r.Next(0, Stations.Count())); //getting random station 
+                        Current.Location.Latitude = l.location.Latitude;
+                        Current.Location.Longitude = l.location.Longitude;
+                        Current.Battery = r.Next(0, 21);
+                        SendDroneToCharge(Current.Id, l.Id);
+                    }
+                    else // if the drone's status is "Available"
+                    {
+                        var p = dal.Receivers();
+                        int i = r.Next(0, p.Length);
+                        var receiver = dal.Request<IDAL.DO.Customer>(p[i]);
+                        Current.Location.Latitude = receiver.location.Latitude;
+                        Current.Location.Longitude = receiver.location.Longitude;
+                        //battery
+                    }
                 }
             }
         }
