@@ -22,7 +22,7 @@ namespace IBL.BO
                    $"Location:          {location}\n" +
                    $"ChargeSlots:       {AvailableSlots}\n" +
                    "Charging Drones:    " + string.Join("\n\t\t\t\t\t ", (IEnumerable<DroneCharge>)Charging.ToArray());
-                       
+            
             }
         }
 }

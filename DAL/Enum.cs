@@ -64,19 +64,12 @@ namespace IDAL
             Fast,
             Emergency
         }
-        /*public enum DroneStatuses
-        {
-            Available,
-            Maintenance,
-            Assigned,
-            Delivery
-        }*/
         public enum Add 
         { 
-            AddStation = 1,
-            AddDrone,
-            AddCustomer,
-            AddParcel
+            Station = 1,
+            Drone,
+            Customer,
+            Parcel
         }
         public enum Update 
         { 
@@ -86,30 +79,30 @@ namespace IDAL
             SendDroneToCharge,
             ReleaseDrone
         }
-        public enum Display 
+        public enum Request 
         { 
-            DisplayStation = 1,
-            DisplayDrone,
-            DisplayCustomer,
-            DisplayParcel,
+            Station = 1,
+            Drone,
+            Customer,
+            Parcel,
             DistanceFromStation,
             DistanceFromCustomer
         }
-        public enum DisplayList
+        public enum RequestList
         {
-            DisplayStations = 1,
-            DisplayDrones,
-            DisplayCustomers,
-            DisplayParcels,
-            DisplayUnassignParcles,
-            DisplayAvailableStations
+            Stations = 1,
+            Drones,
+            Customers,
+            Parcels,
+            UnassignParcles,
+            AvailableStations
         }
         public enum Option
         {
             Add = 1,
             Update,
-            Display,
-            DisplayList,
+            Request,
+            RequestList,
             Exit
         }
     }

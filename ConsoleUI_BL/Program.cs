@@ -61,8 +61,8 @@ namespace ConsoleUI_BL
             Console.WriteLine(@"choose an option between 1 to 5:
 1)Add
 2)Update
-3)Display
-4)Display list
+3)Request
+4)Request list
 5)exit");
         }
         /// <summary>
@@ -92,13 +92,13 @@ namespace ConsoleUI_BL
         /// <summary>
         /// print display option
         /// </summary>
-        static void PrintDisplayOption()
+        static void PrintRequestOption()
         {
             Console.WriteLine(@"choose an option between 1 to 4:
-1)Display station
-2)Display drone
-3)Display customer
-4)Display parcel
+1)Request station
+2)Request drone
+3)Request customer
+4)Request parcel
 5)Distance from station
 6)Distance from customer"
 );
@@ -107,15 +107,15 @@ namespace ConsoleUI_BL
         /// <summary>
         /// print display list option
         /// </summary>
-        static void PrintDisplayListOption()
+        static void PrintRequestListOption()
         {
             Console.WriteLine(@"choose an option between 1 to 6:
-1)Display stations list
-2)Display Drones list
-3)Display customers list
-4)Display parcels list
-5)Display parcels list that aren't associated with a drone
-6)Display stations list with avaliable charging spots");
+1)Request stations list
+2)Request Drones list
+3)Request customers list
+4)Request parcels list
+5)Request parcels list that aren't associated with a drone
+6)Request stations list with avaliable charging spots");
         }
 
 
@@ -141,11 +141,11 @@ namespace ConsoleUI_BL
                     case ((int)Option.Update):
                         SwitchUpdateOption();
                         break;
-                    case ((int)Option.Display):
-                        SwitchDisplayOption();
+                    case ((int)Option.Request):
+                        SwitchRequestOption();
                         break;
-                    case ((int)Option.DisplayList):
-                        SwitchDisplayListOption();
+                    case ((int)Option.RequestList):
+                        SwitchRequestListOption();
                         break;
                     case ((int)Option.Exit):
                         break;
@@ -166,7 +166,7 @@ namespace ConsoleUI_BL
             switch (option)
             {
 
-                case ((int)Add.AddStation):
+                case ((int)Add.Station):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfChargeSlots, Longitude and Latitude");
                     try
@@ -189,15 +189,16 @@ namespace ConsoleUI_BL
                     }
                     break;
 
-                case ((int)Add.AddDrone):
+                case ((int)Add.Drone):
                     Console.WriteLine("Enter Id, Model, Max Weight, Initial Station");
                     try {
                         BL.Create<Drone>(new Drone()
                         {
                             Id = InputInt(),
                             MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-
-                        });
+                            Model = Console.ReadLine(),
+                            Location = Request<Station>(InputInt)
+                        }) ;
                             }
                     catch (Exception ex)
                     {
@@ -205,7 +206,7 @@ namespace ConsoleUI_BL
                     }
                     break;
 
-                case ((int)Add.AddCustomer):
+                case ((int)Add.Customer):
                     Console.WriteLine("Enter Id, Name, Phone, Longitude and Latitude");
                     try
                     {
@@ -228,7 +229,7 @@ namespace ConsoleUI_BL
 
                     break;
 
-                case ((int)Add.AddParcel):
+                case ((int)Add.Parcel):
                     Console.WriteLine("Enter Sender Id, Receiver Id, Weight, Priority");
                     try
                     {
@@ -237,6 +238,7 @@ namespace ConsoleUI_BL
                             
                         });
                     }
+                    //wouldn't be exception,the user doesn't choose the id
                     catch (Exception ex)
                     {
                         throw new ExistObjectIdException("????????????", ex); 
@@ -273,7 +275,12 @@ namespace ConsoleUI_BL
                    
                     break;
                 case ((int)Update.ReleaseDrone):
-                   
+                    break;
+                case ((int)Update.DroneData):
+                    break;
+                case ((int) Update.StationData):
+                    break;
+                case ((int)Update.CustomerData):
                     break;
             }
         }
@@ -284,67 +291,71 @@ namespace ConsoleUI_BL
         /// <summary>
         /// switch about display option
         /// </summary>
-        static void SwitchDisplayOption()
+        static void SwitchRequestOption()
         {
-            PrintDisplayOption();
+            PrintRequestOption();
             int option = InputInt();
+            
             Console.Clear();
             switch (option)
             {
-                case ((int)Display.DisplayStation):
-                   
-                    break;
-                case ((int)Display.DisplayDrone):
-                    
-                    break;
-                case ((int)Display.DisplayCustomer):
-                    
-                    break;
-                case ((int)Display.DisplayParcel):
-                    
-                    break;
-                case ((int)Display.DistanceFromStation):
-                    
-                    break;
-                case ((int)Display.DistanceFromCustomer):
-                    
-                    break;
+                case ((int)Request.Station):
 
+                    break;
+                case ((int)Request.Drone):
+
+                    break;
+                case ((int)Request.Customer):
+
+                    break;
+                case ((int)Request.Parcel):
+
+                    break;
             }
         }
-
 
         /// <summary>
         /// switch display list option
         /// </summary>
-        static void SwitchDisplayListOption()
+        static void SwitchRequestListOption()
         {
-            PrintDisplayListOption();
+            PrintRequestListOption();
             int option = InputInt();
 
             Console.Clear();
             switch (option)
             {
-                case ((int)DisplayList.DisplayStations):
-                    
+                case ((int)EnumRequestList.Stations):
+                    RequestList<StationToList>();
                     break;
-                case ((int)DisplayList.DisplayDrones):
-                    
+                case ((int)EnumRequestList.Drones):
+                    RequestList<DroneToList>();
                     break;
-                case ((int)DisplayList.DisplayCustomers):
-                   
+                case ((int)EnumRequestList.Customers):
+                    RequestList<CustomerToList>();
                     break;
-                case ((int)DisplayList.DisplayParcels):
-                    
+                case ((int)EnumRequestList.Parcels):
+                    RequestList<ParcelToList>();
                     break;
-                case ((int)DisplayList.DisplayUnassignParcles):
-                    
+                case ((int)EnumRequestList.UnassignParcles):
+                    RequestUnassignParcel();
                     break;
-                case ((int)DisplayList.DisplayAvailableStations):
-                   
+                case ((int)EnumRequestList.AvailableStations):
+                    RequestAvailbleStation();
                     break;
+
             }
         }
         #endregion Switches
+        #region RequestMethod
+        static void RequestList<T>()where T:class
+        {
+            foreach( T t in BL.RequestList<T>())
+            {
+                Console.WriteLine(t);
+            }
+        }
+
+        #endregion RequestMethod
     }
 }

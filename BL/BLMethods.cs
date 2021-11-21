@@ -48,12 +48,22 @@ namespace IBL.BO
                         });
                         break;
                     case Drone d:
+                        Random r = new Random();
+                        drones.Add(new DroneToList()
+                        {
+                            Id = d.Id,
+                            Battery = r.NextDouble()*20+20,//nubmer between 20 to 40, need to remove digit,
+                            Location = d.Location,
+                            MaxWeight = d.MaxWeight,
+                            Model = d.Model,
+                            Status = DroneStatuses.Maintenance,
+                            ParcelId = 0
+                        });
                         dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone() //might need to also add drone to BL drone list
                         {
                             Id = d.Id,
                             Model = d.Model,
                             MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight, //is this ok?
-                            
                         });
                         break;
                     case Parcel p:
@@ -134,13 +144,40 @@ namespace IBL.BO
                 switch (typeof(T).Name)
                 {
                     case nameof(Station): //does this turn T to IDAL.DO.T type? if so, manually create BO.T and assign from dal.Request
-                        ans = (T)Convert.ChangeType(dal.Request<IDAL.DO.Station>(id), typeof(T)); //add manually drone list?
+                        IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
+                        ans = (T)Convert.ChangeType(new Station()
+                        {
+                            AvailableSlots = s.ChargeSlots,
+                            Id = s.Id,
+                            location = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude },
+                            Name = s.Name,
+                            Charging = drones.FindAll(d=>d.Location.Latitude == s.location.Latitude && d.Location.Longitude == s.location.Longitude).Select(d=>new DroneCharge() {Id = d.Id, Battery = d.Battery }).ToList()
+                        }, typeof(T));
                         break;
                     case nameof(Customer):
-                        ans = (T)Convert.ChangeType(dal.Request<IDAL.DO.Customer>(id), typeof(T));
+                        IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id);
+                        ans = (T)Convert.ChangeType(new Customer()
+                        {
+                            Id = c.Id,
+                            location = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude },
+                            Name = c.Name,
+                            Phone = c.Phone,
+                            To =   RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList(),
+                            From = RequestList<Parcel>().ToList().FindAll(p=> p.Sender.Id == c.Id).Select(p=> new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name}, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList()
+                        }, typeof(T));
                         break;
                     case nameof(Drone):
-                        ans = (T)Convert.ChangeType(dal.Request<IDAL.DO.Drone>(id), typeof(T)); //search in drone list instead
+                        DroneToList d = drones.Find(b => b.Id == id);
+                        ans = (T)Convert.ChangeType(new Drone()
+                        {
+                            Id = d.Id,
+                            Battery = d.Battery,
+                            Location = d.Location,
+                            MaxWeight = d.MaxWeight,
+                            Model = d.Model,
+                            Parcel = null,//need to add parceldeliver
+                            Status = d.Status
+                        }, typeof(T));
                         break;
                     case nameof(Parcel):
                         ans = (T)Convert.ChangeType(dal.Request<IDAL.DO.Parcel>(id), typeof(T));
@@ -163,14 +200,40 @@ namespace IBL.BO
         {
             switch (typeof(T).Name)
             {
-                case nameof(Station):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>();
-                case nameof(Customer):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>();
-                case nameof(Drone):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Drone>();
-                case nameof(Parcel):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>();
+                case nameof(StationToList):
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>().Select(s => new StationToList()
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        Available = 0,//?,
+                        Occupied = 0//?
+                    });
+
+                case nameof(CustomerToList):
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>().Select(c => new CustomerToList()
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Phone = c.Phone,
+                        Delivered = 0,
+                        NoDelivered = 0,
+                        NoReceived = 0,
+                        Received = 0
+                    });
+
+                case nameof(DroneToList):
+                    return (IEnumerable<T>)drones;
+                case nameof(ParcelToList):
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>().Select(p => new ParcelToList
+                    {
+                        Id = p.Id,
+                        Priority = (Priorities)Enum.Parse(typeof(Priorities),p.Priority.ToString()),
+                        ReceiverName = Request<Customer>(p.TargetId).Name,
+                        SenderName = Request<Customer>(p.SenderId).Name,
+                        Status = p.Delivered==DateTime.MinValue?(p.PickedUp==DateTime.MinValue? (p.Scheduled==DateTime.MinValue?ParcelStatuses.Created:ParcelStatuses.Assigned):ParcelStatuses.PickedUp):ParcelStatuses.Delivered,
+                        Weight = (WeightCategories)Enum.Parse(typeof(Priorities),p.Weight.ToString()),
+                        
+                    }) ;
                 default:
                     throw new NotExistClass("requested class doesn't exist\n");
             }

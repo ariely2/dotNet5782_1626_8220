@@ -20,7 +20,6 @@ namespace IBL
                 return (T)v.GetValue(random.Next(v.Length));
             }
 
-
             /// <summary>
             /// get an enum type from user,
             /// and check if the input is valid and exist in T
@@ -74,10 +73,10 @@ namespace IBL
         }
         public enum Add
         {
-            AddStation = 1,
-            AddDrone,
-            AddCustomer,
-            AddParcel
+            Station = 1,
+            Drone,
+            Customer,
+            Parcel
         }
         public enum Update
         {
@@ -85,32 +84,35 @@ namespace IBL
             PickUpParcel,
             DeliverParcel,
             SendDroneToCharge,
-            ReleaseDrone
+            ReleaseDrone,
+            DroneData,
+            StationData,
+            CustomerData
         }
-        public enum Display
+        public enum Request
         {
-            DisplayStation = 1,
-            DisplayDrone,
-            DisplayCustomer,
-            DisplayParcel,
+            Station = 1,
+            Drone,
+            Customer,
+            Parcel,
             DistanceFromStation,
             DistanceFromCustomer
         }
-        public enum DisplayList
+        public enum EnumRequestList
         {
-            DisplayStations = 1,
-            DisplayDrones,
-            DisplayCustomers,
-            DisplayParcels,
-            DisplayUnassignParcles,
-            DisplayAvailableStations
+            Stations = 1,
+            Drones,
+            Customers,
+            Parcels,
+            UnassignParcles,
+            AvailableStations
         }
         public enum Option
         {
             Add = 1,
             Update,
-            Display,
-            DisplayList,
+            Request,
+            RequestList,
             Exit
         }
     }

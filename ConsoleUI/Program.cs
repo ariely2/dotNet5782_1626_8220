@@ -142,10 +142,10 @@ namespace ConsoleUI
                     case ((int)Option.Update):
                         SwitchUpdateOption();
                         break;
-                    case ((int)Option.Display):
+                    case ((int)Option.Request):
                         SwitchDisplayOption();
                         break;
-                    case ((int)Option.DisplayList):
+                    case ((int)Option.RequestList):
                         SwitchDisplayListOption();
                         break;
                     case ((int)Option.Exit):
@@ -167,7 +167,7 @@ namespace ConsoleUI
             switch (option)
             {
 
-                case ((int)Add.AddStation):
+                case ((int)Add.Station):
 
                     Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
                     DataBase.Create<Station>(new Station()
@@ -183,7 +183,7 @@ namespace ConsoleUI
                     });
                     break;
 
-                case ((int)Add.AddDrone):
+                case ((int)Add.Drone):
                     Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
                     DataBase.Create<Drone>(new Drone()
                     {
@@ -195,7 +195,7 @@ namespace ConsoleUI
                     });
                     break;
 
-                case ((int)Add.AddCustomer):
+                case ((int)Add.Customer):
                     Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
                     DataBase.Create<Customer>(new Customer()
                     {
@@ -210,7 +210,7 @@ namespace ConsoleUI
                     });
                     break;
 
-                case ((int)Add.AddParcel):
+                case ((int)Add.Parcel):
                     Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
                     DataBase.Create<Parcel>(new Parcel()
                     {
@@ -274,22 +274,22 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case ((int)Display.DisplayStation):
+                case ((int)IDAL.DO.Request.Station):
                     Request<Station>();
                     break;
-                case ((int)Display.DisplayDrone):
+                case ((int)IDAL.DO.Request.Drone):
                     Request<Drone>();
                     break;
-                case ((int)Display.DisplayCustomer):
+                case ((int)IDAL.DO.Request.Customer):
                     Request<Customer>();
                     break;
-                case ((int)Display.DisplayParcel):
+                case ((int)IDAL.DO.Request.Parcel):
                     Request<Parcel>();
                     break;
-                case ((int)Display.DistanceFromStation):
+                case ((int)IDAL.DO.Request.DistanceFromStation):
                     GetDistanceFrom<Station>();
                     break;
-                case ((int)Display.DistanceFromCustomer):
+                case ((int)IDAL.DO.Request.DistanceFromCustomer):
                     GetDistanceFrom<Customer>();
                     break;
 
@@ -308,22 +308,22 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case ((int)DisplayList.DisplayStations):
+                case ((int)IDAL.DO.RequestList.Stations):
                     RequestList<Station>();
                     break;
-                case ((int)DisplayList.DisplayDrones):
+                case ((int)IDAL.DO.RequestList.Drones):
                     RequestList<Drone>();
                     break;
-                case ((int)DisplayList.DisplayCustomers):
+                case ((int)IDAL.DO.RequestList.Customers):
                     RequestList<Customer>();
                     break;
-                case ((int)DisplayList.DisplayParcels):
+                case ((int)IDAL.DO.RequestList.Parcels):
                     RequestList<Parcel>();
                     break;
-                case ((int)DisplayList.DisplayUnassignParcles):
+                case ((int)IDAL.DO.RequestList.UnassignParcles):
                     DisplayUnassignedParcels();
                     break;
-                case ((int)DisplayList.DisplayAvailableStations):
+                case ((int)IDAL.DO.RequestList.AvailableStations):
                     DisplayAvailableStations();
                     break;
             }
