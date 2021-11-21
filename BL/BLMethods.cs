@@ -98,9 +98,11 @@ namespace IBL.BO
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue)
                 {
-                    //battery
-                    p.Delivered = DateTime.Now;
+                    var s = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude };
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
                     var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
+                    p.Delivered = DateTime.Now;
                     d.Location.Latitude = c.location.Latitude;
                     d.Location.Longitude = c.location.Longitude;
                     d.Status = DroneStatuses.Available;
@@ -118,9 +120,12 @@ namespace IBL.BO
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 if (p.PickedUp == DateTime.MinValue)
                 {
+
                     //battery
                     p.PickedUp = DateTime.Now;
                     var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
                     d.Location.Latitude = c.location.Latitude;
                     d.Location.Longitude = c.location.Longitude;
                 }
@@ -268,11 +273,47 @@ namespace IBL.BO
             return false;
         }
 
-        public Location ClosestStation(DroneToList d)
+        public Location ClosestStation(Location d)
         {
-
+            //var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId); //the parcel assigned to the current drone
+            var s = dal.RequestList<IDAL.DO.Station>();
+            //var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+            List<Station> stations = new List<Station>();
+            foreach(var b in s)
+            {
+                stations.Add(new Station()
+                {
+                    location = new Location()
+                    {
+                        Latitude = b.location.Latitude,
+                        Longitude = b.location.Longitude
+                    }
+                });
+            }
+            double distance = Location.distance(stations.First().location, d);
+            int id = stations.First().Id;
+            foreach (var b in stations)
+            {
+                if (Location.distance(b.location, d) < distance)
+                {
+                    distance = Location.distance(b.location, d);
+                    id = b.Id;
+                }
+            }
+            IDAL.DO.Location loc = dal.Request<IDAL.DO.Customer>(id).location;
+            return new Location() { Latitude = loc.Latitude, Longitude = loc.Longitude };
         }
 
-
+        public double MinBattery(double distance, int id)
+        {
+            DroneToList d = drones.Find(x => x.Id == id);
+            if(d.Status == DroneStatuses.Available)
+                return info[0] * distance;
+            else
+            {
+                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                return info[((int)p.Weight) + 1] * distance;
+            }
+        }
     }
 }
