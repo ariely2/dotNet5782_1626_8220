@@ -88,9 +88,11 @@ namespace IBL.BO
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue)
                 {
-                    //battery
-                    p.Delivered = DateTime.Now;
+                    var s = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude };
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
                     var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
+                    p.Delivered = DateTime.Now;
                     d.Location.Latitude = c.location.Latitude;
                     d.Location.Longitude = c.location.Longitude;
                     d.Status = DroneStatuses.Available;
@@ -108,9 +110,12 @@ namespace IBL.BO
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 if (p.PickedUp == DateTime.MinValue)
                 {
+
                     //battery
                     p.PickedUp = DateTime.Now;
                     var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
                     d.Location.Latitude = c.location.Latitude;
                     d.Location.Longitude = c.location.Longitude;
                 }
@@ -239,14 +244,13 @@ namespace IBL.BO
         public double MinBattery(double distance, int id)
         {
             DroneToList d = drones.Find(x => x.Id == id);
-            if(d.Status == DroneStatuses.Delivery)
+            if(d.Status == DroneStatuses.Available)
+                return info[0] * distance;
+            else
             {
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 return info[((int)p.Weight) + 1] * distance;
             }
-            else
-                return info[0] * distance;
         }
-
     }
 }
