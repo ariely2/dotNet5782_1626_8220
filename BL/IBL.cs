@@ -12,13 +12,14 @@ namespace IBL
         public T Request<T>(int id) where T : class;
         public IEnumerable<T> RequestList<T>() where T : class;
         public void Update<T>(int id, T t) where T : class;
-        public void SendDroneToCharge(Drone d); //dronetolist or drone?
-        public void ReleaseDrone(Drone d, double t);
-        public void AssignDrone(Drone d);
-        public void PickUp(Drone d);
-        public void Deliver(Drone d);
+        public void SendDroneToCharge(int d); //dronetolist or drone?
+        public void ReleaseDrone(int d, double t);
+        public void AssignDrone(int id);
+        public void PickUp(int id);
+        public void Deliver(int id);
         public bool isDroneAssigned(DroneToList d);
 
         public Location ClosestStation(DroneToList d);
+        public double MinBattery(double distance, int id);
     }
 }

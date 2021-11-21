@@ -19,10 +19,11 @@ namespace IBL.BO
         public double HeavyUse;
         public double ChargeRate;
         public static Random r = new Random();
+        public double[] info;
         public BL() 
         { 
             dal = new DalObject();
-            double[] info = dal.GetBatteryUsageInfo();
+            info = dal.GetBatteryUsageInfo();
             AvailableUse = info[0];
             LightUse = info[1];
             MediumUse = info[2];
@@ -42,16 +43,23 @@ namespace IBL.BO
                 {
                     Current.Status = DroneStatuses.Delivery;
                     var p = dal.Request<IDAL.DO.Parcel>(Current.ParcelId); //the parcel assigned to the current drone
+                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    var t = dal.Request<IDAL.DO.Customer>(p.TargetId);
                     if (p.PickedUp == DateTime.MinValue)
-                        Current.Location = ClosestStation(Current);
+                    {
+                        Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
+                        Current.Location = ClosestStation(t);
+                    }
                     else
                     {
-                        var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
                         Current.Location.Latitude = c.location.Latitude;
                         Current.Location.Longitude = c.location.Longitude;
-                        //battery
-
                     }
+                    Location target = new Location() { Latitude = t.location.Latitude, Longitude = t.location.Longitude };
+                    double distance = Location.distance(Current.Location, target);
+                    distance += Location.distance(target, ClosestStation(target));
+                    double b = MinBattery(distance, Current.Id);
+                    Current.Battery = r.NextDouble() * (100 - b) + b;
                 }
                 else
                 {
@@ -72,7 +80,8 @@ namespace IBL.BO
                         var receiver = dal.Request<IDAL.DO.Customer>(p[i]);
                         Current.Location.Latitude = receiver.location.Latitude;
                         Current.Location.Longitude = receiver.location.Longitude;
-                        //battery
+                        double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
+                        Current.Battery = r.NextDouble() * (100 - b) + b;
                     }
                 }
             }
