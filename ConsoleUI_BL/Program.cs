@@ -185,7 +185,7 @@ namespace ConsoleUI_BL
                     }
                     catch (Exception ex)
                     {
-                        throw new ExistObjectIdException("Station id exists", ex);
+                        throw new IdExistException("Station id exists", ex);
                     }
                     break;
 
@@ -202,7 +202,7 @@ namespace ConsoleUI_BL
                             }
                     catch (Exception ex)
                     {
-                        throw new ExistObjectIdException("Drone id exists", ex);
+                        throw new IdExistException("Drone id exists", ex);
                     }
                     break;
 
@@ -224,7 +224,7 @@ namespace ConsoleUI_BL
                     }
                     catch (Exception ex)
                     {
-                        throw new ExistObjectIdException("Customer id exists", ex);
+                        throw new IdExistException("Customer id exists", ex);
                     }
 
                     break;
@@ -241,7 +241,7 @@ namespace ConsoleUI_BL
                     //wouldn't be exception,the user doesn't choose the id
                     catch (Exception ex)
                     {
-                        throw new ExistObjectIdException("????????????", ex); 
+                        throw new IdExistException("????????????", ex); 
                     }
                     break;
                 default:

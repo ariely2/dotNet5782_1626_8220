@@ -12,7 +12,7 @@ namespace IBL.BO
         {
             //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
             DroneToList d = drones.Find(x => x.Id == id);
-           if(d.Status == DroneStatuses.Available)
+            if (d.Status == DroneStatuses.Available)
             {
                 var p = dal.RequestList<IDAL.DO.Parcel>();
                 List<IDAL.DO.Parcel> parcels = p.ToList();
@@ -41,7 +41,7 @@ namespace IBL.BO
                     candidates.Add(new ParcelDeliver() { Id = i.Id, Source = senders.Last().location }); //list of parcels with location of sender
                 }
                 candidates.OrderByDescending(x => Location.distance(d.Location, x.Source)); //sorting by distance between drone and sender
-                if(candidates.Count()!=0)
+                if (candidates.Count() != 0)
                 {
                     //check battery thing!
                     d.Status = DroneStatuses.Delivery; //what about parcelid?
@@ -49,7 +49,7 @@ namespace IBL.BO
                     selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
                     selected.Scheduled = DateTime.Now;
                 }
-               // var best = parcels.OrderByDescending(x => Location.distance(d.Location, new Location() { Latitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Latitude, Longitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Longitude })).First();
+                // var best = parcels.OrderByDescending(x => Location.distance(d.Location, new Location() { Latitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Latitude, Longitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Longitude })).First();
             }
             // else
             //throw something
@@ -93,7 +93,7 @@ namespace IBL.BO
                         drones.Add(new DroneToList()
                         {
                             Id = d.Id,
-                            Battery = r.NextDouble()*20+20,//nubmer between 20 to 40, need to remove digit,
+                            Battery = r.NextDouble() * 20 + 20,//nubmer between 20 to 40, need to remove digit,
                             Location = d.Location,
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
@@ -110,7 +110,7 @@ namespace IBL.BO
                     case Parcel p:
                         dal.Create<IDAL.DO.Parcel>(new IDAL.DO.Parcel()
                         {
-                            Id =p.Id,
+                            Id = p.Id,
                             SenderId = p.Sender.Id,
                             TargetId = p.Receiver.Id,
                             Weight = (IDAL.DO.WeightCategories)p.Weight,
@@ -122,7 +122,7 @@ namespace IBL.BO
                         });
                         break;
                     default:
-                        throw new NotExistClass("Class doesn't exist\n");
+                        throw new NotExistClassException("Class doesn't exist\n");
                 }
             }
             catch
@@ -182,66 +182,87 @@ namespace IBL.BO
 
 
         #region Request
+        //need to make the code look better
         public T Request<T>(int id) where T : class
         {
             T ans = default(T);
-            try
+            switch (typeof(T).Name)
             {
-                switch (typeof(T).Name)
-                {
-                    case nameof(Station): //does this turn T to IDAL.DO.T type? if so, manually create BO.T and assign from dal.Request
-                        IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
-                        ans = (T)Convert.ChangeType(new Station()
+                case nameof(Station): //does this turn T to IDAL.DO.T type? if so, manually create BO.T and assign from dal.Request
+                    IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
+                    ans = (T)Convert.ChangeType(new Station()
+                    {
+                        AvailableSlots = s.ChargeSlots,
+                        Id = s.Id,
+                        location = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude },
+                        Name = s.Name,
+                        Charging = drones.FindAll(d => d.Location.Equals(s.location)).Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
+                    }, typeof(T));
+                    break;
+                case nameof(Customer):
+                    IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id);
+                    ans = (T)Convert.ChangeType(new Customer()
+                    {
+                        Id = c.Id,
+                        location = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude },
+                        Name = c.Name,
+                        Phone = c.Phone,
+                        To = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList(),
+                        From = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList()
+                    }, typeof(T));
+                    break;
+                case nameof(Drone):
+                    DroneToList d = drones.Find(b => b.Id == id);
+                    Parcel p = Request<Parcel>(d.ParcelId);
+                    ans = (T)Convert.ChangeType(new Drone()
+                    {
+                        Id = d.Id,
+                        Battery = d.Battery,
+                        Location = d.Location,
+                        MaxWeight = d.MaxWeight,
+                        Model = d.Model,
+                        //check if the drone status is delivery
+                        Parcel = d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
                         {
-                            AvailableSlots = s.ChargeSlots,
-                            Id = s.Id,
-                            location = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude },
-                            Name = s.Name,
-                            Charging = drones.FindAll(d=>d.Location.Latitude == s.location.Latitude && d.Location.Longitude == s.location.Longitude).Select(d=>new DroneCharge() {Id = d.Id, Battery = d.Battery }).ToList()
-                        }, typeof(T));
-                        break;
-                    case nameof(Customer):
-                        IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id);
-                        ans = (T)Convert.ChangeType(new Customer()
-                        {
-                            Id = c.Id,
-                            location = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude },
-                            Name = c.Name,
-                            Phone = c.Phone,
-                            To =   RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList(),
-                            From = RequestList<Parcel>().ToList().FindAll(p=> p.Sender.Id == c.Id).Select(p=> new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name}, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList()
-                        }, typeof(T));
-                        break;
-                    case nameof(Drone):
-                        DroneToList d = drones.Find(b => b.Id == id);
-                        ans = (T)Convert.ChangeType(new Drone()
-                        {
-                            Id = d.Id,
-                            Battery = d.Battery,
-                            Location = d.Location,
-                            MaxWeight = d.MaxWeight,
-                            Model = d.Model,
-                            Parcel = null,//need to add parceldeliver
-                            Status = d.Status
-                        }, typeof(T));
-                        break;
-                    case nameof(Parcel):
-                        ans = (T)Convert.ChangeType(dal.Request<IDAL.DO.Parcel>(id), typeof(T));
-                        break;
-                    default:
-                        throw new NotExistClass("struct doesn't exist\n");
-                }
-                if (ans.Equals(default(T)))
-                    throw new NotExistId("id doesn't exist\n");
+                            Id = d.ParcelId,
+                            Priority = p.Priority,
+                            Receiver = p.Receiver,
+                            Sender = p.Sender,
+                            Status = p.Delivered != DateTime.MinValue,
+                            Destination = Request<Customer>(p.Receiver.Id).location,
+                            Source = Request<Customer>(p.Sender.Id).location,
+                            Weight = p.Weight,
+                            Distance = Location.distance(Request<Customer>(p.Receiver.Id).location, Request<Customer>(p.Sender.Id).location)
+                        }:null,
+                        Status = d.Status
+                    }, typeof(T));
+                    break;
+                case nameof(Parcel):
+                    IDAL.DO.Parcel pi = dal.Request<IDAL.DO.Parcel>(id);
+                    DroneToList a = drones.Find(d => d.Id == pi.DroneId);
+                    ans = (T)Convert.ChangeType(new Parcel()
+                    {
+                        Id = pi.Id,
+                        Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
+                        Priority = (Priorities)pi.Priority,
+                        Weight = (WeightCategories)pi.Weight,
+                        Receiver = new CustomerParcel() { Id = pi.TargetId, Name = Request<Customer>(pi.TargetId).Name },
+                        Sender = new CustomerParcel() { Id = pi.SenderId, Name = Request<Customer>(pi.SenderId).Name },
+                        Delivered = pi.Delivered,
+                        PickedUp = pi.PickedUp,
+                        Requested = pi.Requested,
+                        Scheduled = pi.Scheduled
+                    }, typeof(T));
+                    break;
+                default:
+                    throw new NotExistClassException("class doesn't exist\n");
             }
-            catch
-            {
-
-            }
-            return ans;//is this ok?
-            // throw new NotImplementedException();
+            if (ans.Equals(default(T)))
+                throw new NotExistIdException("id doesn't exist\n");
+            return ans;
         }
-
+                
+        //need to make the code look better
         public IEnumerable<T> RequestList<T>() where T : class
         {
             switch (typeof(T).Name)
@@ -251,9 +272,9 @@ namespace IBL.BO
                     {
                         Id = s.Id,
                         Name = s.Name,
-                        Available = 0,//?,
-                        Occupied = 0//?
-                    });
+                        Available = s.ChargeSlots,
+                        Occupied = drones.FindAll(d=>d.Status==DroneStatuses.Maintenance&& d.Location.Equals(s.location)).Count()//?
+                    }) ;
 
                 case nameof(CustomerToList):
                     return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>().Select(c => new CustomerToList()
@@ -261,10 +282,10 @@ namespace IBL.BO
                         Id = c.Id,
                         Name = c.Name,
                         Phone = c.Phone,
-                        Delivered = 0,
-                        NoDelivered = 0,
-                        NoReceived = 0,
-                        Received = 0
+                        Delivered = RequestList<Parcel>().ToList().FindAll(p=> p.Sender.Id == c.Id && p.Delivered!=DateTime.MinValue).Count(),
+                        NoDelivered = RequestList<Parcel>().ToList().FindAll(p=>p.Sender.Id == c.Id && p.Delivered == DateTime.MinValue).Count(),
+                        NoReceived = RequestList<Parcel>().ToList().FindAll(p=>p.Receiver.Id == c.Id && p.Delivered != DateTime.MinValue).Count(),
+                        Received = RequestList<Parcel>().ToList().FindAll(p=>p.Receiver.Id == c.Id && p.Delivered == DateTime.MinValue).Count()
                     });
 
                 case nameof(DroneToList):
@@ -281,13 +302,12 @@ namespace IBL.BO
                         
                     }) ;
                 default:
-                    throw new NotExistClass("requested class doesn't exist\n");
+                    throw new NotExistClassException("requested class doesn't exist\n");
             }
-           // return null;
-           // throw new NotImplementedException();
         }
         #endregion Request
 
+        #region Update
         public void SendDroneToCharge(int id, int stationID = 0)
         {
             throw new NotImplementedException();
@@ -356,5 +376,7 @@ namespace IBL.BO
                 return info[((int)p.Weight) + 1] * distance;
             }
         }
+        #endregion Update
     }
+
 }

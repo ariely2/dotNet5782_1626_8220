@@ -12,12 +12,20 @@ namespace IBL
 		{
 			public double Longitude { set; get; }
 			public double Latitude { set; get; }
-
-			/// <summary>
-			/// the function return a string with longitude and latitude in sexagesimal representation
-			/// </summary>
-			/// <returns>string of longitude and latitude</returns>
-			public override string ToString()
+            public override bool Equals(object obj)
+            {
+				if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+				{
+					return false;
+				}
+				Location l = (Location)obj;
+				return this.Latitude == l.Latitude && this.Longitude == l.Longitude;
+            }
+            /// <summary>
+            /// the function return a string with longitude and latitude in sexagesimal representation
+            /// </summary>
+            /// <returns>string of longitude and latitude</returns>
+            public override string ToString()
 			{
 				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" + 
 					   $"Latitude:  {SexagesimalRepresentation(Latitude, false)}\n";
