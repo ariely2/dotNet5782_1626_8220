@@ -10,8 +10,49 @@ namespace IBL.BO
     {
         public void AssignDrone(int id)
         {
-           //Drone d = dal.Request<IDAL.DO.Drone>(id);
-           //if(d.Status == DroneStatuses.Available)
+            //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
+            DroneToList d = drones.Find(x => x.Id == id);
+           if(d.Status == DroneStatuses.Available)
+            {
+                var p = dal.RequestList<IDAL.DO.Parcel>();
+                List<IDAL.DO.Parcel> parcels = p.ToList();
+                int max = parcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
+                parcels.RemoveAll(x => (int)x.Priority != max); //removing parcels that don't have max priority
+                parcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
+                max = parcels.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
+                parcels.RemoveAll(x => (int)x.Weight != max); //removing parcels that don't have max weight
+                List<Customer> senders = new List<Customer>();
+                List<IDAL.DO.Customer> IdalSenders = new List<IDAL.DO.Customer>();
+                List<ParcelDeliver> candidates = new List<ParcelDeliver>();
+
+                foreach (var i in parcels) //making a list with all the senders of the parcels left in the list
+                {
+
+                    IdalSenders.Add(dal.Request<IDAL.DO.Customer>(i.SenderId));
+                    senders.Add(new Customer
+                    {
+                        Id = i.SenderId,
+                        location = new Location()
+                        {
+                            Latitude = IdalSenders.Last().location.Latitude,
+                            Longitude = IdalSenders.Last().location.Longitude
+                        }
+                    });
+                    candidates.Add(new ParcelDeliver() { Id = i.Id, Source = senders.Last().location }); //list of parcels with location of sender
+                }
+                candidates.OrderByDescending(x => Location.distance(d.Location, x.Source)); //sorting by distance between drone and sender
+                if(candidates.Count()!=0)
+                {
+                    //check battery thing!
+                    d.Status = DroneStatuses.Delivery; //what about parcelid?
+                    var selected = dal.Request<IDAL.DO.Parcel>(candidates.Last().Id);
+                    selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
+                    selected.Scheduled = DateTime.Now;
+                }
+               // var best = parcels.OrderByDescending(x => Location.distance(d.Location, new Location() { Latitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Latitude, Longitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Longitude })).First();
+            }
+            // else
+            //throw something
         }
 
         #region Create
