@@ -71,14 +71,14 @@ namespace IBL
             Waiting,
             EnRoute
         }
-        public enum Add
+        public enum EnumAdd
         {
             Station = 1,
             Drone,
             Customer,
             Parcel
         }
-        public enum Update
+        public enum EnumUpdate
         {
             ConnectParceltoDrone = 1,
             PickUpParcel,
@@ -89,7 +89,7 @@ namespace IBL
             StationData,
             CustomerData
         }
-        public enum Request
+        public enum EnumRequest
         {
             Station = 1,
             Drone,
@@ -107,7 +107,7 @@ namespace IBL
             UnassignParcles,
             AvailableStations
         }
-        public enum Option
+        public enum EnumOption
         {
             Add = 1,
             Update,

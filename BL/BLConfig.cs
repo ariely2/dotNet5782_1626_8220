@@ -47,8 +47,7 @@ namespace IBL.BO
                     var t = dal.Request<IDAL.DO.Customer>(p.TargetId);
                     if (p.PickedUp == DateTime.MinValue)
                     {
-                        Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
-                        Current.Location = ClosestStation(t);
+                        Current.Location = ClosestStation(new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude });
                     }
                     else
                     {

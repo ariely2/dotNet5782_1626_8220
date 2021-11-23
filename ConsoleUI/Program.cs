@@ -154,7 +154,7 @@ namespace ConsoleUI
             } while (option != 5);
         }
 
-       
+
 
         /// <summary>
         /// switch about add option
@@ -169,61 +169,19 @@ namespace ConsoleUI
 
                 case ((int)Add.Station):
 
-                    Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-                    DataBase.Create<Station>(new Station()
-                    {
-                        Id = InputInt(),
-                        Name = Console.ReadLine(),
-                        ChargeSlots = InputInt(),
-                        location = new Location()
-                        {
-                            Latitude = InputDouble(),
-                            Longitude = InputDouble()
-                        }
-                    });
+                    AddStation();
                     break;
 
                 case ((int)Add.Drone):
-                    Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-                    DataBase.Create<Drone>(new Drone()
-                    {
-                        Id = InputInt(),
-                        Model = Console.ReadLine(),
-                        MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                        //Battery = InputInt(),
-                        //Status = EnumExtension.InputEnum<DroneStatuses>()
-                    });
+                    AddDrone();
                     break;
 
                 case ((int)Add.Customer):
-                    Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-                    DataBase.Create<Customer>(new Customer()
-                    {
-                        Id = InputInt(),
-                        Name = Console.ReadLine(),
-                        Phone = Console.ReadLine(),
-                        location = new Location()
-                        {
-                            Latitude = InputDouble(),
-                            Longitude = InputDouble()
-                        }
-                    });
+                    AddCustomer();
                     break;
 
                 case ((int)Add.Parcel):
-                    Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-                    DataBase.Create<Parcel>(new Parcel()
-                    {
-                        SenderId = InputInt(),
-                        TargetId = InputInt(),
-                        Weight = EnumExtension.InputEnum<WeightCategories>(),
-                        Priority = EnumExtension.InputEnum<Priorities>(),
-                        DroneId = InputInt(),
-                        Requested = DateTime.Now,
-                        Scheduled = DateTime.MinValue,
-                        Delivered = DateTime.MinValue,
-                        PickedUp = DateTime.MinValue
-                    });
+                    AddParcel();
                     break;
                 default:
                     Console.WriteLine("Invalid input, try again");
@@ -231,8 +189,6 @@ namespace ConsoleUI
 
             }
         }
-
-
         /// <summary>
         /// switch about update option
         /// </summary>
@@ -329,6 +285,71 @@ namespace ConsoleUI
             }
         }
         #endregion Switches
+        #region AddMethod
+        static void AddStation()
+        {
+            Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
+            DataBase.Create<Station>(new Station()
+            {
+                Id = InputInt(),
+                Name = Console.ReadLine(),
+                ChargeSlots = InputInt(),
+                location = new Location()
+                {
+                    Latitude = InputDouble(),
+                    Longitude = InputDouble()
+                }
+            });
+        }
+
+        static void AddDrone()
+        {
+            Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
+            DataBase.Create<Drone>(new Drone()
+            {
+                Id = InputInt(),
+                Model = Console.ReadLine(),
+                MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
+            });
+        }
+
+        static void AddCustomer()
+        {
+            Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
+            DataBase.Create<Customer>(new Customer()
+            {
+                Id = InputInt(),
+                Name = Console.ReadLine(),
+                Phone = Console.ReadLine(),
+                location = new Location()
+                {
+                    Latitude = InputDouble(),
+                    Longitude = InputDouble()
+                }
+            });
+        }
+
+        static void AddParcel()
+        {
+            Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
+            DataBase.Create<Parcel>(new Parcel()
+            {
+                SenderId = InputInt(),
+                TargetId = InputInt(),
+                Weight = EnumExtension.InputEnum<WeightCategories>(),
+                Priority = EnumExtension.InputEnum<Priorities>(),
+                DroneId = InputInt(),
+                Requested = DateTime.Now,
+                Scheduled = DateTime.MinValue,
+                Delivered = DateTime.MinValue,
+                PickedUp = DateTime.MinValue
+            });
+        }
+
+
+
+
+        #endregion AddMethod
         #region UpdateMethods
         /// <summary>
         /// The function receives data from the user,
@@ -423,8 +444,9 @@ namespace ConsoleUI
             foreach (Station s in DataBase.GetAvailableStations())
                 Console.WriteLine(s);
         }
-
     }
-    #endregion RequestListMethods
 }
+
+    #endregion RequestListMethods
+
 

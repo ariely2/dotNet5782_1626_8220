@@ -6,7 +6,7 @@ namespace ConsoleUI_BL
 
     class Program
     {
-        private static IBL.IBL BL = new BL();
+        private static IBL.IBL bl = new BL();
         #region InputMethods
         /// <summary>
         /// the function get an int number from user,
@@ -120,7 +120,7 @@ namespace ConsoleUI_BL
 
 
         #endregion PrintOption
-        #region Switches
+        #region Main
         /// <summary>
         /// main function
         /// </summary>
@@ -135,26 +135,25 @@ namespace ConsoleUI_BL
                 Console.Clear();
                 switch (option)
                 {
-                    case ((int)Option.Add):
+                    case ((int)EnumOption.Add):
                         SwitchAddOption();
                         break;
-                    case ((int)Option.Update):
+                    case ((int)EnumOption.Update):
                         SwitchUpdateOption();
                         break;
-                    case ((int)Option.Request):
+                    case ((int)EnumOption.Request):
                         SwitchRequestOption();
                         break;
-                    case ((int)Option.RequestList):
+                    case ((int)EnumOption.RequestList):
                         SwitchRequestListOption();
                         break;
-                    case ((int)Option.Exit):
+                    case ((int)EnumOption.Exit):
                         break;
                 }
             } while (option != 5);
         }
-
-
-
+        #endregion Main
+        #region Add
         /// <summary>
         /// switch about add option
         /// </summary>
@@ -166,83 +165,18 @@ namespace ConsoleUI_BL
             switch (option)
             {
 
-                case ((int)Add.Station):
-
-                    Console.WriteLine("Enter Id, StationName, NumberOfChargeSlots, Longitude and Latitude");
-                    try
-                    {
-                        BL.Create<Station>(new Station()
-                        {
-                            Id = InputInt(),
-                            Name = Console.ReadLine(),
-                            AvailableSlots = InputInt(),
-                            location = new Location()
-                            {
-                                Latitude = InputDouble(),
-                                Longitude = InputDouble()
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new IdExistException("Station id exists", ex);
-                    }
+                case ((int)EnumAdd.Station):
+                    AddStation();
+                    break;
+                case ((int)EnumAdd.Drone):
+                    AddDrone();
+                    break;
+                case ((int)EnumAdd.Customer):
+                    AddCustomer();
                     break;
 
-                case ((int)Add.Drone):
-                    Console.WriteLine("Enter Id, Model, Max Weight, Initial Station");
-                    try {
-                        BL.Create<Drone>(new Drone()
-                        {
-                            Id = InputInt(),
-                            MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                            Model = Console.ReadLine(),
-                            Location = Request<Station>(InputInt)
-                        }) ;
-                            }
-                    catch (Exception ex)
-                    {
-                        throw new IdExistException("Drone id exists", ex);
-                    }
-                    break;
-
-                case ((int)Add.Customer):
-                    Console.WriteLine("Enter Id, Name, Phone, Longitude and Latitude");
-                    try
-                    {
-                        BL.Create<Customer>(new Customer()
-                        {
-                            Id = InputInt(),
-                            Name = Console.ReadLine(),
-                            Phone = Console.ReadLine(),
-                            location = new Location()
-                            {
-                                Latitude = InputDouble(),
-                                Longitude = InputDouble()
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new IdExistException("Customer id exists", ex);
-                    }
-
-                    break;
-
-                case ((int)Add.Parcel):
-                    Console.WriteLine("Enter Sender Id, Receiver Id, Weight, Priority");
-                    try
-                    {
-                        BL.Create<Parcel>(new Parcel()
-                        {
-                            
-                        });
-                    }
-                    //wouldn't be exception,the user doesn't choose the id
-                    catch (Exception ex)
-                    {
-                        throw new IdExistException("????????????", ex); 
-                    }
+                case ((int)EnumAdd.Parcel):
+                    AddParcel();
                     break;
                 default:
                     Console.WriteLine("Invalid input, try again");
@@ -250,8 +184,89 @@ namespace ConsoleUI_BL
 
             }
         }
+            static void AddStation()
+            {
+                Console.WriteLine("Enter Id, StationName, NumberOfChargeSlots, Longitude and Latitude");
+                try
+                {
+                    bl.Create<Station>(new Station()
+                    {
+                        Id = InputInt(),
+                        Name = Console.ReadLine(),
+                        AvailableSlots = InputInt(),
+                        location = new Location()
+                        {
+                            Latitude = InputDouble(),
+                            Longitude = InputDouble()
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new IdExistException("Station id exists", ex);
+                }
+            }
 
+            static void AddDrone()
+            {
+                Console.WriteLine("Enter Id, Model, Max Weight, Initial Station");
+                try
+                {
+                    bl.Create<Drone>(new Drone()
+                    {
+                        Id = InputInt(),
+                        MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
+                        Model = Console.ReadLine(),
+                        Location = bl.Request<Station>(InputInt()).location
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new IdExistException("Drone id exists", ex);
+                }
+            }
 
+            static void AddCustomer()
+            {
+                Console.WriteLine("Enter Id, Name, Phone, Longitude and Latitude");
+                try
+                {
+                    bl.Create<Customer>(new Customer()
+                    {
+                        Id = InputInt(),
+                        Name = Console.ReadLine(),
+                        Phone = Console.ReadLine(),
+                        location = new Location()
+                        {
+                            Latitude = InputDouble(),
+                            Longitude = InputDouble()
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new IdExistException("Customer id exists", ex);
+                }
+            }
+
+            static void AddParcel()
+            {
+                Console.WriteLine("Enter Sender Id, Receiver Id, Weight, Priority");
+                try
+                {
+                    bl.Create<Parcel>(new Parcel()
+                    {
+
+                    });
+                }
+                //wouldn't be exception,the user doesn't choose the id
+                catch (Exception ex)
+                {
+                    throw new IdExistException("????????????", ex);
+                }
+            }
+        #endregion Add
+        #region Update
         /// <summary>
         /// switch about update option
         /// </summary>
@@ -262,32 +277,32 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)Update.ConnectParceltoDrone):
+                case ((int)EnumUpdate.ConnectParceltoDrone):
                    
                     break;
-                case ((int)Update.PickUpParcel):
+                case ((int)EnumUpdate.PickUpParcel):
                     
                     break;
-                case ((int)Update.DeliverParcel):
+                case ((int)EnumUpdate.DeliverParcel):
                     
                     break;
-                case ((int)Update.SendDroneToCharge):
+                case ((int)EnumUpdate.SendDroneToCharge):
                    
                     break;
-                case ((int)Update.ReleaseDrone):
+                case ((int)EnumUpdate.ReleaseDrone):
                     break;
-                case ((int)Update.DroneData):
+                case ((int)EnumUpdate.DroneData):
                     break;
-                case ((int) Update.StationData):
+                case ((int) EnumUpdate.StationData):
                     break;
-                case ((int)Update.CustomerData):
+                case ((int)EnumUpdate.CustomerData):
                     break;
             }
         }
 
 
-
-
+        #endregion Update
+        #region Request
         /// <summary>
         /// switch about display option
         /// </summary>
@@ -299,21 +314,28 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)Request.Station):
-
+                case ((int)EnumRequest.Station):
+                    Request<Station>();
                     break;
-                case ((int)Request.Drone):
-
+                case ((int)EnumRequest.Drone):
+                    Request<Drone>();
                     break;
-                case ((int)Request.Customer):
-
+                case ((int)EnumRequest.Customer):
+                    Request<Customer>();
                     break;
-                case ((int)Request.Parcel):
-
+                case ((int)EnumRequest.Parcel):
+                    Request<Parcel>();
                     break;
             }
         }
 
+        static void Request<T>() where T : class
+        {
+            Console.WriteLine("enter id");
+            Console.WriteLine(bl.Request<T>(InputInt()));
+        }
+        #endregion Request
+        #region RequestList
         /// <summary>
         /// switch display list option
         /// </summary>
@@ -341,21 +363,34 @@ namespace ConsoleUI_BL
                     RequestUnassignParcel();
                     break;
                 case ((int)EnumRequestList.AvailableStations):
-                    RequestAvailbleStation();
+                    RequestAvailableStation();
                     break;
 
             }
         }
-        #endregion Switches
-        #region RequestMethod
-        static void RequestList<T>()where T:class
+
+        static void RequestList<T>() where T : class
         {
-            foreach( T t in BL.RequestList<T>())
+            foreach (T t in bl.RequestList<T>())
             {
                 Console.WriteLine(t);
             }
         }
+        static void RequestUnassignParcel()
+        {
+            foreach (ParcelToList p in bl.RequestList<ParcelToList>())
+                if (bl.Request<Parcel>(p.Id).Drone == null)
+                    Console.WriteLine(p);
 
-        #endregion RequestMethod
+        }
+        static void RequestAvailableStation()
+        {
+            foreach (StationToList s in bl.RequestList<StationToList>())
+                if (s.Occupied == 0)
+                    Console.WriteLine(s);s
+        }
+        #endregion RequestList
+
+
     }
 }
