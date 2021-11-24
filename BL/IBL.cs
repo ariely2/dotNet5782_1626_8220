@@ -18,7 +18,7 @@ namespace IBL
         public void PickUp(int id);
         public void Deliver(int id);
         public bool isDroneAssigned(DroneToList d);
-        public Location ClosestStation(DroneToList d);
+        public Location ClosestStation(Location d);
         public double MinBattery(double distance, int id);
     }
 }

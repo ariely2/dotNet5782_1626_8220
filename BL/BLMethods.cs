@@ -14,53 +14,47 @@ namespace IBL.BO
             DroneToList d = drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Available)
             {
-                //fix this: dont need to remove not best, what if final parcel is too far? maybe fix with whiles
-
                 List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList();
                 AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
-                //AllParcels.OrderByDescending(x => (int)x.Priority);
-                int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
-                AllParcels.RemoveAll(x => (int)x.Priority != max); //removing parcels that don't have max priority
-                max = AllParcels.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
-                AllParcels.RemoveAll(x => (int)x.Weight != max); //removing parcels that don't have max weight
-                Customer sender;
-                Customer receiver;
-                List<ParcelDeliver> candidates = new List<ParcelDeliver>();
-                foreach (var i in AllParcels) //making a list of the parcels left in the list with location of sender of receiver
+                bool found = false;
+                while (!found && AllParcels.Count()!=0)
                 {
-                    sender = new Customer() { location = ConvertLocation(dal.Request<IDAL.DO.Customer>(i.SenderId).location)};
-                    receiver = new Customer() { location = ConvertLocation(dal.Request<IDAL.DO.Customer>(i.TargetId).location)};
-                    candidates.Add(new ParcelDeliver() 
+                    int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
+                    var priority = AllParcels.Where(x => (int)x.Priority == max);
+                    AllParcels.RemoveAll(x => (int)x.Priority == max); //removing parcels that don't have max priority
+                    while(!found && priority.Count() !=0)
                     {
-                        Id = i.Id,
-                        Source = sender.location,
-                        Destination = receiver.location
-                    }); 
-                }
-                candidates.OrderByDescending(x => Location.distance(d.Location, x.Source)); //sorting by distance between drone and sender
-                if (candidates.Count() != 0)
-                {
-                    var name = candidates.Last();
-                    double distance =
-                          Location.distance(d.Location, name.Source)
-                        + Location.distance(name.Source, name.Destination)
-                        + Location.distance(name.Destination, ClosestStation(name.Destination));
-                    double min = info[((int)name.Weight) + 1] * distance;
-                    if (min >= d.Battery) //do while so if drone cant take will check next parcel
-                    {
-                        d.Status = DroneStatuses.Delivery;
-                        var selected = dal.Request<IDAL.DO.Parcel>(name.Id);
-                        d.ParcelId = selected.Id;
-                        selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
-                        selected.Scheduled = DateTime.Now;
+                        max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
+                        var weight = AllParcels.Where(x => (int)x.Weight == max).ToList();
+                        AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
+                        weight.OrderByDescending(x => Location.distance(d.Location, ConvertLocation(dal.Request<IDAL.DO.Customer>(x.SenderId).location)));
+                        while (!found && weight.Count()!=0)
+                        {
+                            var best = weight.Last();
+                            Location sender = ConvertLocation(dal.Request<IDAL.DO.Customer>(best.SenderId).location);
+                            Location receiver = ConvertLocation(dal.Request<IDAL.DO.Customer>(best.TargetId).location);
+                            double distance =
+                                  Location.distance(d.Location, sender)
+                                + Location.distance(sender, receiver)
+                                + Location.distance(receiver, ClosestStation(receiver));
+                            double min = info[((int)best.Weight) + 1] * distance;
+                            if (min >= d.Battery)
+                            {
+                                found = true;
+                                d.Status = DroneStatuses.Delivery;
+                                var selected = dal.Request<IDAL.DO.Parcel>(best.Id);
+                                d.ParcelId = selected.Id;
+                                selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
+                                selected.Scheduled = DateTime.Now;
+                            }
+                            else
+                                weight.Remove(best);
+                        }
                     }
-                    //else
-                      //  throw something?
                 }
-                // var best = parcels.OrderByDescending(x => Location.distance(d.Location, new Location() { Latitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Latitude, Longitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Longitude })).First();
             }
-            // else
-            //throw something
+             //else
+                   //  throw something?
         }
 
         #region Create
