@@ -8,46 +8,54 @@ namespace IBL.BO
 {
     public partial class BL : IBL
     {
-        public void AssignDrone(int id)
+        public void AssignDrone(int id) //make this shorter!
         {
             //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
             DroneToList d = drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Available)
             {
-                var p = dal.RequestList<IDAL.DO.Parcel>();
-                List<IDAL.DO.Parcel> parcels = p.ToList();
-                int max = parcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
-                parcels.RemoveAll(x => (int)x.Priority != max); //removing parcels that don't have max priority
-                parcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
-                max = parcels.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
-                parcels.RemoveAll(x => (int)x.Weight != max); //removing parcels that don't have max weight
-                List<Customer> senders = new List<Customer>();
-                List<IDAL.DO.Customer> IdalSenders = new List<IDAL.DO.Customer>();
+                //fix this: dont need to remove not best, what if final parcel is too far? maybe fix with whiles
+
+                List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList();
+                AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
+                //AllParcels.OrderByDescending(x => (int)x.Priority);
+                int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
+                AllParcels.RemoveAll(x => (int)x.Priority != max); //removing parcels that don't have max priority
+                max = AllParcels.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
+                AllParcels.RemoveAll(x => (int)x.Weight != max); //removing parcels that don't have max weight
+                Customer sender;
+                Customer receiver;
                 List<ParcelDeliver> candidates = new List<ParcelDeliver>();
-
-                foreach (var i in parcels) //making a list with all the senders of the parcels left in the list
+                foreach (var i in AllParcels) //making a list of the parcels left in the list with location of sender of receiver
                 {
-
-                    IdalSenders.Add(dal.Request<IDAL.DO.Customer>(i.SenderId));
-                    senders.Add(new Customer
+                    sender = new Customer() { location = ConvertLocation(dal.Request<IDAL.DO.Customer>(i.SenderId).location)};
+                    receiver = new Customer() { location = ConvertLocation(dal.Request<IDAL.DO.Customer>(i.TargetId).location)};
+                    candidates.Add(new ParcelDeliver() 
                     {
-                        Id = i.SenderId,
-                        location = new Location()
-                        {
-                            Latitude = IdalSenders.Last().location.Latitude,
-                            Longitude = IdalSenders.Last().location.Longitude
-                        }
-                    });
-                    candidates.Add(new ParcelDeliver() { Id = i.Id, Source = senders.Last().location }); //list of parcels with location of sender
+                        Id = i.Id,
+                        Source = sender.location,
+                        Destination = receiver.location
+                    }); 
                 }
                 candidates.OrderByDescending(x => Location.distance(d.Location, x.Source)); //sorting by distance between drone and sender
                 if (candidates.Count() != 0)
                 {
-                    //check battery thing!
-                    d.Status = DroneStatuses.Delivery; //what about parcelid?
-                    var selected = dal.Request<IDAL.DO.Parcel>(candidates.Last().Id);
-                    selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
-                    selected.Scheduled = DateTime.Now;
+                    var name = candidates.Last();
+                    double distance =
+                          Location.distance(d.Location, name.Source)
+                        + Location.distance(name.Source, name.Destination)
+                        + Location.distance(name.Destination, ClosestStation(name.Destination));
+                    double min = info[((int)name.Weight) + 1] * distance;
+                    if (min >= d.Battery) //do while so if drone cant take will check next parcel
+                    {
+                        d.Status = DroneStatuses.Delivery;
+                        var selected = dal.Request<IDAL.DO.Parcel>(name.Id);
+                        d.ParcelId = selected.Id;
+                        selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
+                        selected.Scheduled = DateTime.Now;
+                    }
+                    //else
+                      //  throw something?
                 }
                 // var best = parcels.OrderByDescending(x => Location.distance(d.Location, new Location() { Latitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Latitude, Longitude = dal.Request<IDAL.DO.Customer>(x.SenderId).location.Longitude })).First();
             }
@@ -148,7 +156,6 @@ namespace IBL.BO
                     d.Location.Longitude = c.location.Longitude;
                     d.Status = DroneStatuses.Available;
                 }
-
             }
             //throw cant pick up?();
         }
@@ -161,8 +168,6 @@ namespace IBL.BO
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
                 if (p.PickedUp == DateTime.MinValue)
                 {
-
-                    //battery
                     p.PickedUp = DateTime.Now;
                     var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
                     Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
@@ -170,7 +175,6 @@ namespace IBL.BO
                     d.Location.Latitude = c.location.Latitude;
                     d.Location.Longitude = c.location.Longitude;
                 }
-
             }
             //throw cant pick up?();
         }
@@ -377,6 +381,11 @@ namespace IBL.BO
             }
         }
         #endregion Update
+
+        public Location ConvertLocation(IDAL.DO.Location t)
+        {
+            return new Location() { Latitude = t.Latitude, Longitude = t.Longitude };
+        }
     }
 
 }
