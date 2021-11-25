@@ -108,7 +108,9 @@ namespace IBL.BO
                         location = GetStationLocation(s.Id),
                         Name = s.Name,
                         //getting a list of all drones charging at s, and making a list of DroneCharge based on the drone list
-                        Charging = drones.FindAll(d => d.Location.Equals(s.location)).Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
+                        Charging = 
+                        drones.FindAll(d => d.Location.Equals(s.location)) 
+                        .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
                     }, typeof(T));
                     break;
                 case nameof(Customer):
@@ -119,8 +121,24 @@ namespace IBL.BO
                         location = GetCustomerLocation(c.Id),
                         Name = c.Name,
                         Phone = c.Phone,
-                        To = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList(),
-                        From = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList()
+                        To = RequestList<Parcel>().ToList() //list of all parcels sent to customer
+                        .FindAll(p => p.Receiver.Id == c.Id)
+                        .Select(p => new ParcelAtCustomer() {
+                            Id = p.Id,
+                            Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
+                            Priority = p.Priority,
+                            Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered,
+                            Weight = p.Weight }).ToList(),
+
+                        From = RequestList<Parcel>().ToList() // list of all parcels sent from customer
+                        .FindAll(p => p.Sender.Id == c.Id)
+                        .Select(p => new ParcelAtCustomer() {
+                            Id = p.Id,
+                            Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
+                            Priority = p.Priority,
+                            Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered,
+                            Weight = p.Weight }).ToList()
+
                     }, typeof(T));
                     break;
                 case nameof(Drone):
@@ -133,9 +151,8 @@ namespace IBL.BO
                         Location = d.Location,
                         MaxWeight = d.MaxWeight,
                         Model = d.Model,
-                        //check if the drone status is delivery
                         Parcel = d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
-                        {
+                        { //if drone is delivering a parcel, create a ParcelDeliver instance
                             Id = d.ParcelId,
                             Priority = p.Priority,
                             Receiver = p.Receiver,
@@ -448,5 +465,4 @@ namespace IBL.BO
             return new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude };
         }
     }
-
 }
