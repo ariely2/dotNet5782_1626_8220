@@ -27,12 +27,12 @@ namespace IBL.BO
                         max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
                         var weight = AllParcels.Where(x => (int)x.Weight == max).ToList();
                         AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
-                        weight.OrderByDescending(x => Location.distance(d.Location, ConvertLocation(dal.Request<IDAL.DO.Customer>(x.SenderId).location)));
+                        weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.SenderId)));
                         while (!found && weight.Count()!=0)
                         {
                             var best = weight.Last();
-                            Location sender = ConvertLocation(dal.Request<IDAL.DO.Customer>(best.SenderId).location);
-                            Location receiver = ConvertLocation(dal.Request<IDAL.DO.Customer>(best.TargetId).location);
+                            Location sender = GetCustomerLocation(best.SenderId);
+                            Location receiver = GetCustomerLocation(best.TargetId);
                             double distance =
                                   Location.distance(d.Location, sender)
                                 + Location.distance(sender, receiver)
@@ -52,6 +52,8 @@ namespace IBL.BO
                         }
                     }
                 }
+               // if(!found) // if there's no parcel the drone can take
+                   // throw
             }
              //else
                    //  throw something?
@@ -175,7 +177,13 @@ namespace IBL.BO
 
         public void ReleaseDrone(int id, double t)
         {
-            throw new NotImplementedException();
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.Status == DroneStatuses.Maintenance)
+            {
+
+            }
+            //else
+                //throw new NotImplementedException();
         }
 
 
@@ -308,11 +316,38 @@ namespace IBL.BO
         #region Update
         public void SendDroneToCharge(int id, int stationID = 0)
         {
-            throw new NotImplementedException();
+            DroneToList d = drones.Find(x => x.Id == id);
+            if(d.Status == DroneStatuses.Available)
+            {
+                var stations = dal.RequestList<IDAL.DO.Station>().ToList();
+                stations.RemoveAll(x => x.ChargeSlots == 0); //removing stations with no available charge slots
+                stations.OrderByDescending(x => Location.distance(d.Location, GetStationLocation(x.Id)));
+                bool found = false;
+                while(!found && stations.Count!=0)
+                {
+                    Location s = GetStationLocation(stations.Last().Id);
+                    double distance = Location.distance(d.Location, s);
+                    if (MinBattery(distance, d.Id) <= d.Battery)
+                    {
+                        found = true;
+                        d.Battery = MinBattery(distance, d.Id);
+                        d.Location = s;
+                        d.Status = DroneStatuses.Maintenance;
+                        dal.ChargeDrone(d.Id, stations.Last().Id); //is this it?
+                    }
+                    else
+                        stations.RemoveAt(stations.Count - 1);
+                }
+                //if(!found) //if there's no station the drone can go to
+                    //throw
+            }
+            //else
+                //throw new NotImplementedException();
         }
 
         public void Update<T>(int id, T t) where T : class
         {
+
             throw new NotImplementedException();
         }
         public bool isDroneAssigned(DroneToList d)
@@ -363,10 +398,13 @@ namespace IBL.BO
             return new Location() { Latitude = loc.Latitude, Longitude = loc.Longitude };
         }
 
+
+        #endregion Update
+
         public double MinBattery(double distance, int id)
         {
             DroneToList d = drones.Find(x => x.Id == id);
-            if(d.Status == DroneStatuses.Available)
+            if (d.Status == DroneStatuses.Available)
                 return info[0] * distance;
             else
             {
@@ -374,11 +412,15 @@ namespace IBL.BO
                 return info[((int)p.Weight) + 1] * distance;
             }
         }
-        #endregion Update
-
-        public Location ConvertLocation(IDAL.DO.Location t)
+        public Location GetCustomerLocation(int id) //get customers location
         {
-            return new Location() { Latitude = t.Latitude, Longitude = t.Longitude };
+            var c = dal.Request<IDAL.DO.Customer>(id);
+            return new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
+        }
+        public Location GetStationLocation(int id) //get station's location
+        {
+            var s = dal.Request<IDAL.DO.Station>(id);
+            return new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude };
         }
     }
 

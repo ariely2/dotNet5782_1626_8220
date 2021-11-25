@@ -174,7 +174,6 @@ namespace ConsoleUI_BL
                 case ((int)EnumAdd.Customer):
                     AddCustomer();
                     break;
-
                 case ((int)EnumAdd.Parcel):
                     AddParcel();
                     break;
@@ -292,6 +291,7 @@ namespace ConsoleUI_BL
                 case ((int)EnumUpdate.ReleaseDrone):
                     break;
                 case ((int)EnumUpdate.DroneData):
+                    DroneUpdate();
                     break;
                 case ((int) EnumUpdate.StationData):
                     break;
@@ -300,6 +300,20 @@ namespace ConsoleUI_BL
             }
         }
 
+        static void DroneUpdate()
+        {
+            Console.WriteLine("Enter Id, new Model");
+            try
+            {
+                int id = InputInt();
+                string model = Console.ReadLine();
+               // bl.UpdateDrone 
+            }
+            catch (Exception ex)
+            {
+                throw new IdExistException("Drone doesn't exist", ex);
+            }
+        }
 
         #endregion Update
         #region Request
