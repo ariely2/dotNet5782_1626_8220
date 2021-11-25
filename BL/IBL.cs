@@ -19,10 +19,5 @@ namespace IBL
         public bool isDroneAssigned(DroneToList d);
         public Location ClosestStation(Location d);
         public double MinBattery(double distance, int id);
-        public void UpdateStation(int id, string name = null, int? slots = null);
-        public void UpdateDrone(int id, string model = null);
-        public void UpdateCustomer(int id, string name = null, string phone = null);
-
-        
     }
 }

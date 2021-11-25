@@ -255,7 +255,10 @@ namespace ConsoleUI_BL
                 {
                     bl.Create<Parcel>(new Parcel()
                     {
-
+                        Sender = new CustomerParcel() { Id = InputInt() },
+                        Receiver = new CustomerParcel() { Id = InputInt() },
+                        Weight = EnumExtension.InputEnum<WeightCategories>(),
+                        Priority = EnumExtension.InputEnum<Priorities>(),
                     });
                 }
                 //wouldn't be exception,the user doesn't choose the id
@@ -374,12 +377,11 @@ namespace ConsoleUI_BL
                     RequestList<ParcelToList>();
                     break;
                 case ((int)EnumRequestList.UnassignParcles):
-                    RequestUnassignParcel();
+                    RequestUnassignedParcels();
                     break;
                 case ((int)EnumRequestList.AvailableStations):
-                    RequestAvailableStation();
+                    RequestAvailableStations();
                     break;
-
             }
         }
 
@@ -390,18 +392,18 @@ namespace ConsoleUI_BL
                 Console.WriteLine(t);
             }
         }
-        static void RequestUnassignParcel()
+        static void RequestUnassignedParcels()
         {
             foreach (ParcelToList p in bl.RequestList<ParcelToList>())
                 if (bl.Request<Parcel>(p.Id).Drone == null)
                     Console.WriteLine(p);
 
         }
-        static void RequestAvailableStation()
+        static void RequestAvailableStations()
         {
             foreach (StationToList s in bl.RequestList<StationToList>())
-                if (s.Occupied == 0)
-                    Console.WriteLine(s);s
+                if (s.Available != 0)
+                    Console.WriteLine(s);
         }
         #endregion RequestList
 
