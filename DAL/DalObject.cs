@@ -154,27 +154,18 @@ namespace IDAL
             public void AssignParcel(int ParcelId,int DroneId)
             {
                 Parcel p = Request<Parcel>(ParcelId);
-                Drone d = DataSource.Drones.Find(x => x.MaxWeight >= p.Weight);
-                p.DroneId = d.Id;
-                
-                int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
-                Replace(p, a, DataSource.Parcels);
-                int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
-                int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-                Replace(p, a, DataSource.Parcels);
-                Replace(d, b, DataSource.Drones);
+                p.DroneId = DroneId;
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
             }
-
             /// <summary>
             /// the function responsible for pick up a parcel by a drone
             /// </summary>
             /// <param name="ParcelId">id of the parcel</param>
             public void PickUpParcel(int ParcelId)
+            { 
                 Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
                 p.PickedUp = DateTime.Now;
-                int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
-                int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-                Replace(p, a, DataSource.Parcels);
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
             }
 
             /// <summary>
@@ -184,9 +175,8 @@ namespace IDAL
             public void DeliverParcel(int ParcelId)
             {
                 Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
-                int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
                 p.Delivered = DateTime.Now;
-                Replace(p, a, DataSource.Parcels);
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
             }
 
             /// <summary>
@@ -198,9 +188,8 @@ namespace IDAL
             {
                 Station s = DataSource.Stations.Find(x => x.Id == StationId);
                 s.ChargeSlots--;
-                int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
                 DataSource.DroneCharges.Add(new DroneCharge() { DroneId = DroneId, StationId = s.Id });
-                Replace(s, b, DataSource.Stations);
+                DataSource.Stations[DataSource.Stations.FindIndex(s => s.Id == StationId)] = s;
             }
 
 
@@ -210,12 +199,10 @@ namespace IDAL
             /// <param name="DroneId">id of drone to release</param>
             public void ReleaseDrone(int DroneId)
             {
-                Drone d = DataSource.Drones.Find(x => x.Id ==DroneId);
-                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == d.Id);
+                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == DroneId);
                 Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
                 s.ChargeSlots++;
-                int b = DataSource.Stations.FindIndex(x => x.Id == s.Id);
-                Replace(s, b, DataSource.Stations);
+                DataSource.Stations[DataSource.Stations.FindIndex(s => s.Id == c.StationId)] = s;
                 DataSource.DroneCharges.Remove(c);
             }
             #endregion Update
@@ -257,7 +244,6 @@ namespace IDAL
             /// <param name="list">list of T</param>
             internal void Replace<T>(T NItem, T OItem, List<T> list)
             {
-                DataSource.Stations.s
                 list.Remove(OItem);
                 list.Add(NItem);
             }
