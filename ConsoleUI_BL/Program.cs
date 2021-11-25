@@ -255,7 +255,10 @@ namespace ConsoleUI_BL
                 {
                     bl.Create<Parcel>(new Parcel()
                     {
-
+                        Sender = new CustomerParcel() { Id = InputInt() },
+                        Receiver = new CustomerParcel() { Id = InputInt() },
+                        Weight = EnumExtension.InputEnum<WeightCategories>(),
+                        Priority = EnumExtension.InputEnum<Priorities>(),
                     });
                 }
                 //wouldn't be exception,the user doesn't choose the id
@@ -401,7 +404,7 @@ namespace ConsoleUI_BL
         {
             foreach (StationToList s in bl.RequestList<StationToList>())
                 if (s.Occupied == 0)
-                    Console.WriteLine(s);s
+                    Console.WriteLine(s);
         }
         #endregion RequestList
 

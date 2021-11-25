@@ -180,7 +180,9 @@ namespace IBL.BO
             DroneToList d = drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Maintenance)
             {
-
+                d.Status = DroneStatuses.Available;
+                d.Battery += info[4] * t;//assuming t is time in hours
+                dal.ReleaseDrone(d.Id);
             }
             //else
                 //throw new NotImplementedException();
