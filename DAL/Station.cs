@@ -18,10 +18,7 @@ namespace IDAL
             public int ChargeSlots { get; set; }
             public override string ToString()
             {
-                return $"Id:          {Id}\n" +
-                       $"Name:        {Name}\n" +
-                       $"Location:    {location}" +
-                       $"ChargeSlots: {ChargeSlots}\n";
+                return Print.print<Station>(this);
             }
         }
     }

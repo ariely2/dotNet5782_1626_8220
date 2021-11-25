@@ -17,8 +17,7 @@ namespace IDAL
             public int StationId { get; set; }
             public override string ToString()
             {
-                return $"DroneId:    {DroneId}\n" +
-                       $"StationId:  {StationId}\n";
+                return Print.print<DroneCharge>(this);
             }
 
         }

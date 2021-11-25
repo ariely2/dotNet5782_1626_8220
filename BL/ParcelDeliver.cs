@@ -9,7 +9,7 @@ namespace IBL.BO
     public class ParcelDeliver
     {
         public int Id { set; get; }
-        public bool Status { set; get; }//false - wait for pickup, true - in delivery
+        public EnumParcelDeliver Status { set; get; }//pickup = 0, delivery = 1
         public Priorities Priority { set; get; }
         public WeightCategories Weight { set; get; }
        
@@ -21,15 +21,7 @@ namespace IBL.BO
         public double Distance { set; get; }
         public override string ToString()
         {
-            return $"Id:          {Id}\n" +
-                   $"Status:       " + (Status ? "PickUp" : "Delivery") + '\n' +
-                   $"Priority:    {Priority}\n" +
-                   $"Weight:      {Weight}\n" +
-                   $"Sender:      {Sender}" +
-                   $"Receiver:    {Receiver}" +
-                   $"Source:      {Source}" +
-                   $"Destination: {Destination}" +
-                   $"Distance:    {Distance}\n";
+            return Print.print<ParcelDeliver>(this);
 
         }
     }

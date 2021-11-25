@@ -25,16 +25,7 @@ namespace IDAL
             public DateTime Delivered { get; set; }//min value if not delivered
             public override string ToString()
             {
-                return $"Parcel Id:      {Id}\n" +
-                       $"Sender Id:      {SenderId}\n" +
-                       $"Target Id:      {TargetId}\n" +
-                       $"Weight:         {Weight}\n" +
-                       $"Priority:       {Priority}\n" +
-                       $"Drone Id:       {DroneId}\n" +
-                       $"Request Time:   {Requested}\n" +
-                       $"Scheduled Time: {Scheduled}\n" +
-                       $"Pick-up Time:   {PickedUp}\n" +
-                       $"Delivery Time:  {Delivered}\n"; 
+                return Print.print<Parcel>(this);
             }
 
         } 

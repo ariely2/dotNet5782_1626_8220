@@ -20,13 +20,7 @@ namespace IBL.BO
             public  Location Location { get; set; } //current location
             public override string ToString()
             {
-            return $"Id:        {Id}\n" +
-                   $"Model:     {Model}\n" +
-                   $"Max Weight: {MaxWeight}\n" +
-                   $"Battery:   {Battery}\n" +
-                   $"Status:    {Status}\n" +
-                   $"Parcel:    {Parcel}" +
-                   $"Location:  {Location}";
-            }
+            return Print.print<Drone>(this);
+        }
     }
 }

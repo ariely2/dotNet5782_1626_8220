@@ -12,9 +12,7 @@ namespace IBL.BO
         public Location Location { set; get; }
         public override string ToString()
         {
-            return $"Id:       {Id}\n" +
-                   $"Batterry: {Baterry}\n" +
-                   $"Location: {Location}";
+            return Print.print<DroneParcel>(this);
         }
     }
 

@@ -16,11 +16,7 @@ namespace IBL.BO
 
         public override string ToString()
         {
-            return $"Id: {Id}\n" +
-                   $"Weight: {Weight}\n" +
-                   $"Priority: {Priority}\n" +
-                   $"Parcel Status: {Status}\n" +
-                   $"Customer: {Customer}";
+            return Print.print<ParcelAtCustomer>(this);
         }
     }
 }

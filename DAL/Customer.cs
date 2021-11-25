@@ -16,10 +16,7 @@ namespace IDAL
             public Location location { set; get; }
             public override string ToString()
             {
-                return $"Id:        {Id}\n" +
-                       $"Name:      {Name}\n" +
-                       $"Phone:     {Phone}\n" +
-                       $"Location:  {location}";
+                return Print.print<Customer>(this);
             }
         };
     }

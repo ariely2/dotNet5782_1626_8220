@@ -71,6 +71,11 @@ namespace IBL
             Waiting,
             EnRoute
         }
+        public enum EnumParcelDeliver
+        {
+            PickUp,
+            Delivery
+        }
         public enum EnumAdd
         {
             Station = 1,

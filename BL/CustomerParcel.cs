@@ -12,8 +12,7 @@ namespace IBL.BO
         public string Name { set; get; }
         public override string ToString()
         {
-            return $"Id:   {Id}\n" +
-                   $"Name: {Name}\n";
+            return Print.print<CustomerParcel>(this);
         }
     }
 }

@@ -17,12 +17,8 @@ namespace IBL.BO
             public List<DroneCharge> Charging { get; set; }
             public override string ToString()
             {
-            return $"Id:                {Id}\n" +
-                   $"Name:              {Name}\n" +
-                   $"Location:          {location}\n" +
-                   $"ChargeSlots:       {AvailableSlots}\n" +
-                   "Charging Drones:    " + string.Join("\n\t\t\t\t\t ", (IEnumerable<DroneCharge>)Charging.ToArray());
-            
-            }
+            return Print.print<Station>(this);
+
+        }
         }
 }

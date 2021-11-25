@@ -15,10 +15,7 @@ namespace IBL.BO
 
         public override string ToString()
         {
-            return $"Id:              {Id}\n" +
-                   $"Name:            {Name}\n" +
-                   $"Available slots: {Available}\n" +
-                   $"Occupied slots:  {Occupied}\n";
+            return Print.print<StationToList>(this);
         }
     }
 }

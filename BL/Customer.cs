@@ -20,12 +20,7 @@ namespace IBL
 
             public override string ToString()
             {
-                return $"Id:        {Id}\n" +
-                       $"Name:      {Name}\n" +
-                       $"Phone:     {Phone}\n" +
-                       $"Location:  {location}\n" +
-                       $"From:      " + string.Join("\n\t\t   ", (IEnumerable<ParcelAtCustomer>)From.ToArray()) +
-                       $"To:        " + string.Join("\n\t\t   ", (IEnumerable<ParcelAtCustomer>)To.ToArray());
+                return Print.print<Customer>(this);
 
             }
         };

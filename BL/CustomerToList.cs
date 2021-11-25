@@ -18,13 +18,7 @@ namespace IBL.BO
 
         public override string ToString()
         {
-            return $"Id:           {Id}\n" +
-                   $"Name:         {Name}\n" +
-                   $"Phoen:        {Phone}\n" +
-                   $"Delivered:    {Delivered}\n" +
-                   $"No Delivered: {NoDelivered}\n" +
-                   $"Received:     {Received}\n" +
-                   $"No Received:  {NoReceived}\n";
+            return Print.print<CustomerToList>(this);
         }
 
     }

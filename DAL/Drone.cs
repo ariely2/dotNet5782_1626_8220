@@ -19,9 +19,7 @@ namespace IDAL
 
             public override string ToString()
             {
-                return $"Id:        {Id}\n" +
-                       $"Model:     {Model}\n" +
-                       $"MaxWeight: {MaxWeight}\n";
+                return Print.print<Drone>(this);
             }
         }
     }

@@ -20,16 +20,7 @@ namespace IBL.BO
         public DateTime Delivered { get; set; }//min value if not delivered
         public override string ToString()//tostring also here or only in TL classes?
         {
-            return $"Parcel Id:      {Id}\n" +
-                   $"Sender:         {Sender}" +
-                   $"receiver:       {Receiver}" +
-                   $"Weight:         {Weight}\n" +
-                   $"Priority:       {Priority}\n" +
-                   $"Drone:          {Drone}" +
-                   $"Request Time:   {Requested}\n" +
-                   $"Scheduled Time: {Scheduled}\n" +
-                   $"Pick-up Time:   {PickedUp}\n" +
-                   $"Delivery Time:  {Delivered}\n";
+            return Print.print<Parcel>(this);
         }
     }
 }

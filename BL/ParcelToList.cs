@@ -18,12 +18,7 @@ namespace IBL.BO
 
         public override string ToString()
         {
-            return $"Id:           {Id}\n" +
-                   $"SenderName:   {SenderName}\n" +
-                   $"ReceiverName: {ReceiverName}\n" +
-                   $"Weight:       {Weight}\n" +
-                   $"Priority:     {Priority}\n" +
-                   $"Status:       {Status}\n";
+            return Print.print<ParcelToList>(this);
         }
     }
 }

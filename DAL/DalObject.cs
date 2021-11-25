@@ -151,18 +151,13 @@ namespace IDAL
             /// the function reponsible for assign a drone to a parcel
             /// </summary>
             /// <param name="ParcelId">id of the parcel</param>
-            public void AssignParcel(int ParcelId)
+            public void AssignParcel(int ParcelId,int DroneId)
             {
-                Parcel p = Request<Parcel>(ParcelId);
 
-                Drone d = DataSource.Drones.Find(x => x.MaxWeight >= p.Weight);
-                
-                p.DroneId = d.Id;
+                Parcel p = Request<Parcel>(ParcelId);
+                p.DroneId = DroneId;
                 p.Scheduled = DateTime.Now;
-                int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
-                int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
-                Replace(p, a, DataSource.Parcels);
-                Replace(d, b, DataSource.Drones);
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p; 
             }
 
             /// <summary>
@@ -176,6 +171,7 @@ namespace IDAL
                 p.PickedUp = DateTime.Now;
                 int a = DataSource.Parcels.FindIndex(x => x.Id == ParcelId);
                 int b = DataSource.Drones.FindIndex(x => x.Id == d.Id);
+
                 Replace(p, a, DataSource.Parcels);
                 Replace(d, b, DataSource.Drones);
             }
@@ -230,6 +226,34 @@ namespace IDAL
                 DataSource.DroneCharges.Remove(c);
             }
             #endregion Update
+            #region Delete
+
+
+
+
+            public void Delete<T>(int id) where T : struct
+            {
+                switch (typeof(T).Name)
+                {
+                    case nameof(Station):
+                        DataSource.Stations.Remove(Request<Station>(id));
+                        break;
+                    case nameof(Customer):
+                        DataSource.Customers.Remove(Request<Customer>(id));
+                        break;
+                    case nameof(Drone):
+                        DataSource.Drones.Remove(Request<Drone>(id));
+                        break;
+                    case nameof(Parcel):
+                        DataSource.Parcels.Remove(Request<Parcel>(id));
+                        break;
+                    case nameof(DroneCharge):
+                        DataSource.DroneCharges.Remove(Request<DroneCharge>(id));
+                        break;
+                }
+            }
+            #endregion Delete
+
             #region InternalMethods
             /// <summary>
             /// replace the value at index index with the item T
@@ -238,11 +262,11 @@ namespace IDAL
             /// <param name="Item">Item to add to the list</param>
             /// <param name="index">index to remove </param>
             /// <param name="list">list of T</param>
-            internal void Replace<T>(T Item, int index, List<T> list)
+            internal void Replace<T>(T NItem, T OItem, List<T> list)
             {
-
-                list.RemoveAt(index);
-                list.Insert(index, Item);
+                DataSource.Stations.s
+                list.Remove(OItem);
+                list.Add(NItem);
             }
             #endregion InternalMethods
             public int[] Receivers()
@@ -252,6 +276,7 @@ namespace IDAL
                 int [] t = d.Select(x => x.TargetId).ToArray(); //getting receiver ids
                 return t.Distinct().ToArray(); //return array without duplicates
             }
+
         }
     }
 }

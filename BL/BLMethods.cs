@@ -234,7 +234,7 @@ namespace IBL.BO
                             Priority = p.Priority,
                             Receiver = p.Receiver,
                             Sender = p.Sender,
-                            Status = p.Delivered != DateTime.MinValue,
+                            Status = (EnumParcelDeliver)(p.PickedUp == DateTime.MinValue?0:1),
                             Destination = Request<Customer>(p.Receiver.Id).location,
                             Source = Request<Customer>(p.Sender.Id).location,
                             Weight = p.Weight,
@@ -345,10 +345,40 @@ namespace IBL.BO
                 //throw new NotImplementedException();
         }
 
-        public void Update<T>(int id, T t) where T : class
+        public void UpdateStation(int id, string name = null, int? slots = null)
         {
-
-            throw new NotImplementedException();
+            IDAL.DO.Station s= dal.Request<IDAL.DO.Station>(id);
+            dal.Delete<IDAL.DO.Station>(id);
+            dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()
+            {
+                Id = id,
+                Name = name == null ? s.Name : name,
+                location = s.location,
+                ChargeSlots = (int)(slots == null ? s.ChargeSlots : (slots - Request<Station>(id).Charging.Count()))
+            });    
+        }
+        public void UpdateDrone(int id, string model = null)
+        {
+            IDAL.DO.Drone d = dal.Request<IDAL.DO.Drone>(id);
+            dal.Delete<IDAL.DO.Drone>(id);
+            dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone()
+            {
+                Id = id,
+                MaxWeight = d.MaxWeight,
+                Model = model == null ? d.Model : model
+            });
+        }
+        public void UpdateCustomer(int id, string name = null, string phone = null)
+        {
+            IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id);
+            dal.Delete<IDAL.DO.Customer>(id);
+            dal.Create<IDAL.DO.Customer>(new IDAL.DO.Customer()
+            {
+                Id = id,
+                location = c.location,
+                Name = name == null ? c.Name : name,
+                Phone = phone == null? c.Phone:phone
+            });
         }
         public bool isDroneAssigned(DroneToList d)
         {

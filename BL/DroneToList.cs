@@ -18,13 +18,7 @@ namespace IBL.BO
 
         public override string ToString()
         {
-            return $"Id:       {Id}\n" +
-                   $"Model:    {Model}\n" +
-                   $"Max Weight:   {MaxWeight}\n" +
-                   $"Battery:  {Battery}\n" +
-                   $"Status:   {Status}\n" +
-                   $"Location: {Location}" +
-                   $"ParcelId: {ParcelId}";
+            return Print.print<DroneToList>(this);
         }
     }
 }
