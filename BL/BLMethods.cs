@@ -6,60 +6,16 @@ using System.Threading.Tasks;
 using IDAL;
 namespace IBL.BO
 {
+    /// <summary>
+    /// Partial BL class that contains all methods necessary for BL
+    /// </summary>
     public partial class BL : IBL
     {
-        public void AssignDrone(int id) //make this shorter!
-        {
-            //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
-            DroneToList d = drones.Find(x => x.Id == id);
-            if (d.Status == DroneStatuses.Available)
-            {
-                List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList();
-                AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
-                bool found = false;
-                while (!found && AllParcels.Count()!=0)
-                {
-                    int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
-                    var priority = AllParcels.Where(x => (int)x.Priority == max);
-                    AllParcels.RemoveAll(x => (int)x.Priority == max); //removing parcels that don't have max priority
-                    while(!found && priority.Count() !=0)
-                    {
-                        max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
-                        var weight = AllParcels.Where(x => (int)x.Weight == max).ToList();
-                        AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
-                        weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.SenderId)));
-                        while (!found && weight.Count()!=0)
-                        {
-                            var best = weight.Last();
-                            Location sender = GetCustomerLocation(best.SenderId);
-                            Location receiver = GetCustomerLocation(best.TargetId);
-                            double distance =
-                                  Location.distance(d.Location, sender)
-                                + Location.distance(sender, receiver)
-                                + Location.distance(receiver, ClosestStation(receiver));
-                            double min = info[((int)best.Weight) + 1] * distance;
-                            if (min >= d.Battery)
-                            {
-                                found = true;
-                                d.Status = DroneStatuses.Delivery;
-                                var selected = dal.Request<IDAL.DO.Parcel>(best.Id);
-                                d.ParcelId = selected.Id;
-                                selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
-                                selected.Scheduled = DateTime.Now;
-                            }
-                            else
-                                weight.Remove(best);
-                        }
-                    }
-                }
-               // if(!found) // if there's no parcel the drone can take
-                   // throw
-            }
-             //else
-                   //  throw something?
-        }
-
+        
         #region Create
+        /// <summary>
+        /// generic function that creates new objects
+        /// </summary>
         public void Create<T>(T t) where T : class
         {
             try
@@ -104,11 +60,11 @@ namespace IBL.BO
                             Status = DroneStatuses.Maintenance,
                             ParcelId = 0
                         });
-                        dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone() //might need to also add drone to BL drone list
+                        dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone()
                         {
                             Id = d.Id,
                             Model = d.Model,
-                            MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight, //is this ok?
+                            MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight,
                         });
                         break;
                     case Parcel p:
@@ -135,59 +91,6 @@ namespace IBL.BO
             }
         }
         #endregion Create
-        public void Deliver(int id)
-        {
-            DroneToList d = drones.Find(x => x.Id == id);
-            if (d.ParcelId != 0)
-            {
-                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
-                if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue)
-                {
-                    var s = dal.Request<IDAL.DO.Customer>(p.SenderId);
-                    Location t = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude };
-                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
-                    var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
-                    p.Delivered = DateTime.Now;
-                    d.Location.Latitude = c.location.Latitude;
-                    d.Location.Longitude = c.location.Longitude;
-                    d.Status = DroneStatuses.Available;
-                }
-            }
-            //throw cant pick up?();
-        }
-
-        public void PickUp(int id)
-        {
-            DroneToList d = drones.Find(x => x.Id == id);
-            if (d.ParcelId != 0)
-            {
-                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
-                if (p.PickedUp == DateTime.MinValue)
-                {
-                    p.PickedUp = DateTime.Now;
-                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
-                    Location t = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude };
-                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
-                    d.Location.Latitude = c.location.Latitude;
-                    d.Location.Longitude = c.location.Longitude;
-                }
-            }
-            //throw cant pick up?();
-        }
-
-        public void ReleaseDrone(int id, double t)
-        {
-            DroneToList d = drones.Find(x => x.Id == id);
-            if (d.Status == DroneStatuses.Maintenance)
-            {
-                d.Status = DroneStatuses.Available;
-                d.Battery += info[4] * t;//assuming t is time in hours
-                dal.ReleaseDrone(d.Id);
-            }
-            //else
-                //throw new NotImplementedException();
-        }
-
 
         #region Request
         //need to make the code look better
@@ -202,8 +105,9 @@ namespace IBL.BO
                     {
                         AvailableSlots = s.ChargeSlots,
                         Id = s.Id,
-                        location = new Location() { Latitude = s.location.Latitude, Longitude = s.location.Longitude },
+                        location = GetStationLocation(s.Id),
                         Name = s.Name,
+                        //getting a list of all drones charging at s, and making a list of DroneCharge based on the drone list
                         Charging = drones.FindAll(d => d.Location.Equals(s.location)).Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
                     }, typeof(T));
                     break;
@@ -212,7 +116,7 @@ namespace IBL.BO
                     ans = (T)Convert.ChangeType(new Customer()
                     {
                         Id = c.Id,
-                        location = new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude },
+                        location = GetCustomerLocation(c.Id),
                         Name = c.Name,
                         Phone = c.Phone,
                         To = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id).Select(p => new ParcelAtCustomer() { Id = p.Id, Customer = new CustomerParcel() { Id = c.Id, Name = c.Name }, Priority = p.Priority, Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered, Weight = p.Weight }).ToList(),
@@ -316,7 +220,108 @@ namespace IBL.BO
         #endregion Request
 
         #region Update
-        public void SendDroneToCharge(int id, int stationID = 0)
+
+        public void AssignDrone(int id) //make this shorter!
+        {
+            //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.Status == DroneStatuses.Available)
+            {
+                List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList();
+                AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
+                bool found = false;
+                while (!found && AllParcels.Count() != 0)
+                {
+                    int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list   //might need to write var instead int?
+                    var priority = AllParcels.Where(x => (int)x.Priority == max);
+                    AllParcels.RemoveAll(x => (int)x.Priority == max); //removing parcels that don't have max priority
+                    while (!found && priority.Count() != 0)
+                    {
+                        max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcel list
+                        var weight = AllParcels.Where(x => (int)x.Weight == max).ToList();
+                        AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
+                        weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.SenderId)));
+                        while (!found && weight.Count() != 0)
+                        {
+                            var best = weight.Last();
+                            Location sender = GetCustomerLocation(best.SenderId);
+                            Location receiver = GetCustomerLocation(best.TargetId);
+                            double distance =
+                                  Location.distance(d.Location, sender)
+                                + Location.distance(sender, receiver)
+                                + Location.distance(receiver, ClosestStation(receiver));
+                            double min = info[((int)best.Weight) + 1] * distance;
+                            if (min >= d.Battery)
+                            {
+                                found = true;
+                                d.Status = DroneStatuses.Delivery;
+                                var selected = dal.Request<IDAL.DO.Parcel>(best.Id);
+                                d.ParcelId = selected.Id;
+                                selected.DroneId = d.Id; //does it change this also in IDAL or only in the function?
+                                selected.Scheduled = DateTime.Now;
+                            }
+                            else
+                                weight.Remove(best);
+                        }
+                    }
+                }
+                // if(!found) // if there's no parcel the drone can take
+                // throw
+            }
+            //else
+            //  throw something?
+        }
+        public void Deliver(int id)
+        {
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.ParcelId != 0)
+            {
+                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue)
+                {
+                    var s = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = GetCustomerLocation(s.Id);
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
+                    var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
+                    p.Delivered = DateTime.Now;
+                    d.Location = GetCustomerLocation(c.Id);
+                    d.Status = DroneStatuses.Available;
+                }
+            }
+            //throw cant pick up?();
+        }
+
+        public void PickUp(int id)
+        {
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.ParcelId != 0)
+            {
+                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                if (p.PickedUp == DateTime.MinValue)
+                {
+                    p.PickedUp = DateTime.Now;
+                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    Location t = GetCustomerLocation(c.Id);
+                    d.Battery = MinBattery(Location.distance(t, d.Location), d.Id);
+                    d.Location = GetCustomerLocation(c.Id);
+                }
+            }
+            //throw cant pick up?();
+        }
+
+        public void ReleaseDrone(int id, double t)
+        {
+            DroneToList d = drones.Find(x => x.Id == id);
+            if (d.Status == DroneStatuses.Maintenance)
+            {
+                d.Status = DroneStatuses.Available;
+                d.Battery += info[4] * t;//assuming t is time in hours
+                dal.ReleaseDrone(d.Id);
+            }
+            //else
+            //throw new NotImplementedException();
+        }
+        public void SendDroneToCharge(int id)
         {
             DroneToList d = drones.Find(x => x.Id == id);
             if(d.Status == DroneStatuses.Available)
@@ -352,12 +357,17 @@ namespace IBL.BO
 
             throw new NotImplementedException();
         }
+
+
+
+        #endregion Update
+
         public bool isDroneAssigned(DroneToList d)
         {
             var p = dal.RequestList<IDAL.DO.Parcel>();
-            for(int i = 0; i < p.Count(); i++)
+            for (int i = 0; i < p.Count(); i++)
             {
-                if(p.ElementAt(i).DroneId == d.Id) // if the drone is assigned to a parcel
+                if (p.ElementAt(i).DroneId == d.Id) // if the drone is assigned to a parcel
                 {
                     if (p.ElementAt(i).Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
                     {
@@ -373,36 +383,19 @@ namespace IBL.BO
         {
             //var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId); //the parcel assigned to the current drone
             var s = dal.RequestList<IDAL.DO.Station>();
-            //var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
-            List<Station> stations = new List<Station>();
-            foreach(var b in s)
+            double distance = Location.distance(GetStationLocation(s.First().Id), d);
+            int id = s.First().Id;
+            foreach (var b in s)
             {
-                stations.Add(new Station()
+                if (Location.distance(GetStationLocation(b.Id), d) < distance)
                 {
-                    location = new Location()
-                    {
-                        Latitude = b.location.Latitude,
-                        Longitude = b.location.Longitude
-                    }
-                });
-            }
-            double distance = Location.distance(stations.First().location, d);
-            int id = stations.First().Id;
-            foreach (var b in stations)
-            {
-                if (Location.distance(b.location, d) < distance)
-                {
-                    distance = Location.distance(b.location, d);
+                    distance = Location.distance(GetStationLocation(b.Id), d);
                     id = b.Id;
                 }
             }
             IDAL.DO.Location loc = dal.Request<IDAL.DO.Customer>(id).location;
             return new Location() { Latitude = loc.Latitude, Longitude = loc.Longitude };
         }
-
-
-        #endregion Update
-
         public double MinBattery(double distance, int id)
         {
             DroneToList d = drones.Find(x => x.Id == id);

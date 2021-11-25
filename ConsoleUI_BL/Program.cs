@@ -377,12 +377,11 @@ namespace ConsoleUI_BL
                     RequestList<ParcelToList>();
                     break;
                 case ((int)EnumRequestList.UnassignParcles):
-                    RequestUnassignParcel();
+                    RequestUnassignedParcels();
                     break;
                 case ((int)EnumRequestList.AvailableStations):
-                    RequestAvailableStation();
+                    RequestAvailableStations();
                     break;
-
             }
         }
 
@@ -393,17 +392,17 @@ namespace ConsoleUI_BL
                 Console.WriteLine(t);
             }
         }
-        static void RequestUnassignParcel()
+        static void RequestUnassignedParcels()
         {
             foreach (ParcelToList p in bl.RequestList<ParcelToList>())
                 if (bl.Request<Parcel>(p.Id).Drone == null)
                     Console.WriteLine(p);
 
         }
-        static void RequestAvailableStation()
+        static void RequestAvailableStations()
         {
             foreach (StationToList s in bl.RequestList<StationToList>())
-                if (s.Occupied == 0)
+                if (s.Available != 0)
                     Console.WriteLine(s);
         }
         #endregion RequestList

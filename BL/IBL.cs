@@ -12,7 +12,7 @@ namespace IBL
         public T Request<T>(int id) where T : class;
         public IEnumerable<T> RequestList<T>() where T : class;
         public void Update<T>(int id, T t) where T : class;
-        public void SendDroneToCharge(int d); //dronetolist or drone?
+        public void SendDroneToCharge(int d); 
         public void ReleaseDrone(int d, double t);
         public void AssignDrone(int id);
         public void PickUp(int id);
@@ -20,5 +20,8 @@ namespace IBL
         public bool isDroneAssigned(DroneToList d);
         public Location ClosestStation(Location d);
         public double MinBattery(double distance, int id);
+        public Location GetCustomerLocation(int id);
+        public Location GetStationLocation(int id);
+
     }
 }

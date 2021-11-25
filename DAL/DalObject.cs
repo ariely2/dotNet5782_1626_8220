@@ -47,7 +47,7 @@ namespace IDAL
                         p.Id = DataSource.Config.IdOfParcel;
                         DataSource.Parcels.Add(p);
                         break;
-                    default://unknown struct
+                    default: //unknown struct
                         throw new NotExistStruct("struct isn't exist\n");
                 }
             }

@@ -8,11 +8,14 @@ using IDAL.DalObject;
 
 namespace IBL.BO
 {
+    /// <summary>
+    /// Partial BL class that configures a BL instance
+    /// </summary>
     public partial class BL:IBL
     {
         private IDal dal;
         public List<DroneToList> drones = new List<DroneToList>(); //public?
-        //static??
+        //static?
         public double AvailableUse; 
         public double LightUse; 
         public double MediumUse; 
@@ -20,7 +23,7 @@ namespace IBL.BO
         public double ChargeRate;
         public static Random r = new Random();
         public double[] info;
-        public BL() 
+        public BL() //BL constructor
         { 
             dal = new DalObject();
             info = dal.GetBatteryUsageInfo();
@@ -30,7 +33,7 @@ namespace IBL.BO
             HeavyUse = info[3];
             ChargeRate = info[4];
             
-            foreach(var d in dal.RequestList<IDAL.DO.Drone>())
+            foreach(var d in dal.RequestList<IDAL.DO.Drone>()) //adding drones from DAL drones list to  BL list
             {
                 drones.Add(new DroneToList()
                 {
@@ -38,49 +41,46 @@ namespace IBL.BO
                     Model = d.Model,
                     MaxWeight = (BO.WeightCategories)d.MaxWeight
                 });
-                DroneToList Current = drones.Last();
+                DroneToList Current = drones.Last(); // modifying the last drone entered to the list each time, to modify all of them
                 if (isDroneAssigned(Current))
                 {
                     Current.Status = DroneStatuses.Delivery;
                     var p = dal.Request<IDAL.DO.Parcel>(Current.ParcelId); //the parcel assigned to the current drone
-                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId);
+                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId); // the parcel's sender and receiver
                     var t = dal.Request<IDAL.DO.Customer>(p.TargetId);
-                    if (p.PickedUp == DateTime.MinValue)
+                    Location source = GetCustomerLocation(c.Id);
+                    Location target = GetCustomerLocation(t.Id);
+                    double distance = Location.distance(source, target); //distance from sender to receiver
+                    distance += Location.distance(target, ClosestStation(target)); // + distance from receiver to closest station
+                    if (p.PickedUp == DateTime.MinValue) //if the parcel isn't picked up yet
                     {
-                        Current.Location = ClosestStation(new Location() { Latitude = c.location.Latitude, Longitude = c.location.Longitude });
+                        Current.Location = ClosestStation(GetCustomerLocation(c.Id)); //change drone's location to sender's location
+                        distance += Location.distance(Current.Location, source); // + distance from initial location to sender
                     }
                     else
-                    {
-                        Current.Location.Latitude = c.location.Latitude;
-                        Current.Location.Longitude = c.location.Longitude;
-                    }
-                    Location target = new Location() { Latitude = t.location.Latitude, Longitude = t.location.Longitude };
-                    double distance = Location.distance(Current.Location, target);
-                    distance += Location.distance(target, ClosestStation(target));
+                        Current.Location = GetCustomerLocation(c.Id);
                     double b = MinBattery(distance, Current.Id);
-                    Current.Battery = r.NextDouble() * (100 - b) + b;
+                    Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
                 }
                 else
                 {
-                    Current.Status = (DroneStatuses)r.Next(0, 2);
+                    Current.Status = (DroneStatuses)r.Next(0, 2); 
                     if (Current.Status == DroneStatuses.Maintenance)
                     {
                         var Stations = dal.GetAvailableStations(); // we need an availble station to charge the drone
-                        var l = Stations.ElementAt(r.Next(0, Stations.Count())); //getting random station 
-                        Current.Location.Latitude = l.location.Latitude;
-                        Current.Location.Longitude = l.location.Longitude;
+                        var s = Stations.ElementAt(r.Next(0, Stations.Count())); //getting random station
+                        Current.Location = GetStationLocation(s.Id);
                         Current.Battery = r.Next(0, 21);
-                        SendDroneToCharge(Current.Id, l.Id);
+                        dal.ChargeDrone(d.Id, s.Id); //is this it?
                     }
                     else // if the drone's status is "Available"
                     {
                         var p = dal.Receivers();
                         int i = r.Next(0, p.Length);
-                        var receiver = dal.Request<IDAL.DO.Customer>(p[i]);
-                        Current.Location.Latitude = receiver.location.Latitude;
-                        Current.Location.Longitude = receiver.location.Longitude;
+                        var receiver = dal.Request<IDAL.DO.Customer>(p[i]); // getting a random receiver
+                        Current.Location = GetStationLocation(receiver.Id);
                         double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
-                        Current.Battery = r.NextDouble() * (100 - b) + b;
+                        Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
                     }
                 }
             }
