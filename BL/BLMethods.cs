@@ -109,7 +109,7 @@ namespace IBL.BO
                         UpdateStation(station.Id, null, station.Charging.Count() + station.AvailableSlots);
                         break;
 
-                    case Parcesl p:
+                    case Parcel p:
                         dal.Create<IDAL.DO.Parcel>(new IDAL.DO.Parcel()
                         {
                             Id = p.Id,
