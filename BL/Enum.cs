@@ -40,6 +40,25 @@ namespace IBL
                 } while (!valid);
                 return result;
             }
+
+            /// <summary>
+            /// the function return the status of the parcel
+            /// </summary>
+            /// <param name="d">delivered time</param>
+            /// <param name="p">picked up time</param>
+            /// <param name="s">scheduled time</param>
+            /// <param name="r">requested time</param>
+            /// <returns>return the status</returns>
+            public static ParcelStatuses GetStatus(DateTime? d, DateTime? p, DateTime? s, DateTime? r)
+            {
+                if (d != null)
+                    return ParcelStatuses.Delivered;
+                else if (p != null)
+                    return ParcelStatuses.PickedUp;
+                else if (s != null)
+                    return ParcelStatuses.Assigned;
+                return ParcelStatuses.Created;
+            }
         }
         public enum WeightCategories
         {

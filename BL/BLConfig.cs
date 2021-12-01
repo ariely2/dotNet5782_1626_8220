@@ -14,7 +14,7 @@ namespace IBL.BO
     public partial class BL:IBL
     {
         private IDal dal;
-        public List<DroneToList> drones = new List<DroneToList>(); //public?
+        public List<DroneToList> Drones = new List<DroneToList>(); //public?
         //static?
         public double AvailableUse; 
         public double LightUse; 
@@ -35,13 +35,13 @@ namespace IBL.BO
             
             foreach(var d in dal.RequestList<IDAL.DO.Drone>()) //adding drones from DAL drones list to  BL list
             {
-                drones.Add(new DroneToList()
+                Drones.Add(new DroneToList()
                 {
                     Id = d.Id,
                     Model = d.Model,
                     MaxWeight = (BO.WeightCategories)d.MaxWeight
                 });
-                DroneToList Current = drones.Last(); // modifying the last drone entered to the list each time, to modify all of them
+                DroneToList Current = Drones.Last(); // modifying the last drone entered to the list each time, to modify all of them
                 if (isDroneAssigned(Current))
                 {
                     Current.Status = DroneStatuses.Delivery;

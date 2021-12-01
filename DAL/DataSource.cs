@@ -18,8 +18,9 @@ namespace IDAL
             internal static List<DroneCharge> DroneCharges = new List<DroneCharge>();
             internal class Config
             {
+                
                 //id of parcel - number with 8 digit
-                public static int IdOfParcel { private set; get; } = 1000000;
+                public static int IdOfParcel {set; get; } = Parcel.LowerBoundId;
                 public static double AvailableUse = 10; //an available drone uses 10% battery per kilometer
                 public static double LightUse = 15; //a drone carrying light weight uses 15% battery per kilometer
                 public static double MediumUse = 20; //a drone carrying medium weight uses 20% battery per kilometer
@@ -36,78 +37,113 @@ namespace IDAL
                 {
                     //initialize 10 customers
                     string[] CNames = new string[] { "Mario", "Carmen", "Tamar", "Daniel", "Adam", "Rosie", "Paul", "Jessie", "Leslie", "Charlie" };
+
                     for (int i = 0; i < 10; i++)
+                    {
+                        //check that there is no customer with the same id
+                        int id;
+                        do
+                        {
+                            id = random.Next(Customer.LowerBoundId, Customer.UpperBoundId);
+                        } while (Customers.Exists(x => x.Id == id));
+
+                        //check that there is no 2 customers with the same phone number
+                        string phone;
+                        do
+                        {
+                            phone = random.Next(111111, 999999).ToString("000000");
+                        } while (Customers.Exists(x => x.Phone == phone));
+
                         Customers.Add(new Customer()
                         {
-                            Id = random.Next(100000000,1000000000),
+                            Id = id,//calculate before
                             Name = CNames[i],//Name from the array
-                            Phone = random.Next(111111, 999999).ToString("000000"),//Random phone number (adding zeroes in the front)
-                            location = new Location()
+                            Phone = phone,//calculate before
+                            Location = new Location()
                             {
                                 Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
                                 Latitude = (random.NextDouble() * 180) - 90//Random latitude between -90 and 90
                             }
-                        }); 
+                        });
+                    }
 
                     //initialize 3 stations
                     string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon" };
                     for (int i = 0; i < 3; i++)
+                    {
+                        //check that there is no 2 station with the same id
+                        int id;
+                        do
+                        {
+                            id = random.Next(Station.LowerBoundId, Station.UpperBoundId);
+                        } while (Stations.Exists(x => x.Id == id));
+
                         Stations.Add(new Station()
                         {
-                            Id = random.Next(100, 1000),
+                            Id = id,
                             Name = SNames[i],//Name from Name array.
-                            location = new Location()
+                            Location = new Location()
                             {
                                 Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
                                 Latitude = (random.NextDouble() * 180) - 90//Random Latitude between -90 and 90
                             },
                             ChargeSlots = random.Next(1, 4)//Random number of available slots between 1 and 3
                         });
+                    }
 
-                    ///initialize 5 drones
+                    //initialize 5 drones
+                    //model names
                     string[] MNames = new string[] { "A", "B", "C", "D", "E" };
+
                     for (int i = 0; i < 5; i++)
                     {
+                        //check that there is no 2 drone with the same id
+                        int id;
+                        do
+                        {
+                            id = random.Next(Drone.LowerBoundId, Drone.UpperBoundId);
+                        } while (Drones.Exists(x => x.Id == id));
+
                         Drones.Add(new Drone()
                         {
-                            Id = random.Next(10000, 100000),
+                            Id = id,
                             Model = MNames[i],//Name from model array
                             MaxWeight = EnumExtension.RandomEnumValue<WeightCategories>(),//Random MaxWeight
                         });
                     }
 
                     //initialize 10 parcels
+                    //array to check if we already used this drone
+                    bool[] used = new bool[5] { false, false, false, false, false };
+
                     for (int i = 0; i < 10; i++)
                     {
+                        //random weight
                         WeightCategories ParcelMaxWeight = EnumExtension.RandomEnumValue<WeightCategories>();
-                        //looking for an avaliable drone with enough battery and can carry the parcel
-                        Drone d = Drones.Find(x => /*x.Status == DroneStatuses.Available && x.Battery != 0 && */x.MaxWeight >= ParcelMaxWeight);
+
+                        //search for a drone available which can carry the parcel 
+                        int j;
+                        for (j = 0; j < 5 && !(!used[j] && Drones[j].MaxWeight >= ParcelMaxWeight); j++) ;
+                        if(j!=5)
+                            used[j] = true;
+
+                        //random picked( true or false)
+                        bool picked = (random.Next(2) == 0);
+                        //random customer index
                         int randomCustomer = random.Next(Customers.Count());
                         Parcels.Add(new Parcel()
                         {
                             Id = IdOfParcel++,//Id equals to IdOfParcle
                             SenderId = Customers[randomCustomer].Id,//Random Id from customers list 
                             TargetId = Customers[(randomCustomer + 1) % Customers.Count()].Id,//Random Id from customers list, cant be equal to sendId
-                            Weight = ParcelMaxWeight,//Random Weight
-                            DroneId = (d.Equals(default(Drone)) ? 0 : d.Id),//Id from drones's list (only if there is a drone that match the requirements)
+                            Weight = ParcelMaxWeight,
+                            DroneId = (j != 5 ? Drones[j].Id : null),
                             Priority = EnumExtension.RandomEnumValue<Priorities>(),//Random priority
                             Requested = DateTime.Now,//the person requested the parcel now
-                            Scheduled = (d.Equals(default(Drone)) ? DateTime.MinValue : DateTime.Now),//time that we assign a drone to the parcel, MinValue - if we didn't find a drone
-                            PickedUp = DateTime.MinValue,
-                            Delivered = DateTime.MinValue
+                            Scheduled = (j != 5 ? DateTime.Now : null),
+                            PickedUp = (picked ? DateTime.Now : null),
+                            Delivered = (picked && random.Next(2) == 0 ? DateTime.Now : null)
                         });
-                        if (!d.Equals(default(Drone)))
-                        {
-                            Drones.Add(new Drone()
-                            {
-                                Id = d.Id,//same id
-                                Model = d.Model,//same Model
-                                //Battery = d.Battery,//same Battery
-                                MaxWeight = d.MaxWeight,//same MaxWeight
-                                //Status = DroneStatuses.Assigned//change the drone's status from avaliable to delivery
-                            });
-                            Drones.Remove(d);
-                        }
                     }
                 }
             }

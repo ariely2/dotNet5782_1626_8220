@@ -9,6 +9,7 @@ namespace ConsoleUI
         //the data base isntance
         static DalObject DataBase = new DalObject();
         #region InputMethods
+
         /// <summary>
         /// the function get an int number from user,
         /// and check if it valid (not have letter for example)
@@ -52,6 +53,7 @@ namespace ConsoleUI
             } while (!valid);
             return num;
         }
+
         #endregion InputMethods
         #region PrintOptions
         /// <summary>
@@ -121,6 +123,7 @@ namespace ConsoleUI
 
 
         #endregion PrintOption
+
         #region Switches
         /// <summary>
         /// main function
@@ -151,6 +154,7 @@ namespace ConsoleUI
                     case ((int)Option.Exit):
                         break;
                 }
+                Console.Clear();
             } while (option != 5);
         }
 
@@ -248,8 +252,9 @@ namespace ConsoleUI
                 case ((int)IDAL.DO.Request.DistanceFromCustomer):
                     GetDistanceFrom<Customer>();
                     break;
-
             }
+            Console.Write("Press <Enter> to continue");
+            while (Console.ReadKey().Key != ConsoleKey.Enter) ;
         }
 
 
@@ -283,6 +288,8 @@ namespace ConsoleUI
                     DisplayAvailableStations();
                     break;
             }
+            Console.Write("Press <Enter> to continue");
+            while (Console.ReadKey().Key != ConsoleKey.Enter) ;
         }
         #endregion Switches
         #region AddMethod
@@ -294,7 +301,7 @@ namespace ConsoleUI
                 Id = InputInt(),
                 Name = Console.ReadLine(),
                 ChargeSlots = InputInt(),
-                location = new Location()
+                Location = new Location()
                 {
                     Latitude = InputDouble(),
                     Longitude = InputDouble()
@@ -321,7 +328,7 @@ namespace ConsoleUI
                 Id = InputInt(),
                 Name = Console.ReadLine(),
                 Phone = Console.ReadLine(),
-                location = new Location()
+                Location = new Location()
                 {
                     Latitude = InputDouble(),
                     Longitude = InputDouble()
@@ -340,9 +347,9 @@ namespace ConsoleUI
                 Priority = EnumExtension.InputEnum<Priorities>(),
                 DroneId = InputInt(),
                 Requested = DateTime.Now,
-                Scheduled = DateTime.MinValue,
-                Delivered = DateTime.MinValue,
-                PickedUp = DateTime.MinValue
+                Scheduled = null,
+                Delivered = null,
+                PickedUp = null
             });
         }
 
@@ -357,8 +364,8 @@ namespace ConsoleUI
         /// </summary>
         static void ConnectParcelToDrone()
         {
-            Console.WriteLine("Enter Parcel ID");
-            DataBase.AssignParcel(InputInt()); //Parcel Id
+            Console.WriteLine("Enter Parcel ID, Drone Id");
+            DataBase.AssignParcel(InputInt(),InputInt()); //Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -404,12 +411,12 @@ namespace ConsoleUI
         #region RequestMethods
         static void Request<T>() where T : struct
         {
-            Console.WriteLine($"Enter {nameof(T)} ID");
+            Console.WriteLine($"Enter {typeof(T).Name} ID");
             Console.WriteLine(DataBase.Request<T>(InputInt()));
         }
         static void GetDistanceFrom<T>() where T : struct
         {
-            Console.WriteLine("enter longitude, latitude and" + typeof(T).Name + "id");
+            Console.WriteLine("enter longitude, latitude and " + typeof(T).Name + "id");
             Console.WriteLine("The distance is: {0} km",
                 DataBase.GetDistanceFrom<T>(
                     new Location()

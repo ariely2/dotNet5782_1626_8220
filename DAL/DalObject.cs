@@ -22,62 +22,115 @@ namespace IDAL
             }
             #endregion Constructor
             #region Create
+
+            /// <summary>
+            /// add an object to the lists (customer, station, drone, parcel)
+            /// </summary>
+            /// <typeparam name="T">type of object</typeparam>
+            /// <param name="t">the object</param>
             public void Create<T>(T t) where T : struct
             {
 
                 switch (t)
                 {
-
                     case Station s:
-                        if (!DataSource.Stations.Find(x => x.Id == s.Id).Equals(default(Station)))
-                            throw new ExistId("Station id already exist\n");
+                        //id out of bounds
+                        if (!s.Check())
+                            throw new IdOutOfBoundsException("Station id out of bounds\n");
+                        //id already exist
+                        if (DataSource.Stations.Exists(x => x.Id == s.Id))
+                            throw new ExistIdException("Station id already exist\n");
+                        if (s.ChargeSlots < 0)
+                            throw new NotPossibleStationException("Can't be station with negative available slots\n");
+
                         DataSource.Stations.Add(s);
                         break;
                     case Drone d:
-                        if (!DataSource.Drones.Find(x => x.Id == d.Id).Equals(default(Drone)))
-                            throw new ExistId("Drone id already exist\n");
+                        //id out of bounds
+                        if (!d.Check())
+                            throw new IdOutOfBoundsException("Drone's id out of bounds\n");
+                        //id already exist
+                        if (DataSource.Drones.Exists(x => x.Id == d.Id))
+                            throw new ExistIdException("Drone's id already exist\n");
                         DataSource.Drones.Add(d);
                         break;
                     case Customer c:
-                        if (!DataSource.Customers.Find(x => x.Id == c.Id).Equals(default(Customer)))
-                            throw new ExistId("Customer id already exist\n");
+                        //id out of bounds
+                        if (!c.Check())
+                            throw new IdOutOfBoundsException("Customer's id out of bounds\n");
+                        //id already exist
+                        if (DataSource.Customers.Exists(x => x.Id == c.Id))
+                            throw new ExistIdException("Customer's id already exist\n");
+                        //phone number already exist
+                        if (DataSource.Customers.Exists(x => x.Phone == c.Phone))
+                            throw new ExistPhoneException("Customer's phone already exist\n");
                         DataSource.Customers.Add(c);
                         break;
+
                     case Parcel p://isn't possible to have exception in parcel, the id isn't chosen by the user.
-                        p.Id = DataSource.Config.IdOfParcel;
+                        //sender isn't exist
+                        if (!DataSource.Customers.Exists(c => c.Id == p.SenderId))
+                            throw new NotExistException("Sender's id isn't exist\n");
+                        //target isn't exist
+                        if (!DataSource.Customers.Exists(c => c.Id == p.TargetId))
+                            throw new NotExistException("Target's id ins't exist\n");
+                        //drone isn't exist, and its id isn't 0
+                        if (p.DroneId != null && !DataSource.Drones.Exists(d => d.Id == p.DroneId))
+                            throw new NotExistException("Drone's id isn't exist\n");
+
+                        p.Id = DataSource.Config.IdOfParcel++;
                         DataSource.Parcels.Add(p);
                         break;
                     default: //unknown struct
-                        throw new NotExistStruct("struct isn't exist\n");
+                        throw new NotSupportException("Not support " + typeof(T).Name + "\n");
                 }
             }
             #endregion Create
             #region Request
 
+            /// <summary>
+            /// request an object (customer, parcel, station, drone)
+            /// if the object isn't exist, the function throw an exception
+            /// </summary>
+            /// <typeparam name="T">type of the requested object is T</typeparam>
+            /// <param name="id">id of the object</param>
+            /// <returns>return the object</returns>
             public T Request<T>(int id) where T : struct
             {
                 T ans;
+
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
+
                         ans = (T)Convert.ChangeType(DataSource.Stations.Find(s => s.Id == id), typeof(T));
                         break;
                     case nameof(Customer):
+
                         ans = (T)Convert.ChangeType(DataSource.Customers.Find(c => c.Id == id), typeof(T));
                         break;
                     case nameof(Drone):
+
                         ans = (T)Convert.ChangeType(DataSource.Drones.Find(d => d.Id == id), typeof(T));
                         break;
                     case nameof(Parcel):
+
                         ans = (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
                         break;
                     default:
-                        throw new NotExistStruct("struct doesn't exist\n");
+                        throw new NotSupportException("Not support this struct\n");
                 }
                 if (ans.Equals(default(T)))
-                    throw new NotExistId("id doesn't exist\n");
+                    throw new NotExistException(typeof(T).Name + " isn't exist\n");
                 return ans;
             }
+
+            /// <summary>
+            /// return a list of type T
+            /// the lists are: Stations, drones, customers, parcels
+            /// </summary>
+            /// <typeparam name="T">type of the requested list</typeparam>
+            /// <returns></returns>
             public IEnumerable<T> RequestList<T>() where T : struct
             {
                 switch (typeof(T).Name)
@@ -91,14 +144,12 @@ namespace IDAL
                     case nameof(Parcel):
                         return (IEnumerable<T>)DataSource.Parcels;
                     default:
-                        break;
+                        throw new NotSupportException("Not support this struct");
                 }
-                return null;
-
             }
 
             /// <summary>
-            /// find station with available charge slots
+            /// find station with avaiable chargeslots
             /// </summary>
             /// <returns>list of station with chargeSlots >0</returns>
             public IEnumerable<Station> GetAvailableStations()
@@ -112,28 +163,39 @@ namespace IDAL
             /// <returns>list of parcels</returns>
             public IEnumerable<Parcel> UnassignedParcels()
             {
-                return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == 0);
+                return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == null);
             }
 
-            public double GetDistanceFrom<T>(Location location, int id)where T:struct
+            /// <summary>
+            /// the function return the distance from specific location to an object (customer, station)
+            /// throw an exception, if the object isn't exist
+            /// </summary>
+            /// <typeparam name="T">type of the object</typeparam>
+            /// <param name="location">the specific location</param>
+            /// <param name="id">id of the object</param>
+            /// <returns>reutrn the distance between the object and the location</returns>
+            public double GetDistanceFrom<T>(Location location, int id) where T : struct
             {
+                //in case of exception, request function would send it
                 Location ans;
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
-                        ans = DataSource.Stations.Find(s => s.Id == id).location;
+                        ans = Request<Station>(id).Location;
                         break;
                     case nameof(Customer):
-                        ans = DataSource.Customers.Find(c => c.Id == id).location;
+                        ans = Request<Customer>(id).Location;
                         break;
                     default:
-                        throw new NotExistStruct("Not support this requests\n");
+                        throw new NotSupportException("Not support this struct\n");
                 }
-                if (ans.Equals(default(T)))
-                    throw new NotExistId("id isn't exist\n");
                 return Location.distance(location, ans);
             }
 
+            /// <summary>
+            /// the function return a list of battery usage info
+            /// </summary>
+            /// <returns>array of double about battery usage info</returns>
             public double[] GetBatteryUsageInfo()
             {
                 double[] info =
@@ -145,64 +207,92 @@ namespace IDAL
                 return info;
             }
 
+            public int[] Receivers()
+            {
+                List<Parcel> d = (List<Parcel>)DataSource.Parcels.FindAll(x => x.Delivered != DateTime.MinValue); //all delivered parcels
+                //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
+                int[] t = d.Select(x => x.TargetId).ToArray(); //getting receiver ids
+                return t.Distinct().ToArray(); //return array without duplicates
+            }
+
             #endregion Request
             #region Update
             /// <summary>
-            /// the function reponsible for assign a drone to a parcel
+            /// the function connect parcel to a drone
+            /// throw exceptions if the drone or the parcel aren't exist
             /// </summary>
-            /// <param name="ParcelId">id of the parcel</param>
-            public void AssignParcel(int ParcelId,int DroneId)
+            /// <param name="parcelId">parcel's id</param>
+            /// <param name="droneId">drone's id</param>
+            public void AssignParcel(int parcelId, int droneId)
             {
-                Parcel p = Request<Parcel>(ParcelId);
-                p.DroneId = DroneId;
-                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
+                //if the drone or parcel isn't exist, request function would send an exception
+                Parcel p= Request<Parcel>(parcelId);
+                Drone d = Request<Drone>(droneId);
+                //update properties of the parcel
+                p.Scheduled = DateTime.Now;
+                p.DroneId = d.Id;
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == parcelId)] = p;
             }
+
             /// <summary>
             /// the function responsible for pick up a parcel by a drone
+            /// throw exception if the parcel isn't exist or if we didn't assign a drone to the parcel
             /// </summary>
-            /// <param name="ParcelId">id of the parcel</param>
-            public void PickUpParcel(int ParcelId)
-            { 
-                Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+            /// <param name="parcelId">id of the parcel</param>
+            public void PickUpParcel(int parcelId)
+            {
+                //if parcel isn't exist, request function would send an exception
+                Parcel p=  Request<Parcel>(parcelId);
                 p.PickedUp = DateTime.Now;
-                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
+                DataSource.Parcels[DataSource.Parcels.FindIndex(x => x.Id == parcelId)] = p;
             }
 
             /// <summary>
             /// the function responsible for deliver a parcel to a customer
+            /// if the parcel isn't exists or if the drone didn't pick up the parcel, or assign to the parcel then throw an exception, 
             /// </summary>
-            /// <param name="ParcelId">id of the parcel</param>
-            public void DeliverParcel(int ParcelId)
+            /// <param name="parcelId">id of the parcel</param>
+            public void DeliverParcel(int parcelId)
             {
-                Parcel p = DataSource.Parcels.Find(x => x.Id == ParcelId);
+                //if parcel isn't exist, request function would send an exception
+                Parcel p = Request<Parcel>(parcelId);
                 p.Delivered = DateTime.Now;
-                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
+                DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == parcelId)] = p;
             }
 
             /// <summary>
-            /// the function charge a drone in a station
+            /// the function charge a drone in a specific station
+            /// throw an exception if the station is full, or there station or the drone ins't exist
             /// </summary>
-            /// <param name="DroneId">id of the drone</param>
-            /// <param name="StationId">id of the station</param>
-            public void ChargeDrone(int DroneId, int StationId)
+            /// <param name="droneId">id of the drone</param>
+            /// <param name="stationId">id of the station</param>
+            public void ChargeDrone(int droneId, int stationId)
             {
-                Station s = DataSource.Stations.Find(x => x.Id == StationId);
+                //if station or drone isn't exist, request function would send an exception
+                Station s = Request<Station>(stationId);
+                Drone d = Request<Drone>(droneId);
                 s.ChargeSlots--;
-                DataSource.DroneCharges.Add(new DroneCharge() { DroneId = DroneId, StationId = s.Id });
-                DataSource.Stations[DataSource.Stations.FindIndex(s => s.Id == StationId)] = s;
+                DataSource.DroneCharges.Add(new DroneCharge() { DroneId = d.Id, StationId = s.Id });
+                DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
             }
 
 
             /// <summary>
-            /// The function releases the drone from the station where it is charged
+            /// The function releases the drone from the station where it is currently charged
             /// </summary>
-            /// <param name="DroneId">id of drone to release</param>
-            public void ReleaseDrone(int DroneId)
+            /// <param name="droneId">id of drone to release</param>
+            public void ReleaseDrone(int droneId)
             {
-                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == DroneId);
-                Station s = DataSource.Stations.Find(x => x.Id == c.StationId);
+                //if the drone isn't exist, request function would send an exception  
+                Drone d = Request<Drone>(droneId);
+                //assume that the drone is currently charging, bl responsible for checking that
+                DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == droneId);
+
+                Station s = Request<Station>(c.StationId);
                 s.ChargeSlots++;
-                DataSource.Stations[DataSource.Stations.FindIndex(s => s.Id == c.StationId)] = s;
+
+                DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
+               
                 DataSource.DroneCharges.Remove(c);
             }
             #endregion Update
@@ -210,52 +300,39 @@ namespace IDAL
 
 
 
-
+            /// <summary>
+            /// remove an object from its list, given it's id
+            /// throw an exception if the object isn't exist
+            /// </summary>
+            /// <typeparam name="T">type of the object (station, customer, drone, parcel)</typeparam>
+            /// <param name="id">id of the object</param>
             public void Delete<T>(int id) where T : struct
             {
+                //if there is an exception, request function would send it
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
-                        DataSource.Stations.Remove(Request<Station>(id));
+                        Station s = Request<Station>(id);
+                        DataSource.Stations.Remove(s);
                         break;
                     case nameof(Customer):
-                        DataSource.Customers.Remove(Request<Customer>(id));
+                        Customer c = Request<Customer>(id);
+                        DataSource.Customers.Remove(c);
                         break;
                     case nameof(Drone):
-                        DataSource.Drones.Remove(Request<Drone>(id));
+                        Drone d = Request<Drone>(id);
+                        DataSource.Drones.Remove(d);
                         break;
                     case nameof(Parcel):
-                        DataSource.Parcels.Remove(Request<Parcel>(id));
+                        Parcel p = Request<Parcel>(id);
+                        DataSource.Parcels.Remove(p);
                         break;
-                    case nameof(DroneCharge):
-                        DataSource.DroneCharges.Remove(Request<DroneCharge>(id));
-                        break;
+                    default:
+                        throw new NotSupportException("Not support" + typeof(T).Name + "struct\n");
+
                 }
             }
             #endregion Delete
-
-            #region InternalMethods
-            /// <summary>
-            /// replace the value at index index with the item T
-            /// </summary>
-            /// <typeparam name="T">represent an instance of struct T</typeparam>
-            /// <param name="Item">Item to add to the list</param>
-            /// <param name="index">index to remove </param>
-            /// <param name="list">list of T</param>
-            internal void Replace<T>(T NItem, T OItem, List<T> list)
-            {
-                list.Remove(OItem);
-                list.Add(NItem);
-            }
-            #endregion InternalMethods
-            public int[] Receivers()
-            {
-                List<Parcel> d = (List<Parcel>)DataSource.Parcels.FindAll(x => x.Delivered != DateTime.MinValue); //all delivered parcels
-                //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
-                int [] t = d.Select(x => x.TargetId).ToArray(); //getting receiver ids
-                return t.Distinct().ToArray(); //return array without duplicates
-            }
-
         }
     }
 }
