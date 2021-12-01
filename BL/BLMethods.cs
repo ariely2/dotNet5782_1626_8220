@@ -299,9 +299,9 @@ namespace IBL.BO
                 {
                     var s = dal.Request<IDAL.DO.Customer>(p.SenderId);
                     Location t = GetCustomerLocation(s.Id);
+                    p.Delivered = DateTime.Now;
                     d.Battery -= MinBattery(Location.distance(t, d.Location), d.Id); //updating drone's battery
                     var c = dal.Request<IDAL.DO.Customer>(p.TargetId);
-                    p.Delivered = DateTime.Now;
                     d.Location = GetCustomerLocation(c.Id); //updating drone's location
                     d.Status = DroneStatuses.Available;
                 }
@@ -449,10 +449,13 @@ namespace IBL.BO
             DroneToList d = drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Available) //if drone is available, return corresponding battery per entered distance
                 return info[0] * distance; 
-            else
+            else //if a parcel is assigned to drone
             {
                 var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
-                return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
+                if(p.Delivered == DateTime.MinValue) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
+                    return info[0] * distance;
+                else // distance is distance to deliver parcel
+                    return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
             }
         }
         public Location GetCustomerLocation(int id) //get customers location
