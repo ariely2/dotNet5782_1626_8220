@@ -328,6 +328,10 @@ namespace IBL.BO
 
         #region Update
 
+        /// <summary>
+        /// A function that assigns a drone to deliver a parcel, and finds the best parcel for the drone
+        /// according to the requirements
+        /// </summary>
         public void AssignDrone(int id) 
         {
             //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
@@ -379,6 +383,11 @@ namespace IBL.BO
             //else
             //  throw something?
         }
+
+        /// <summary>
+        /// function that makes the drone deliver the parcel to the receiver
+        /// </summary>
+        /// <param name="id"></param>
         public void Deliver(int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
@@ -399,6 +408,10 @@ namespace IBL.BO
             //throw cant pick up?();
         }
 
+        /// <summary>
+        /// function that makes the drone pick up the parcel from the sender
+        /// </summary>
+        /// <param name="id"></param>
         public void PickUp(int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
@@ -417,6 +430,9 @@ namespace IBL.BO
             //throw cant pick up?();
         }
 
+        /// <summary>
+        /// function that releases drone from charging
+        /// </summary>
         public void ReleaseDrone(int id, double t)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
@@ -429,6 +445,10 @@ namespace IBL.BO
             //else
                 //throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// function that sends the drone to charge
+        /// </summary>
         public void SendDroneToCharge(int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
@@ -460,6 +480,9 @@ namespace IBL.BO
             //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// function that updates station's details
+        /// </summary>
         public void UpdateStation(int id, string name = null, int? slots = null)
         {
             IDAL.DO.Station s= dal.Request<IDAL.DO.Station>(id); //getting station
@@ -472,6 +495,12 @@ namespace IBL.BO
                 ChargeSlots = (int)(slots == null ? s.ChargeSlots : (slots - Request<Station>(id).Charging.Count()))
             }); //creating updated station
         }
+
+        /// <summary>
+        /// function that updates drone's details
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
         public void UpdateDrone(int id, string model = null)
         {
             IDAL.DO.Drone d = dal.Request<IDAL.DO.Drone>(id); //getting drone
@@ -483,6 +512,13 @@ namespace IBL.BO
                 Model = model == null ? d.Model : model
             }); //creating updated drone
         }
+
+        /// <summary>
+        /// function that updates customer's details
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="phone"></param>
         public void UpdateCustomer(int id, string name = null, string phone = null)
         {
             IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id); //getting customer
@@ -501,6 +537,10 @@ namespace IBL.BO
         #endregion Update
 
         #region InternalMethod
+
+        /// <summary>
+        /// function that checks if the drone is assigned to a parcel
+        /// </summary>
         public bool isDroneAssigned(DroneToList d)
         {
             var p = dal.RequestList<IDAL.DO.Parcel>(); //getting list of all parcels
@@ -518,6 +558,9 @@ namespace IBL.BO
             return false;
         }
         
+        /// <summary>
+        /// function that returns the location of the closest station to given location
+        /// </summary>
         public Location ClosestStation(Location d)
         {
             //var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId); //the parcel assigned to the current drone
@@ -535,6 +578,10 @@ namespace IBL.BO
             IDAL.DO.Location loc = dal.Request<IDAL.DO.Customer>(id).Location; 
             return new Location() { Latitude = loc.Latitude, Longitude = loc.Longitude };
         }
+        /// <summary>
+        /// function the returns the minimum battery needed for a drone to fly a given distance
+        /// based on it's status and parcel weight (if it's carrying a parcel)
+        /// </summary>
         public double MinBattery(double distance, int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
@@ -549,11 +596,18 @@ namespace IBL.BO
                     return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
             }
         }
+        /// <summary>
+        /// function that returns customer's location based on their id
+        /// </summary>
         public Location GetCustomerLocation(int id) //get customers location
         {
             var c = dal.Request<IDAL.DO.Customer>(id);
             return new Location() { Latitude = c.Location.Latitude, Longitude = c.Location.Longitude };
         }
+
+        /// <summary>
+        /// function that returns station's location based on it's id
+        /// </summary>
         public Location GetStationLocation(int id) //get station's location
         {
             var s = dal.Request<IDAL.DO.Station>(id);

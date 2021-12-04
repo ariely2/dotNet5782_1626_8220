@@ -23,7 +23,7 @@ namespace IBL.BO
         public double ChargeRate;
         public static Random r = new Random();
         public double[] info;
-        public BL() //BL constructor
+        public BL() //BL constructor, initializes BL instance
         { 
             dal = new DalObject();
             info = dal.GetBatteryUsageInfo();
