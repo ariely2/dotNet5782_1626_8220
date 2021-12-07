@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace IBL.BO
-{ //change IDAL request to request?
+{ 
     /// <summary>
     /// Partial BL class that contains all methods necessary for BL
     /// </summary>
@@ -333,11 +333,11 @@ namespace IBL.BO
         /// </summary>
         public void AssignDrone(int id) 
         {
-            //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
+            //updates also in "drones"?
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Available)
             {
-                List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList(); //getting list of all parcels
+                List<Parcel> AllParcels = RequestList<Parcel>().ToList(); //getting list of all parcels
                 AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
                 //does this delete parcels from DAL? 
                 bool found = false;
@@ -351,12 +351,12 @@ namespace IBL.BO
                         max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcels with max priority list
                         var weight = AllParcels.Where(x => (int)x.Weight == max).ToList(); // getting list of parcels with max weight and priority
                         AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
-                        weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.SenderId))); //sorting list by distance from drone to parcel's sender
+                        weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.Sender.Id))); //sorting list by distance from drone to parcel's sender
                         while (!found && weight.Count() != 0) //while there are potential parcels with max priority and weight left
                         {
                             var best = weight.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
-                            Location sender = GetCustomerLocation(best.SenderId);
-                            Location receiver = GetCustomerLocation(best.TargetId);
+                            Location sender = GetCustomerLocation(best.Sender.Id);
+                            Location receiver = GetCustomerLocation(best.Receiver.Id);
                             double distance =
                                   Location.distance(d.Location, sender)
                                 + Location.distance(sender, receiver)
@@ -391,14 +391,14 @@ namespace IBL.BO
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.ParcelId != 0) //if there's a parcel assigned to the drone
             {
-                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                Parcel p = Request<Parcel>(d.ParcelId);
                 if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue) //if the parcel is picked up but not delivered yet
                 {
-                    Customer s = Request<Customer>(p.SenderId);
+                    Customer s = Request<Customer>(p.Sender.Id);
                     Location t = GetCustomerLocation(s.Id);
                     dal.DeliverParcel(p.Id);
                     d.Battery -= MinBattery(Location.distance(t, d.Location), d.Id); //updating drone's battery
-                    Customer r = Request<Customer>(p.TargetId);
+                    Customer r = Request<Customer>(p.Receiver.Id);
                     d.Location = GetCustomerLocation(r.Id); //updating drone's location
                     d.Status = DroneStatuses.Available;
                 }
@@ -415,11 +415,11 @@ namespace IBL.BO
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.ParcelId != 0) //if there's a parcel assigned to the drone
             {
-                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                Parcel p = Request<Parcel>(d.ParcelId);
                 if (p.PickedUp == DateTime.MinValue) // if the parcel isn't picked up yet
                 {
                     dal.PickUpParcel(p.Id);
-                    Customer s = Request<Customer>(p.SenderId);
+                    Customer s = Request<Customer>(p.Sender.Id);
                     Location t = GetCustomerLocation(s.Id);
                     d.Battery -= MinBattery(Location.distance(t, d.Location), d.Id); //updating drone's battery
                     d.Location = GetCustomerLocation(s.Id);
@@ -453,7 +453,6 @@ namespace IBL.BO
             if (d.Status == DroneStatuses.Available)
             {
                 var stations = RequestList<Station>().ToList();
-                //var stations = dal.RequestList<IDAL.DO.Station>().ToList(); //getting list of all stations
                 stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations with no available charge slots
                 stations.OrderByDescending(x => Location.distance(d.Location, x.location)); //sorting station list by distance from drone to station
                 bool found = false;
@@ -542,14 +541,14 @@ namespace IBL.BO
         /// </summary>
         public bool isDroneAssigned(DroneToList d)
         {
-            var p = dal.RequestList<IDAL.DO.Parcel>(); //getting list of all parcels
-            for (int i = 0; i < p.Count(); i++) 
+            var p = RequestList<Parcel>(); //getting list of all parcels
+            foreach(var n in p)
             {
-                if (p.ElementAt(i).DroneId == d.Id) // if the drone is assigned to a parcel
+                if(n.Drone.Id == d.Id)
                 {
-                    if (p.ElementAt(i).Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
+                    if (n.Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
                     {
-                        d.ParcelId = p.ElementAt(i).Id;
+                        d.ParcelId = n.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
                         return true;
                     }
                 }
@@ -562,7 +561,6 @@ namespace IBL.BO
         /// </summary>
         public Location ClosestStation(Location d)
         {
-            //var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId); //the parcel assigned to the current drone
             var stations = RequestList<Station>(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
             int id = stations.First().Id;
@@ -588,7 +586,7 @@ namespace IBL.BO
                 return info[0] * distance; 
             else //if a parcel is assigned to drone
             {
-                var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId);
+                Parcel p = Request<Parcel>(d.ParcelId);
                 if(p.Delivered == DateTime.MinValue) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
                     return info[0] * distance;
                 else // distance is distance to deliver parcel
