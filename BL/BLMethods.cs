@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace IBL.BO
-{ //change IDAL request to request?
+{ 
     /// <summary>
     /// Partial BL class that contains all methods necessary for BL
     /// </summary>
@@ -342,7 +342,6 @@ namespace IBL.BO
         public void AssignDrone(int id)
         {
 
-            //var d = dal.Request<IDAL.DO.Drone>(id); //update also in "drones"?
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
@@ -575,14 +574,14 @@ namespace IBL.BO
         /// </summary>
         public bool isDroneAssigned(DroneToList d)
         {
-            var p = dal.RequestList<IDAL.DO.Parcel>(); //getting list of all parcels
-            for (int i = 0; i < p.Count(); i++) 
+            var p = RequestList<Parcel>(); //getting list of all parcels
+            foreach(var n in p)
             {
-                if (p.ElementAt(i).DroneId == d.Id) // if the drone is assigned to a parcel
+                if(n.Drone.Id == d.Id)
                 {
-                    if (p.ElementAt(i).Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
+                    if (n.Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
                     {
-                        d.ParcelId = p.ElementAt(i).Id;
+                        d.ParcelId = n.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
                         return true;
                     }
                 }
@@ -595,7 +594,6 @@ namespace IBL.BO
         /// </summary>
         public Location ClosestStation(Location d)
         {
-            //var p = dal.Request<IDAL.DO.Parcel>(d.ParcelId); //the parcel assigned to the current drone
             var stations = RequestList<Station>(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
             int id = stations.First().Id;
