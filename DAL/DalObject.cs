@@ -36,48 +36,63 @@ namespace IDAL
                     case Station s:
                         //id out of bounds
                         if (!s.Check())
-                            throw new IdOutOfBoundsException("Station id out of bounds\n");
+                            throw new OutOfBoundsException("Station's id out of bounds\n");
                         //id already exist
                         if (DataSource.Stations.Exists(x => x.Id == s.Id))
-                            throw new ExistIdException("Station id already exist\n");
-                        if (s.ChargeSlots < 0)
-                            throw new NotPossibleStationException("Can't be station with negative available slots\n");
+                            throw new AlreadyExistException("Station's id already exist\n");
 
+                        //station with negative charge slots
+                        if (s.ChargeSlots < 0)
+                            throw new NotPossibleException("Can't be station with negative available slots\n");
+                        
+                        //add station
                         DataSource.Stations.Add(s);
                         break;
                     case Drone d:
                         //id out of bounds
                         if (!d.Check())
-                            throw new IdOutOfBoundsException("Drone's id out of bounds\n");
+                            throw new OutOfBoundsException("Drone's id out of bounds\n");
                         //id already exist
                         if (DataSource.Drones.Exists(x => x.Id == d.Id))
-                            throw new ExistIdException("Drone's id already exist\n");
+                            throw new AlreadyExistException("Drone's id already exist\n");
+
+                        //add drone
                         DataSource.Drones.Add(d);
                         break;
                     case Customer c:
+
                         //id out of bounds
                         if (!c.Check())
-                            throw new IdOutOfBoundsException("Customer's id out of bounds\n");
+                            throw new OutOfBoundsException("Customer's id out of bounds\n");
+
                         //id already exist
                         if (DataSource.Customers.Exists(x => x.Id == c.Id))
-                            throw new ExistIdException("Customer's id already exist\n");
+                            throw new AlreadyExistException("Customer's id already exist\n");
+
                         //phone number already exist
                         if (DataSource.Customers.Exists(x => x.Phone == c.Phone))
-                            throw new ExistPhoneException("Customer's phone already exist\n");
+                            throw new AlreadyExistException("Customer's phone already exist\n");
+
+                        //add customer
                         DataSource.Customers.Add(c);
                         break;
 
-                    case Parcel p://isn't possible to have exception in parcel, the id isn't chosen by the user.
+                    case Parcel p:
+                        //isn't possible to have id exception in parcel, the id isn't chosen by the user.
+
                         //sender isn't exist
                         if (!DataSource.Customers.Exists(c => c.Id == p.SenderId))
                             throw new NotExistException("Sender's id isn't exist\n");
+
                         //target isn't exist
                         if (!DataSource.Customers.Exists(c => c.Id == p.TargetId))
                             throw new NotExistException("Target's id ins't exist\n");
+
                         //drone isn't exist, and its id isn't 0
                         if (p.DroneId != null && !DataSource.Drones.Exists(d => d.Id == p.DroneId))
                             throw new NotExistException("Drone's id isn't exist\n");
 
+                        //add parcel
                         p.Id = DataSource.Config.IdOfParcel++;
                         DataSource.Parcels.Add(p);
                         break;
@@ -120,8 +135,9 @@ namespace IDAL
                     default:
                         throw new NotSupportException("Not support this struct\n");
                 }
+                //if it isn't exist
                 if (ans.Equals(default(T)))
-                    throw new NotExistException(typeof(T).Name + " isn't exist\n");
+                    throw new NotExistException(typeof(T).Name + " with id: " + id +  " isn't exist\n");
                 return ans;
             }
 
@@ -297,9 +313,6 @@ namespace IDAL
             }
             #endregion Update
             #region Delete
-
-
-
             /// <summary>
             /// remove an object from its list, given it's id
             /// throw an exception if the object isn't exist
@@ -308,7 +321,7 @@ namespace IDAL
             /// <param name="id">id of the object</param>
             public void Delete<T>(int id) where T : struct
             {
-                //if there is an exception, request function would send it
+                //if there is an exception of id isn't exist, request function would send it
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
