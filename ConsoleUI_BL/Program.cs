@@ -203,8 +203,9 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
+            
         }
 
         static void AddDrone()

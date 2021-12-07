@@ -23,15 +23,6 @@ namespace IBL.BO
                 {
                     case Station s:
 
-                        //check if there is a station in the exact location
-                        if (RequestList<Station>().ToList().Exists(x => x.location.Equals(s.location)))
-                            throw new AlreadyExistException("Station already exist in the exact location\n");
-
-                        //don't know if we need to check this
-                        //check if there is a custoner in the exact location
-                        if (RequestList<Customer>().ToList().Exists(x => x.location.Equals(s.location)))
-                            throw new AlreadyExistException("Customer already exist in the exact location\n");
-
                         //create station in dal
                         dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()
                         {
@@ -47,14 +38,6 @@ namespace IBL.BO
                         break;
 
                     case Customer c:
-                        //check if there is a customer in the exact location
-                        if (RequestList<Customer>().ToList().Exists(x => x.location.Equals(c.location)))
-                            throw new AlreadyExistException("Customer already exist in the exact locatoin\n");
-
-                        //dont know if we need to check this
-                        //check if there is a station in the exact location
-                        if (RequestList<Station>().ToList().Exists(x => x.location.Equals(c.location)))
-                            throw new AlreadyExistException("Station already exist in the exact location\n");
 
                         //create customer in dal
                         dal.Create<IDAL.DO.Customer>(new IDAL.DO.Customer()
@@ -72,14 +55,16 @@ namespace IBL.BO
 
                     case Drone d:
                         Random r = new Random();
-                        Station station = RequestList<Station>().ToList().Find(s => s.location.Equals(d.Location));
+                        
+
+                        StationToList station = RequestList<StationToList>().ToList().Find(s => Request<Station>(s.Id).location.Equals(d.Location));
                         //check if the drone location is the same as exist station
 
                         if (station.Equals(default(Station)))
                             throw new NotExistException("There is no station in this location\n");
 
                         //check if the station have place for the drone
-                        if (station.AvailableSlots == 0)
+                        if (station.Available == 0)
                             throw new NotPossibleException("This station have no enough place\n");
 
                         //create the drone in dal
@@ -100,11 +85,11 @@ namespace IBL.BO
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
                             Status = DroneStatuses.Maintenance,
-                            ParcelId = null
+                            ParcelId = null//not assigned to a parcel
                         });
 
                         //update station info, reduce available slots by 1
-                        UpdateStation(station.Id, null, station.Charging.Count() + station.AvailableSlots);
+                        UpdateStation(station.Id, null, station.Available + station.Occupied);
                         break;
 
                     case Parcel p:
@@ -112,7 +97,7 @@ namespace IBL.BO
                         {
                             Id = p.Id,
                             SenderId = p.Sender.Id,
-                            TargetId = p.Receiver.Id,
+                            ReceiverId = p.Receiver.Id,
                             Weight = (IDAL.DO.WeightCategories)p.Weight,
                             Priority = (IDAL.DO.Priorities)p.Priority,
                             DroneId = null,
@@ -129,7 +114,7 @@ namespace IBL.BO
             //catch exception from dal. exception from bl would go through
 
 
-            //id/phone already exist, need to convert the exception from dal to bl
+            //id already exist, need to convert the exception from dal to bl
             catch (IDAL.DO.AlreadyExistException ex)
             {
                 throw new AlreadyExistException(ex.Message, ex);
@@ -171,16 +156,18 @@ namespace IBL.BO
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
-
                         //get a IDAL.DO.station with this id, convert it to a BL.BO.station
                         IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
+                       
                         ans = (T)Convert.ChangeType(new Station()
                         {
                             AvailableSlots = s.ChargeSlots,
                             Id = s.Id,
-                            location = GetStationLocation(s.Id),
+                            location = new Location() { Latitude = s.Location.Latitude,
+                                                        Longitude = s.Location.Longitude},
                             Name = s.Name,
                             //getting a list of all drones charging at s, and making a list of DroneCharge based on the drone list, can be null
+                            //maybe we need to change this
                             Charging = Drones.FindAll(d =>d.Status==DroneStatuses.Maintenance && d.Location.Equals(s.Location))
                                              .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
                         }, typeof(T));
@@ -193,10 +180,23 @@ namespace IBL.BO
                         ans = (T)Convert.ChangeType(new Customer()
                         {
                             Id = c.Id,
-                            location = GetCustomerLocation(c.Id),
+                            location = new Location() { Longitude = c.Location.Longitude,
+                                Latitude = c.Location.Latitude },
                             Name = c.Name,
                             Phone = c.Phone,
-                            To = RequestList<Parcel>().ToList() //list of all parcels sent to customer, can be empty
+                            //query type, not work
+                            //To = from ParcelToList entity1 in RequestList<ParcelToList>()
+                            //     let entitiy2 = Request<Parcel>(entity1.Id)
+                            //     where entitiy2.Receiver.Id == c.Id
+                            //     select new ParcelAtCustomer()
+                            //     {
+                            //         Id = entitiy2.Id,
+                            //         Customer = new CustomerParcel() { Id = c.Id, Name = c.Name},
+                            //         Priority = entitiy2.Priority,
+                            //         Status = EnumExtension.GetStatus(entitiy2.Delivered,entitiy2.PickedUp, entitiy2.Scheduled, entitiy2.Requested),
+                            //         Weight = entitiy2.Weight
+                            //     },
+                            To = RequestList<ParcelToList>().ToList().Select(p=> Request<Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
                             .FindAll(p => p.Receiver.Id == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
@@ -205,10 +205,9 @@ namespace IBL.BO
                                 Priority = p.Priority,
                                 Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
                                 Weight = p.Weight
-
                             }).ToList(),
 
-                            From = RequestList<Parcel>().ToList() // list of all parcels sent from customer, can be empty
+                            From = RequestList<ParcelToList>().ToList().Select(p=>Request<Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
                             .FindAll(p => p.Sender.Id == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
@@ -223,8 +222,14 @@ namespace IBL.BO
                         break;
                     case nameof(Drone):
                         
+                        //find the drone
                         DroneToList d = Drones.Find(b => b.Id == id);
-                        Parcel p = Request<Parcel>((int)d.ParcelId);
+                        
+                        Parcel p  =default(Parcel);
+
+                        //if the drone isn't assigned to a parcel, then we dont want to find this parcel
+                        if (d.ParcelId != null)
+                            p = Request<Parcel>((int)d.ParcelId);
                         ans = (T)Convert.ChangeType(new Drone()
                         {
                             Id = d.Id,
@@ -232,7 +237,7 @@ namespace IBL.BO
                             Location = d.Location,
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
-                            Parcel = d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
+                            Parcel = d.ParcelId==null?null:d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
                             { //if drone is delivering a parcel, create a ParcelDeliver instance
                                 Id = (int)d.ParcelId,
                                 Priority = p.Priority,
@@ -256,7 +261,7 @@ namespace IBL.BO
                             Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
                             Priority = (Priorities)pi.Priority,
                             Weight = (WeightCategories)pi.Weight,
-                            Receiver = new CustomerParcel() { Id = pi.TargetId, Name = Request<Customer>(pi.TargetId).Name },
+                            Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = Request<Customer>(pi.ReceiverId).Name },
                             Sender = new CustomerParcel() { Id = pi.SenderId, Name = Request<Customer>(pi.SenderId).Name },
                             Delivered = pi.Delivered,
                             PickedUp = pi.PickedUp,
@@ -317,7 +322,7 @@ namespace IBL.BO
                     {
                         Id = p.Id,
                         Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
-                        ReceiverName = Request<Customer>(p.TargetId).Name,
+                        ReceiverName = Request<Customer>(p.ReceiverId).Name,
                         SenderName = Request<Customer>(p.SenderId).Name,
                         Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered,
                         Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
@@ -337,7 +342,10 @@ namespace IBL.BO
         /// </summary>
         public void AssignDrone(int id)
         {
+            //find the drone
             DroneToList d = Drones.Find(x => x.Id == id);
+
+            //if drone isn't available
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
 
