@@ -32,7 +32,6 @@ namespace IBL.BO
                         if (RequestList<Customer>().ToList().Exists(x => x.location.Equals(s.location)))
                             throw new AlreadyExistException("Customer already exist in the exact location\n");
 
-
                         //create station in dal
                         dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()
                         {
@@ -73,8 +72,6 @@ namespace IBL.BO
 
                     case Drone d:
                         Random r = new Random();
-
-
                         Station station = RequestList<Station>().ToList().Find(s => s.location.Equals(d.Location));
                         //check if the drone location is the same as exist station
 
@@ -163,7 +160,6 @@ namespace IBL.BO
         #region Request
         /// <summary>
         /// the function return object from type T with the same id
-        /// 
         /// </summary>
         /// <typeparam name="T">type of object to return </typeparam>
         /// <param name="id">id of the object</param>
@@ -228,7 +224,7 @@ namespace IBL.BO
                     case nameof(Drone):
                         
                         DroneToList d = Drones.Find(b => b.Id == id);
-                        Parcel p = Request<Parcel>(d.ParcelId);
+                        Parcel p = Request<Parcel>((int)d.ParcelId);
                         ans = (T)Convert.ChangeType(new Drone()
                         {
                             Id = d.Id,
@@ -238,7 +234,7 @@ namespace IBL.BO
                             Model = d.Model,
                             Parcel = d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
                             { //if drone is delivering a parcel, create a ParcelDeliver instance
-                                Id = d.ParcelId,
+                                Id = (int)d.ParcelId,
                                 Priority = p.Priority,
                                 Receiver = p.Receiver,
                                 Sender = p.Sender,
@@ -341,18 +337,13 @@ namespace IBL.BO
         /// </summary>
         public void AssignDrone(int id)
         {
-
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
 
             //need to change to requestList from bl
-            List<IDAL.DO.Parcel> AllParcels = dal.RequestList<IDAL.DO.Parcel>().ToList(); //getting list of all parcels
-
-
-           
+            List<Parcel> AllParcels = RequestList<Parcel>().ToList(); //getting list of all parcels
             AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
-                                                                         //does this delete parcels from DAL? 
             bool found = false;
             while (!found && AllParcels.Count() != 0) //while there are potential parcels left
             {
@@ -364,12 +355,12 @@ namespace IBL.BO
                     max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcels with max priority list
                     var weight = AllParcels.Where(x => (int)x.Weight == max).ToList(); // getting list of parcels with max weight and priority
                     AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
-                    weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.SenderId))); //sorting list by distance from drone to parcel's sender
+                    weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.Sender.Id))); //sorting list by distance from drone to parcel's sender
                     while (!found && weight.Count() != 0) //while there are potential parcels with max priority and weight left
                     {
                         var best = weight.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
-                        Location sender = GetCustomerLocation(best.SenderId);
-                        Location receiver = GetCustomerLocation(best.TargetId);
+                        Location sender = GetCustomerLocation(best.Sender.Id);
+                        Location receiver = GetCustomerLocation(best.Receiver.Id);
                         double distance =
                               Location.distance(d.Location, sender)
                             + Location.distance(sender, receiver)
@@ -482,8 +473,6 @@ namespace IBL.BO
             //the drone isn't available
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
-
-
             var stations = RequestList<Station>().ToList();
             //var stations = dal.RequestList<IDAL.DO.Station>().ToList(); //getting list of all stations
             stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations with no available charge slots
@@ -516,14 +505,18 @@ namespace IBL.BO
         /// </summary>
         public void UpdateStation(int id, string name = null, int? slots = null)
         {
-            IDAL.DO.Station s= dal.Request<IDAL.DO.Station>(id); //getting station
+            Station s= Request<Station>(id); //getting station
             dal.Delete<IDAL.DO.Station>(id); //deleting old station
             dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()
             {
                 Id = id,
                 Name = name == null ? s.Name : name,
-                Location = s.Location,
-                ChargeSlots = (int)(slots == null ? s.ChargeSlots : (slots - Request<Station>(id).Charging.Count()))
+                Location = new IDAL.DO.Location()
+                {
+                    Latitude = s.location.Latitude,
+                    Longitude = s.location.Longitude
+                },
+                ChargeSlots = (int)(slots == null ? s.AvailableSlots : (slots - Request<Station>(id).Charging.Count()))
             }); //creating updated station
         }
 
@@ -534,12 +527,12 @@ namespace IBL.BO
         /// <param name="model"></param>
         public void UpdateDrone(int id, string model = null)
         {
-            IDAL.DO.Drone d = dal.Request<IDAL.DO.Drone>(id); //getting drone
+            Drone d = Request<Drone>(id); //getting drone
             dal.Delete<IDAL.DO.Drone>(id); //deleting old drone
             dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone()
             {
                 Id = id,
-                MaxWeight = d.MaxWeight,
+                MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight,
                 Model = model == null ? d.Model : model
             }); //creating updated drone
         }
@@ -552,12 +545,16 @@ namespace IBL.BO
         /// <param name="phone"></param>
         public void UpdateCustomer(int id, string name = null, string phone = null)
         {
-            IDAL.DO.Customer c = dal.Request<IDAL.DO.Customer>(id); //getting customer
+            Customer c = Request<Customer>(id); //getting customer
             dal.Delete<IDAL.DO.Customer>(id); //deleting old customer
             dal.Create<IDAL.DO.Customer>(new IDAL.DO.Customer()
             {
                 Id = id,
-                Location = c.Location,
+                Location = new IDAL.DO.Location()
+                {
+                    Latitude = c.location.Latitude,
+                    Longitude = c.location.Longitude
+                },              
                 Name = name == null ? c.Name : name,
                 Phone = phone == null? c.Phone:phone
             }); //creating updated customer
