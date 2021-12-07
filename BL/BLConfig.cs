@@ -47,7 +47,7 @@ namespace IBL.BO
                     Current.Status = DroneStatuses.Delivery;
                     var p = dal.Request<IDAL.DO.Parcel>(Current.ParcelId); //the parcel assigned to the current drone
                     var c = dal.Request<IDAL.DO.Customer>(p.SenderId); // the parcel's sender and receiver
-                    var t = dal.Request<IDAL.DO.Customer>(p.TargetId);
+                    var t = dal.Request<IDAL.DO.Customer>(p.ReceiverId);
                     Location source = GetCustomerLocation(c.Id);
                     Location target = GetCustomerLocation(t.Id);
                     double distance = Location.distance(source, target); //distance from sender to receiver

@@ -342,7 +342,7 @@ namespace ConsoleUI
             DataBase.Create<Parcel>(new Parcel()
             {
                 SenderId = InputInt(),
-                TargetId = InputInt(),
+                ReceiverId = InputInt(),
                 Weight = EnumExtension.InputEnum<WeightCategories>(),
                 Priority = EnumExtension.InputEnum<Priorities>(),
                 DroneId = InputInt(),

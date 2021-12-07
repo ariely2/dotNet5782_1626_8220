@@ -69,10 +69,6 @@ namespace IDAL
                         if (DataSource.Customers.Exists(x => x.Id == c.Id))
                             throw new AlreadyExistException("Customer's id already exist\n");
 
-                        //phone number already exist
-                        if (DataSource.Customers.Exists(x => x.Phone == c.Phone))
-                            throw new AlreadyExistException("Customer's phone already exist\n");
-
                         //add customer
                         DataSource.Customers.Add(c);
                         break;
@@ -85,7 +81,7 @@ namespace IDAL
                             throw new NotExistException("Sender's id isn't exist\n");
 
                         //target isn't exist
-                        if (!DataSource.Customers.Exists(c => c.Id == p.TargetId))
+                        if (!DataSource.Customers.Exists(c => c.Id == p.ReceiverId))
                             throw new NotExistException("Target's id ins't exist\n");
 
                         //drone isn't exist, and its id isn't 0
@@ -227,7 +223,7 @@ namespace IDAL
             {
                 List<Parcel> d = (List<Parcel>)DataSource.Parcels.FindAll(x => x.Delivered != DateTime.MinValue); //all delivered parcels
                 //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
-                int[] t = d.Select(x => x.TargetId).ToArray(); //getting receiver ids
+                int[] t = d.Select(x => x.ReceiverId).ToArray(); //getting receiver ids
                 return t.Distinct().ToArray(); //return array without duplicates
             }
 

@@ -135,7 +135,7 @@ namespace IDAL
                         {
                             Id = IdOfParcel++,//Id equals to IdOfParcle
                             SenderId = Customers[randomCustomer].Id,//Random Id from customers list 
-                            TargetId = Customers[(randomCustomer + 1) % Customers.Count()].Id,//Random Id from customers list, cant be equal to sendId
+                            ReceiverId = Customers[(randomCustomer + 1) % Customers.Count()].Id,//Random Id from customers list, cant be equal to sendId
                             Weight = ParcelMaxWeight,
                             DroneId = (j != 5 ? Drones[j].Id : null),
                             Priority = EnumExtension.RandomEnumValue<Priorities>(),//Random priority

@@ -24,7 +24,7 @@ namespace IDAL
             public int SenderId { get; set; }
 
             //receiver id
-            public int TargetId { get; set; }
+            public int ReceiverId { get; set; }
 
             //weight of the parcel
             public WeightCategories Weight { get; set; }

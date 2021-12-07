@@ -8,27 +8,25 @@ namespace IBL
 {
 	namespace BO
 	{
-		public class Location
+		/// <summary>
+		/// the class represent a location
+		/// </summary>
+		public struct Location
 		{
+			//longitude coordinate
 			public double Longitude { set; get; }
+
+			//latitude coordinate
 			public double Latitude { set; get; }
-            public override bool Equals(object obj)
-            {
-				if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-				{
-					return false;
-				}
-				Location l = (Location)obj;
-				return this.Latitude == l.Latitude && this.Longitude == l.Longitude;
-            }
-            /// <summary>
-            /// the function return a string with longitude and latitude in sexagesimal representation
-            /// </summary>
-            /// <returns>string of longitude and latitude</returns>
-            public override string ToString()
+
+			/// <summary>
+			/// the function return a string with longitude and latitude in sexagesimal representation
+			/// </summary>
+			/// <returns>return the location in sexagesimal representations</returns>
+			public override string ToString()
 			{
-				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" + 
-					   $"Latitude:  {SexagesimalRepresentation(Latitude, false)}\n";
+				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" +
+					   $"          Latitude:  {SexagesimalRepresentation(Latitude, false)}";
 			}
 
 			/// <summary>
@@ -101,7 +99,8 @@ namespace IBL
 				// calculate the result
 				return (c * r);
 			}
-
 		}
+
+
 	}
 }
