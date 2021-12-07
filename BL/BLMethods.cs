@@ -101,7 +101,7 @@ namespace IBL.BO
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
                             Status = DroneStatuses.Maintenance,
-                            ParcelId = 0
+                            ParcelId = null
                         });
 
                         //update station info, reduce available slots by 1
@@ -239,7 +239,7 @@ namespace IBL.BO
                                 Priority = p.Priority,
                                 Receiver = p.Receiver,
                                 Sender = p.Sender,
-                                Status = (EnumParcelDeliver)(p.PickedUp == DateTime.MinValue ? 0 : 1),
+                                Status = (EnumParcelDeliver)(p.PickedUp == null ? 0 : 1),
                                 Destination = Request<Customer>(p.Receiver.Id).location,
                                 Source = Request<Customer>(p.Sender.Id).location,
                                 Weight = p.Weight,
@@ -300,10 +300,10 @@ namespace IBL.BO
                         Id = c.Id,
                         Name = c.Name,
                         Phone = c.Phone,
-                        Delivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered != DateTime.MinValue).Count(),
-                        NoDelivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered == DateTime.MinValue).Count(),
-                        NoReceived = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered != DateTime.MinValue).Count(),
-                        Received = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered == DateTime.MinValue).Count()
+                        Delivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered != null).Count(),
+                        NoDelivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered == null).Count(),
+                        NoReceived = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered != null).Count(),
+                        Received = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered == null).Count()
                     });
 
                 case nameof(DroneToList):
@@ -392,7 +392,7 @@ namespace IBL.BO
             if (d.ParcelId != 0) //if there's a parcel assigned to the drone
             {
                 Parcel p = Request<Parcel>(d.ParcelId);
-                if (p.PickedUp != DateTime.MinValue && p.Delivered == DateTime.MinValue) //if the parcel is picked up but not delivered yet
+                if (p.PickedUp != null && p.Delivered == null) //if the parcel is picked up but not delivered yet
                 {
                     Customer s = Request<Customer>(p.Sender.Id);
                     Location t = GetCustomerLocation(s.Id);
@@ -416,7 +416,7 @@ namespace IBL.BO
             if (d.ParcelId != 0) //if there's a parcel assigned to the drone
             {
                 Parcel p = Request<Parcel>(d.ParcelId);
-                if (p.PickedUp == DateTime.MinValue) // if the parcel isn't picked up yet
+                if (p.PickedUp == null) // if the parcel isn't picked up yet
                 {
                     dal.PickUpParcel(p.Id);
                     Customer s = Request<Customer>(p.Sender.Id);
@@ -546,7 +546,7 @@ namespace IBL.BO
             {
                 if(n.Drone.Id == d.Id)
                 {
-                    if (n.Delivered == DateTime.MinValue) // if the parcel isn't delivered yet
+                    if (n.Delivered == null) // if the parcel isn't delivered yet
                     {
                         d.ParcelId = n.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
                         return true;
@@ -587,7 +587,7 @@ namespace IBL.BO
             else //if a parcel is assigned to drone
             {
                 Parcel p = Request<Parcel>(d.ParcelId);
-                if(p.Delivered == DateTime.MinValue) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
+                if(p.Delivered == null) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
                     return info[0] * distance;
                 else // distance is distance to deliver parcel
                     return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance

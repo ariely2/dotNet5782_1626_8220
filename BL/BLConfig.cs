@@ -45,17 +45,15 @@ namespace IBL.BO
                 if (isDroneAssigned(Current))
                 {
                     Current.Status = DroneStatuses.Delivery;
-                    var p = dal.Request<IDAL.DO.Parcel>(Current.ParcelId); //the parcel assigned to the current drone
-                    var c = dal.Request<IDAL.DO.Customer>(p.SenderId); // the parcel's sender and receiver
-                    var t = dal.Request<IDAL.DO.Customer>(p.TargetId);
-                    Location source = GetCustomerLocation(c.Id);
-                    Location target = GetCustomerLocation(t.Id);
-                    double distance = Location.distance(source, target); //distance from sender to receiver
-                    distance += Location.distance(target, ClosestStation(target)); // + distance from receiver to closest station
-                    if (p.PickedUp == DateTime.MinValue) //if the parcel isn't picked up yet
+                    var p = Request<Parcel>(Current.ParcelId); //the parcel assigned to the current drone
+                    var c = Request<Customer>(p.Sender.Id); // the parcel's sender and receiver
+                    var t = Request<Customer>(p.Receiver.Id);
+                    double distance = Location.distance(c.location, t.location); //distance from sender to receiver
+                    distance += Location.distance(t.location, ClosestStation(t.location)); // + distance from receiver to closest station
+                    if (p.PickedUp == null) //if the parcel isn't picked up yet
                     {
                         Current.Location = ClosestStation(GetCustomerLocation(c.Id)); //change drone's location to sender's location
-                        distance += Location.distance(Current.Location, source); // + distance from initial location to sender
+                        distance += Location.distance(Current.Location, c.location); // + distance from initial location to sender
                     }
                     else
                         Current.Location = GetCustomerLocation(c.Id);
@@ -77,7 +75,7 @@ namespace IBL.BO
                     {
                         var p = dal.Receivers();
                         int i = r.Next(0, p.Length);
-                        var receiver = dal.Request<IDAL.DO.Customer>(p[i]); // getting a random receiver
+                        var receiver = Request<Customer>(p[i]); // getting a random receiver
                         Current.Location = GetStationLocation(receiver.Id);
                         double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
                         Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
