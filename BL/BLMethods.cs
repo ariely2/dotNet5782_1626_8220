@@ -470,34 +470,28 @@ namespace IBL.BO
         public void SendDroneToCharge(int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
-            //the drone isn't available
-            if (d.Status != DroneStatuses.Available)
+            if (d.Status != DroneStatuses.Available) //the drone isn't available
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
             var stations = RequestList<Station>().ToList();
-            //var stations = dal.RequestList<IDAL.DO.Station>().ToList(); //getting list of all stations
             stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations with no available charge slots
             stations.OrderByDescending(x => Location.distance(d.Location, x.location)); //sorting station list by distance from drone to station
             bool found = false;
-            while (!found && stations.Count != 0) //while there are stations left in list
+            while (!found && stations.Count != 0) //while there are stations left in list and no station was found
             {
-                Location s = GetStationLocation(stations.Last().Id);
-                double distance = Location.distance(d.Location, s);
+                double distance = Location.distance(d.Location, stations.Last().location);
                 if (MinBattery(distance, d.Id) <= d.Battery) //if drone has enough battery to get to station
                 {
                     found = true;
-                    d.Battery = MinBattery(distance, d.Id);
-                    d.Location = s;
+                    d.Battery -= MinBattery(distance, d.Id);
+                    d.Location = stations.Last().location;
                     d.Status = DroneStatuses.Maintenance;
                     dal.ChargeDrone(d.Id, stations.Last().Id); //is this it?
                 }
                 else
-                    stations.RemoveAt(stations.Count - 1); //if the drone doesn't have enough battery to get to station, remove it from list 
+                    stations.RemoveAt(stations.Count - 1); //if the drone doesn't have enough battery to get to station, remove station from list 
             }
-            //the function didn't find a station with available slots
-            if (!found)
+            if (!found) //the function didn't find a station with available slots
                 throw new NotFoundException("Not found a station with available slots\n");
-
-
         }
 
         /// <summary>
@@ -523,8 +517,8 @@ namespace IBL.BO
         /// <summary>
         /// function that updates drone's details
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="model"></param>
+        /// <param name="id"> drone id </param>
+        /// <param name="model"> drone model </param>
         public void UpdateDrone(int id, string model = null)
         {
             Drone d = Request<Drone>(id); //getting drone
@@ -540,9 +534,9 @@ namespace IBL.BO
         /// <summary>
         /// function that updates customer's details
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="phone"></param>
+        /// <param name="id"> customer id </param>
+        /// <param name="name"> customer's name </param>
+        /// <param name="phone"> customer's phone number </param>
         public void UpdateCustomer(int id, string name = null, string phone = null)
         {
             Customer c = Request<Customer>(id); //getting customer
@@ -559,9 +553,6 @@ namespace IBL.BO
                 Phone = phone == null? c.Phone:phone
             }); //creating updated customer
         }
-
-
-
         #endregion Update
 
         #region InternalMethod
@@ -571,17 +562,12 @@ namespace IBL.BO
         /// </summary>
         public bool isDroneAssigned(DroneToList d)
         {
-            var p = RequestList<Parcel>(); //getting list of all parcels
-            foreach(var n in p)
+            var a = RequestList<Parcel>().ToList(); //getting list of all parcels
+            var p = a.Find(x => x.Drone.Id == d.Id);
+            if(p.Delivered == null) //if the parcel isn't delivered yet
             {
-                if(n.Drone.Id == d.Id)
-                {
-                    if (n.Delivered == null) // if the parcel isn't delivered yet
-                    {
-                        d.ParcelId = n.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
-                        return true;
-                    }
-                }
+                d.ParcelId = p.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
+                return true;
             }
             return false;
         }
