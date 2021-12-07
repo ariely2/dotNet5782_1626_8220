@@ -9,7 +9,8 @@ namespace IBL.BO
     public class ParcelDeliver
     {
         public int Id { set; get; }
-        public EnumParcelDeliver Status { set; get; }//pickup = 0, delivery = 1
+        public EnumParcelDeliver Status { set; get; }//0 -> wait for pick up
+                                                     //1 -> on the way to receiver
         public Priorities Priority { set; get; }
         public WeightCategories Weight { set; get; }
        

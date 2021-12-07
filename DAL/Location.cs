@@ -8,15 +8,21 @@ namespace IDAL
 {
 	namespace DO
 	{
+		/// <summary>
+		/// the class represent a location
+		/// </summary>
 		public struct Location
 		{
+			//longitude coordinate
 			public double Longitude { set; get; }
+
+			//latitude coordinate
 			public double Latitude { set; get; }
 
 			/// <summary>
 			/// the function return a string with longitude and latitude in sexagesimal representation
 			/// </summary>
-			/// <returns>string of longitude and latitude</returns>
+			/// <returns>return the location in sexagesimal representations</returns>
 			public override string ToString()
 			{
 				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" +

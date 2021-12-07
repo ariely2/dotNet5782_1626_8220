@@ -9,26 +9,68 @@ namespace IDAL
     namespace DO
     {
         /// <summary>
-        /// the struct represent a parcel
+        /// the struct represent a parcel in the database
         /// </summary>
         public struct Parcel
         {
+            //bounds of id
             public static readonly int LowerBoundId = (int)1e8;
             public static readonly int UpperBoundId = (int)1e9;
-            public int Id { get; set; }//id with 8 digit
+            
+            //id of the parcel, 8 digit number
+            public int Id { get; set; }
+
+            //sender id
             public int SenderId { get; set; }
+
+            //receiver id
             public int TargetId { get; set; }
+
+            //weight of the parcel
             public WeightCategories Weight { get; set; }
+
+            //priority of the parcel
             public Priorities Priority { get; set; }
+
+            //id of the drone. if the drone isn't assigned yet, then the value is null
             public int? DroneId { get; set; }
+
+            //time to requested the parcel
             public DateTime? Requested { get; set; }
-            public DateTime? Scheduled { get; set; }//min value if not scheduled
-            public DateTime? PickedUp { get; set; }//min value if not picked up
-            public DateTime? Delivered { get; set; }//min value if not delivered
+
+            //time to assign a drone to this parcel. if it didn't happen, then the value is null
+            public DateTime? Scheduled { get; set; }
+
+            //time the drone picked up the parcel. if it didn't happen, then the value is null
+            public DateTime? PickedUp { get; set; }
+
+            //time the drone delivered the parcel to the target. if it didn't happen, then the value is null
+            public DateTime? Delivered { get; set; }
+
+            /// <summary>
+            /// override the function ToString in class Object
+            /// </summary>
+            /// <returns>the string format look like that:
+            /// Id: Id.ToString()
+            /// SenderId: SenderId.ToString()
+            /// TargetId: TargetId.ToString()
+            /// Weight: Weight.ToString()
+            /// Priority: Priority.ToString()
+            /// DroneId: DroneId.ToString()
+            /// Requested: Requested.ToString()
+            /// Scheduled: Scheduled.ToString()
+            /// PickedUp: PickedUp.ToString()
+            /// Delivered: Delivered.ToString()
+            /// </returns>
             public override string ToString()
             {
                 return Print.print<Parcel>(this);
             }
+
+            /// <summary>
+            /// function to check if the id is in bounds
+            /// </summary>
+            /// <returns>return true/false, depends on the id</returns>
             public bool Check()
             {
                 return this.Id >= LowerBoundId && this.Id < UpperBoundId;

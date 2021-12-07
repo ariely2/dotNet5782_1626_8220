@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace IDAL 
 {
+    /// <summary>
+    /// interface with all the function requried to the database
+    /// </summary>
     public interface IDal
     {
         void Create<T>(T t) where T : struct;
