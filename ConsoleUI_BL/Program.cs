@@ -167,7 +167,6 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-
                 case ((int)EnumAdd.Station):
                     AddStation();
                     break;
@@ -183,7 +182,6 @@ namespace ConsoleUI_BL
                 default:
                     Console.WriteLine("Invalid Input, try again");
                     break;
-
             }
         }
         static void AddStation()
@@ -225,7 +223,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                throw new IdExistException("Drone id exists", ex);
+                Console.WriteLine(ex);
             }
         }
 
@@ -248,7 +246,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                throw new IdExistException("Customer id exists", ex);
+                Console.WriteLine(ex);
             }
         }
 
@@ -265,10 +263,9 @@ namespace ConsoleUI_BL
                     Priority = EnumExtension.InputEnum<Priorities>(),
                 });
             }
-            //wouldn't be exception,the user doesn't choose the id
             catch (Exception ex)
             {
-                throw new IdExistException("????????????", ex);
+                Console.WriteLine(ex);
             }
         }
         #endregion Add
@@ -284,26 +281,96 @@ namespace ConsoleUI_BL
             switch (option)
             {
                 case ((int)EnumUpdate.ConnectParceltoDrone):
-
+                    DroneAssign();
                     break;
                 case ((int)EnumUpdate.PickUpParcel):
-
+                    PickUpParcel();
                     break;
                 case ((int)EnumUpdate.DeliverParcel):
-
+                    DeliverParcel();
                     break;
                 case ((int)EnumUpdate.SendDroneToCharge):
-
+                    ChargeDrone();
                     break;
                 case ((int)EnumUpdate.ReleaseDrone):
+                    DroneRelease();
                     break;
                 case ((int)EnumUpdate.DroneData):
                     DroneUpdate();
                     break;
                 case ((int)EnumUpdate.StationData):
+                    StationUpdate();
                     break;
                 case ((int)EnumUpdate.CustomerData):
+                    CustomerUpdate();
                     break;
+            }
+        }
+
+        static void DroneAssign()
+        {
+            Console.WriteLine("Enter drone Id");
+            try
+            {
+                int id = InputInt();
+                bl.AssignDrone(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        static void PickUpParcel()
+        {
+            Console.WriteLine("Enter drone Id");
+            try
+            {
+                int id = InputInt();
+                bl.PickUp(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        static void DeliverParcel()
+        {
+            Console.WriteLine("Enter drone Id");
+            try
+            {
+                int id = InputInt();
+                bl.Deliver(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        static void ChargeDrone()
+        {
+            Console.WriteLine("Enter Id");
+            try
+            {
+                int id = InputInt();
+                bl.SendDroneToCharge(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        static void DroneRelease()
+        {
+            Console.WriteLine("Enter Id and hours of charging");
+            try
+            {
+                int id = InputInt();
+                double hours = InputDouble();
+                bl.ReleaseDrone(id, hours);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -314,11 +381,51 @@ namespace ConsoleUI_BL
             {
                 int id = InputInt();
                 string model = Console.ReadLine();
-                // bl.UpdateDrone 
+                bl.UpdateDrone(id, model); 
             }
             catch (Exception ex)
             {
-                throw new IdExistException("Drone doesn't exist", ex);
+                Console.WriteLine(ex);
+            }
+        }
+
+        static void StationUpdate()
+        {
+            Console.WriteLine("Enter Id,  then enter new model and/or new number of charge slots ");
+            try
+            {
+                int id = InputInt();
+                int? slots = null;
+                string model = Console.ReadLine();
+                string s = Console.ReadLine();
+                if (s != "\n") //if slots number was entered
+                    slots = int.Parse(s);
+                if (model == "\n") //if model was not entered
+                    model = null;
+                bl.UpdateStation(id, model, slots);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        static void CustomerUpdate()
+        {
+            Console.WriteLine("Enter Id,  then enter new name and/or new phone number");
+            try
+            {
+                int id = InputInt();
+                string name = Console.ReadLine();
+                string phone = Console.ReadLine();
+                if (name == "\n") //if name was not entered
+                    name = null;
+                if (phone == "\n") //if phone was not entered
+                    phone = null;
+                bl.UpdateCustomer(id, name, phone);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -401,7 +508,6 @@ namespace ConsoleUI_BL
             foreach (ParcelToList p in bl.RequestList<ParcelToList>())
                 if (bl.Request<Parcel>(p.Id).Drone == null)
                     Console.WriteLine(p);
-
         }
         static void RequestAvailableStations()
         {
@@ -410,6 +516,5 @@ namespace ConsoleUI_BL
                     Console.WriteLine(s);
         }
         #endregion RequestList
-
     }
 }
