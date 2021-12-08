@@ -55,8 +55,6 @@ namespace IBL.BO
 
                     case Drone d:
                         Random r = new Random();
-                        
-
                         StationToList station = RequestList<StationToList>().ToList().Find(s => Request<Station>(s.Id).location.Equals(d.Location));
                         //check if the drone location is the same as exist station
 

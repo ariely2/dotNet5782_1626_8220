@@ -82,12 +82,15 @@ namespace ConsoleUI_BL
         /// </summary>
         static void PrintUpdateOption()
         {
-            Console.WriteLine(@"choose an option between 1 to 5:
+            Console.WriteLine(@"choose an option between 1 to 8:
 1)Assign a parcel to a drone
 2)Pick up a parcel by a drone
 3)deliver a parcel to a customer
 4)Send a drone to charge
-5)Release a drone from charging");
+5)Release a drone from charging
+6)Update Drone data
+7)Update Station data
+8)Update Customer data");
         }
         /// <summary>
         /// print display option
@@ -397,9 +400,9 @@ namespace ConsoleUI_BL
                 int? slots = null;
                 string model = Console.ReadLine();
                 string s = Console.ReadLine();
-                if (s != "\n") //if slots number was entered
+                if (!String.IsNullOrWhiteSpace(s)) //if slots number was entered
                     slots = int.Parse(s);
-                if (model == "\n") //if model was not entered
+                if (String.IsNullOrWhiteSpace(model)) //if model was not entered
                     model = null;
                 bl.UpdateStation(id, model, slots);
             }
@@ -416,9 +419,9 @@ namespace ConsoleUI_BL
                 int id = InputInt();
                 string name = Console.ReadLine();
                 string phone = Console.ReadLine();
-                if (name == "\n") //if name was not entered
+                if (String.IsNullOrWhiteSpace(name)) //if name was not entered
                     name = null;
-                if (phone == "\n") //if phone was not entered
+                if (String.IsNullOrWhiteSpace(phone)) //if phone was not entered
                     phone = null;
                 bl.UpdateCustomer(id, name, phone);
             }
