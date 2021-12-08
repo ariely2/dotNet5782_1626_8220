@@ -250,7 +250,8 @@ namespace IBL.BO
                         ans = (T)Convert.ChangeType(new Parcel()
                         {
                             Id = pi.Id,
-                            Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
+                            //if the parcel wasn't assigned yet to a drone
+                            Drone = a == null?null:new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
                             // Priority = (Priorities)pi.Priority,
                             //Weight = (WeightCategories)pi.Weight,
                             Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<IDAL.DO.Customer>(pi.ReceiverId).Name },
@@ -265,13 +266,17 @@ namespace IBL.BO
                         throw new NotSupportException("Not support " + typeof(T).Name + '\n');
                 }
             }
-            catch (NotSupportException ex)
+            catch (IDAL.DO.NotSupportException ex)
             {
                 throw new NotSupportException(ex.Message, ex);
             }
             catch (IDAL.DO.NotExistException ex)
             {
-                throw new NotExistException(typeof(T).Name + " with id of: " + id + " isn't exist\n", ex);
+                throw new NotExistException(ex.Message, ex);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
             }
             return ans;
         }
@@ -560,39 +565,29 @@ namespace IBL.BO
 
         #region InternalMethod
 
-        /// <summary>
-        /// function that checks if the drone is assigned to a parcel
-        /// </summary>
-        public bool isDroneAssigned(DroneToList d)
-        {
-            var a = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
-            var p = a.Find(x => x.Drone.Id == d.Id);
-            if (p.Delivered == null) //if the parcel isn't delivered yet
-            {
-                d.ParcelId = p.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
-                return true;
-            }
-            return false;
-        }
+
 
         /// <summary>
-        /// function that returns the location of the closest station to given location
+        /// the function search for the closest station
         /// </summary>
+        /// <param name="d">current location</param>
+        /// <returns>reutrn the location of the closest location</returns>
         public Location ClosestStation(Location d)
         {
+            
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
-            int id = stations.First().Id;
+            Location ans = stations.First().location;
             foreach (var b in stations)
             {
                 if (Location.distance(b.location, d) < distance) //if station is closer than current closest station
                 {
                     distance = Location.distance(b.location, d); //update shortest distance and id of closest station
-                    id = b.Id;
+                    ans = b.location;
                 }
             }
-            Location loc = Request<Customer>(id).location;
-            return loc;
+            //return the location of the closest station
+            return ans;
         }
         /// <summary>
         /// function the returns the minimum battery needed for a drone to fly a given distance

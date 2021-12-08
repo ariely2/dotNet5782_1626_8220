@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IDAL;
-using IDAL.DalObject;
 
 namespace IBL.BO
 {
@@ -14,7 +13,8 @@ namespace IBL.BO
     public partial class BL:IBL
     {
         private IDal dal;
-        public List<DroneToList> Drones = new List<DroneToList>(); //public?
+        private List<DroneToList> Drones; //public?
+
         //static?
         public double AvailableUse; 
         public double LightUse; 
@@ -24,8 +24,9 @@ namespace IBL.BO
         public static Random r = new Random();
         public double[] info;
         public BL() //BL constructor, initializes BL instance
-        { 
-            dal = new DalObject();
+        {
+            dal = new IDAL.DalObject.DalObject();
+            Drones = new List<DroneToList>();
             info = dal.GetBatteryUsageInfo();
             AvailableUse = info[0];
             LightUse = info[1];
@@ -45,18 +46,19 @@ namespace IBL.BO
                 if (isDroneAssigned(Current))
                 {
                     Current.Status = DroneStatuses.Delivery;
-                    var p = Request<Parcel>((int)Current.ParcelId); //the parcel assigned to the current drone
-                    var c = Request<Customer>(p.Sender.Id); // the parcel's sender and receiver
-                    var t = Request<Customer>(p.Receiver.Id);
-                    double distance = Location.distance(c.location, t.location); //distance from sender to receiver
-                    distance += Location.distance(t.location, ClosestStation(t.location)); // + distance from receiver to closest station
+                    Parcel p = Request<Parcel>((int)Current.ParcelId); //the parcel assigned to the current drone
+                    Customer sender = Request<Customer>(p.Sender.Id); // the parcel's sender
+                    Customer receiver = Request<Customer>(p.Receiver.Id);//thet parcel's receiver
+
+                    double distance = Location.distance(sender.location, receiver.location); //distance from sender to receiver
+                    distance += Location.distance(receiver.location, ClosestStation(receiver.location)); // + distance from receiver to closest station
                     if (p.PickedUp == null) //if the parcel isn't picked up yet
                     {
-                        Current.Location = ClosestStation(GetCustomerLocation(c.Id)); //change drone's location to sender's location
-                        distance += Location.distance(Current.Location, c.location); // + distance from initial location to sender
+                        Current.Location = ClosestStation(GetCustomerLocation(sender.Id)); //change drone's location to sender's location
+                        distance += Location.distance(Current.Location, sender.location); // + distance from initial location to sender
                     }
                     else
-                        Current.Location = GetCustomerLocation(c.Id);
+                        Current.Location = GetCustomerLocation(sender.Id);
                     double b = MinBattery(distance, Current.Id);
                     Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
                 }
@@ -82,6 +84,22 @@ namespace IBL.BO
                     }
                 }
             }
+
+            foreach (var d in Drones)
+                Console.WriteLine(d);
+        }
+        /// <summary>
+        /// function that checks if the drone is assigned to a parcel
+        /// </summary>
+        public bool isDroneAssigned(DroneToList d)
+        {
+            var p = dal.RequestList<IDAL.DO.Parcel>().ToList().Find(x => x.DroneId == d.Id);
+            if (p.Delivered == null) //if the parcel isn't delivered yet
+            {
+                d.ParcelId = p.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
+                return true;
+            }
+            return false;
         }
     }
 }

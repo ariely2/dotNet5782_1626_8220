@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class AlreadyExistException : Exception
+    public class AlreadyExistException : Exception
     {
         public AlreadyExistException()
         {

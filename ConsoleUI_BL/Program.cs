@@ -6,7 +6,7 @@ namespace ConsoleUI_BL
 
     class Program
     {
-        private static IBL.IBL bl = new BL();
+        public static IBL.IBL bl;
         #region InputMethods
         /// <summary>
         /// the function get an int number from user,
@@ -130,6 +130,7 @@ namespace ConsoleUI_BL
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            bl = new BL();
             int option;
             do
             {
@@ -462,8 +463,14 @@ namespace ConsoleUI_BL
         static void Request<T>() where T : class
         {
             Console.WriteLine("enter id");
-            Console.WriteLine(bl.Request<T>(InputInt()));
-        }
+            try {
+                Console.WriteLine(bl.Request<T>(InputInt()));
+            }
+            catch(NotExistException ex)
+            {
+                Console.WriteLine(ex.Message + "try again");
+            }
+            }
         #endregion Request
         #region RequestList
         /// <summary>
@@ -500,7 +507,10 @@ namespace ConsoleUI_BL
 
         static void RequestList<T>() where T : class
         {
-            foreach (T t in bl.RequestList<T>())
+            var arr = bl.RequestList<T>();
+            if (arr == null)
+                return;
+            foreach (T t in arr)
             {
                 Console.WriteLine(t);
             }

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class OutOfBoundsExceptoin : Exception
+    public class OutOfBoundsExceptoin : Exception
     {
         public OutOfBoundsExceptoin()
         {

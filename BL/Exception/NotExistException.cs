@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class NotExistException : Exception
+    public class NotExistException : Exception
     {
         public NotExistException()
         {

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class ParcelWasntPickedUpException : Exception
+    public class ParcelWasntPickedUpException : Exception
     {
         public ParcelWasntPickedUpException()
         {

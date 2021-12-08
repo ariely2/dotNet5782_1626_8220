@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class NotSupportException : Exception
+    public class NotSupportException : Exception
     {
         public NotSupportException()
         {

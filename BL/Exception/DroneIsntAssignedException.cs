@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace IBL.BO
 {
     [Serializable]
-    internal class DroneIsntAssignedException : Exception
+    public class DroneIsntAssignedException : Exception
     {
         public DroneIsntAssignedException()
         {
