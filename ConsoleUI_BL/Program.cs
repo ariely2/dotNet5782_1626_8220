@@ -204,8 +204,7 @@ namespace ConsoleUI_BL
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "Try again\n");
-            }
-            
+            } 
         }
 
         static void AddDrone()
@@ -223,7 +222,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
 
@@ -246,7 +245,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
 
@@ -265,7 +264,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         #endregion Add
@@ -317,7 +316,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         static void PickUpParcel()
@@ -330,7 +329,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         static void DeliverParcel()
@@ -343,7 +342,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         static void ChargeDrone()
@@ -356,7 +355,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         static void DroneRelease()
@@ -370,7 +369,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
 
@@ -385,7 +384,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
 
@@ -406,7 +405,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
         static void CustomerUpdate()
@@ -425,7 +424,7 @@ namespace ConsoleUI_BL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message + "Try again\n");
             }
         }
 
