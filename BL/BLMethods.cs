@@ -302,15 +302,16 @@ namespace IBL.BO
                     });
 
                 case nameof(CustomerToList):
+                    List<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList();
                     return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>().Select(c => new CustomerToList()
                     {
                         Id = c.Id,
                         Name = c.Name,
                         Phone = c.Phone,
-                        Delivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered != null).Count(),
-                        NoDelivered = RequestList<Parcel>().ToList().FindAll(p => p.Sender.Id == c.Id && p.Delivered == null).Count(),
-                        NoReceived = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered != null).Count(),
-                        Received = RequestList<Parcel>().ToList().FindAll(p => p.Receiver.Id == c.Id && p.Delivered == null).Count()
+                        Delivered = parcels.FindAll(p => p.Sender.Id == c.Id && p.Delivered != null).Count(),
+                        NoDelivered = parcels.FindAll(p => p.Sender.Id == c.Id && p.Delivered == null).Count(),
+                        NoReceived = parcels.FindAll(p => p.Receiver.Id == c.Id && p.Delivered != null).Count(),
+                        Received = parcels.FindAll(p => p.Receiver.Id == c.Id && p.Delivered == null).Count()
                     });
 
                 case nameof(DroneToList):
@@ -322,7 +323,7 @@ namespace IBL.BO
                         Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
                         ReceiverName = Request<Customer>(p.ReceiverId).Name,
                         SenderName = Request<Customer>(p.SenderId).Name,
-                        Status = p.Delivered == DateTime.MinValue ? (p.PickedUp == DateTime.MinValue ? (p.Scheduled == DateTime.MinValue ? ParcelStatuses.Created : ParcelStatuses.Assigned) : ParcelStatuses.PickedUp) : ParcelStatuses.Delivered,
+                        Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled,p.Requested),
                         Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
 
                     });
@@ -348,7 +349,7 @@ namespace IBL.BO
                 throw new DroneIsntAvailableException("drone isn't available\n");
 
             //need to change to requestList from bl
-            List<Parcel> AllParcels = RequestList<Parcel>().ToList(); //getting list of all parcels
+            List<Parcel> AllParcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
             AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
             bool found = false;
             while (!found && AllParcels.Count() != 0) //while there are potential parcels left
@@ -478,7 +479,9 @@ namespace IBL.BO
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.Status != DroneStatuses.Available) //the drone isn't available
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
-            var stations = RequestList<Station>().ToList();
+            List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList();
+            
+            //var stations = dal.RequestList<IDAL.DO.Station>().ToList(); //getting list of all stations
             stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations with no available charge slots
             stations.OrderByDescending(x => Location.distance(d.Location, x.location)); //sorting station list by distance from drone to station
             bool found = false;
@@ -568,7 +571,7 @@ namespace IBL.BO
         /// </summary>
         public bool isDroneAssigned(DroneToList d)
         {
-            var a = RequestList<Parcel>().ToList(); //getting list of all parcels
+            var a = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
             var p = a.Find(x => x.Drone.Id == d.Id);
             if(p.Delivered == null) //if the parcel isn't delivered yet
             {
@@ -583,7 +586,7 @@ namespace IBL.BO
         /// </summary>
         public Location ClosestStation(Location d)
         {
-            var stations = RequestList<Station>(); //getting list of all stations
+            List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
             int id = stations.First().Id;
             foreach (var b in stations)
