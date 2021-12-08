@@ -70,7 +70,7 @@ namespace IBL.BO
                         {
                             Id = d.Id,
                             Model = d.Model,
-                            MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight,
+                            //MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight,
                         });
 
                         //if the id already exist, dal.create would throw an exception
@@ -96,8 +96,8 @@ namespace IBL.BO
                             Id = p.Id,
                             SenderId = p.Sender.Id,
                             ReceiverId = p.Receiver.Id,
-                            Weight = (IDAL.DO.WeightCategories)p.Weight,
-                            Priority = (IDAL.DO.Priorities)p.Priority,
+                           // Weight = p.Weight == WeightCategories.Heavy? IDAL.DO.WeightCategories.Heavy,
+                            //Priority = (IDAL.DO.Priorities)p.Priority,
                             DroneId = null,
                             Requested = DateTime.Now,
                             Scheduled = null,
@@ -182,26 +182,38 @@ namespace IBL.BO
                                                         Latitude = c.Location.Latitude },
                             Name = c.Name,
                             Phone = c.Phone,
+                            To = RequestList<ParcelToList>().ToList().Select(p=> dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
+                            .FindAll(p => p.ReceiverId == c.Id)
+                            //     let entitiy2 = Request<Parcel>(entity1.Id)
+                            //     where entitiy2.Receiver.Id == c.Id
+                            //     select new ParcelAtCustomer()
+                            //     {
+                            //         Id = entitiy2.Id,
+                            //         Customer = new CustomerParcel() { Id = c.Id, Name = c.Name},
+                            //         Priority = entitiy2.Priority,
+                            //         Status = EnumExtension.GetStatus(entitiy2.Delivered,entitiy2.PickedUp, entitiy2.Scheduled, entitiy2.Requested),
+                            //         Weight = entitiy2.Weight
+                            //     },
                             To = RequestList<ParcelToList>().ToList().Select(p=> Request<Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
                             .FindAll(p => p.Receiver.Id == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
                                 Id = p.Id,
                                 Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
-                                Priority = p.Priority,
+                                // = (Priorities)p.Priority,
                                 Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
-                                Weight = p.Weight
+                                //Weight = (WeightCategories)p.Weight
                             }).ToList(),
 
-                            From = RequestList<ParcelToList>().ToList().Select(p=>Request<Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
-                            .FindAll(p => p.Sender.Id == c.Id)
+                            From = RequestList<ParcelToList>().ToList().Select(p=> dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
+                            .FindAll(p => p.SenderId == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
                                 Id = p.Id,
                                 Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
-                                Priority = p.Priority,
+                                //Priority = (Priorities)p.Priority,
                                 Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
-                                Weight = p.Weight
+                                //Weight = (WeightCategories)p.Weight
                             }).ToList()
 
                         }, typeof(T));
@@ -210,7 +222,6 @@ namespace IBL.BO
                         
                         //find the drone
                         DroneToList d = Drones.Find(b => b.Id == id);
-                        
                         Parcel p  =default(Parcel);
 
                         //if the drone isn't assigned to a parcel, then we dont want to find this parcel
@@ -233,10 +244,10 @@ namespace IBL.BO
                                 Destination = Request<Customer>(p.Receiver.Id).location,
                                 Source = Request<Customer>(p.Sender.Id).location,
                                 Weight = p.Weight,
-                                Distance = Location.distance(Request<Customer>(p.Receiver.Id).location, Request<Customer>(p.Sender.Id).location)
-                            } : null,
-                            Status = d.Status
-                        }, typeof(T));
+                           // Priority = (Priorities)pi.Priority,
+                            //Weight = (WeightCategories)pi.Weight,
+                            Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<IDAL.DO.Customer>(pi.ReceiverId).Name },
+                            Sender = new CustomerParcel() { Id = pi.SenderId, Name = dal.Request<IDAL.DO.Customer>(pi.SenderId).Name },
                         break;
                     case nameof(Parcel):
                         IDAL.DO.Parcel pi = dal.Request<IDAL.DO.Parcel>(id);
@@ -247,7 +258,6 @@ namespace IBL.BO
                             Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
                             Priority = (Priorities)pi.Priority,
                             Weight = (WeightCategories)pi.Weight,
-                           
                             Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = Request<Customer>(pi.ReceiverId).Name },
                             Sender = new CustomerParcel() { Id = pi.SenderId, Name = Request<Customer>(pi.SenderId).Name },
                             Delivered = pi.Delivered,
@@ -309,11 +319,11 @@ namespace IBL.BO
                     return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>().Select(p => new ParcelToList
                     {
                         Id = p.Id,
-                        Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
-                        ReceiverName = Request<Customer>(p.ReceiverId).Name,
-                        SenderName = Request<Customer>(p.SenderId).Name,
+                        //Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
+                        ReceiverName = dal.Request<IDAL.DO.Customer>(p.ReceiverId).Name,
+                        SenderName = dal.Request<IDAL.DO.Customer>(p.SenderId).Name,
                         Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled,p.Requested),
-                        Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
+                        //Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
 
                     });
                 default:
