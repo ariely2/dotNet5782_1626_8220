@@ -179,21 +179,9 @@ namespace IBL.BO
                         {
                             Id = c.Id,
                             location = new Location() { Longitude = c.Location.Longitude,
-                                Latitude = c.Location.Latitude },
+                                                        Latitude = c.Location.Latitude },
                             Name = c.Name,
                             Phone = c.Phone,
-                            //query type, not work
-                            //To = from ParcelToList entity1 in RequestList<ParcelToList>()
-                            //     let entitiy2 = Request<Parcel>(entity1.Id)
-                            //     where entitiy2.Receiver.Id == c.Id
-                            //     select new ParcelAtCustomer()
-                            //     {
-                            //         Id = entitiy2.Id,
-                            //         Customer = new CustomerParcel() { Id = c.Id, Name = c.Name},
-                            //         Priority = entitiy2.Priority,
-                            //         Status = EnumExtension.GetStatus(entitiy2.Delivered,entitiy2.PickedUp, entitiy2.Scheduled, entitiy2.Requested),
-                            //         Weight = entitiy2.Weight
-                            //     },
                             To = RequestList<ParcelToList>().ToList().Select(p=> Request<Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
                             .FindAll(p => p.Receiver.Id == c.Id)
                             .Select(p => new ParcelAtCustomer()
@@ -259,6 +247,7 @@ namespace IBL.BO
                             Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
                             Priority = (Priorities)pi.Priority,
                             Weight = (WeightCategories)pi.Weight,
+                           
                             Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = Request<Customer>(pi.ReceiverId).Name },
                             Sender = new CustomerParcel() { Id = pi.SenderId, Name = Request<Customer>(pi.SenderId).Name },
                             Delivered = pi.Delivered,
