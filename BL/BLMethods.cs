@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace IBL.BO
-{ 
+{
     /// <summary>
     /// Partial BL class that contains all methods necessary for BL
     /// </summary>
@@ -96,7 +96,7 @@ namespace IBL.BO
                             Id = p.Id,
                             SenderId = p.Sender.Id,
                             ReceiverId = p.Receiver.Id,
-                           // Weight = p.Weight == WeightCategories.Heavy? IDAL.DO.WeightCategories.Heavy,
+                            // Weight = p.Weight == WeightCategories.Heavy? IDAL.DO.WeightCategories.Heavy,
                             //Priority = (IDAL.DO.Priorities)p.Priority,
                             DroneId = null,
                             Requested = DateTime.Now,
@@ -130,11 +130,11 @@ namespace IBL.BO
             }
 
             //the station have no place for additional drone
-            catch(IDAL.DO.NotPossibleException ex)
+            catch (IDAL.DO.NotPossibleException ex)
             {
                 throw new NotPossibleException(ex.Message, ex);
             }
-            
+
         }
 
 
@@ -150,23 +150,27 @@ namespace IBL.BO
         public T Request<T>(int id) where T : class
         {
             T ans = default(T);
-            try {
+            try
+            {
                 switch (typeof(T).Name)
                 {
                     case nameof(Station):
                         //get a IDAL.DO.station with this id, convert it to a BL.BO.station
                         IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
-                       
+
                         ans = (T)Convert.ChangeType(new Station()
                         {
                             AvailableSlots = s.ChargeSlots,
                             Id = s.Id,
-                            location = new Location() { Latitude = s.Location.Latitude,
-                                                        Longitude = s.Location.Longitude},
+                            location = new Location()
+                            {
+                                Latitude = s.Location.Latitude,
+                                Longitude = s.Location.Longitude
+                            },
                             Name = s.Name,
                             //getting a list of all drones charging at s, and making a list of DroneCharge based on the drone list, can be null
                             //maybe we need to change this
-                            Charging = Drones.FindAll(d =>d.Status==DroneStatuses.Maintenance && d.Location.Equals(s.Location))
+                            Charging = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(s.Location))
                                              .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
                         }, typeof(T));
                         break;
@@ -178,24 +182,15 @@ namespace IBL.BO
                         ans = (T)Convert.ChangeType(new Customer()
                         {
                             Id = c.Id,
-                            location = new Location() { Longitude = c.Location.Longitude,
-                                                        Latitude = c.Location.Latitude },
+                            location = new Location()
+                            {
+                                Longitude = c.Location.Longitude,
+                                Latitude = c.Location.Latitude
+                            },
                             Name = c.Name,
                             Phone = c.Phone,
-                            To = RequestList<ParcelToList>().ToList().Select(p=> dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
+                            To = RequestList<ParcelToList>().ToList().Select(p => dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
                             .FindAll(p => p.ReceiverId == c.Id)
-                            //     let entitiy2 = Request<Parcel>(entity1.Id)
-                            //     where entitiy2.Receiver.Id == c.Id
-                            //     select new ParcelAtCustomer()
-                            //     {
-                            //         Id = entitiy2.Id,
-                            //         Customer = new CustomerParcel() { Id = c.Id, Name = c.Name},
-                            //         Priority = entitiy2.Priority,
-                            //         Status = EnumExtension.GetStatus(entitiy2.Delivered,entitiy2.PickedUp, entitiy2.Scheduled, entitiy2.Requested),
-                            //         Weight = entitiy2.Weight
-                            //     },
-                            To = RequestList<ParcelToList>().ToList().Select(p=> Request<Parcel>(p.Id)).ToList() //list of all parcels sent to customer, can be empty
-                            .FindAll(p => p.Receiver.Id == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
                                 Id = p.Id,
@@ -205,7 +200,7 @@ namespace IBL.BO
                                 //Weight = (WeightCategories)p.Weight
                             }).ToList(),
 
-                            From = RequestList<ParcelToList>().ToList().Select(p=> dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
+                            From = RequestList<ParcelToList>().ToList().Select(p => dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
                             .FindAll(p => p.SenderId == c.Id)
                             .Select(p => new ParcelAtCustomer()
                             {
@@ -219,10 +214,10 @@ namespace IBL.BO
                         }, typeof(T));
                         break;
                     case nameof(Drone):
-                        
+
                         //find the drone
                         DroneToList d = Drones.Find(b => b.Id == id);
-                        Parcel p  =default(Parcel);
+                        Parcel p = default(Parcel);
 
                         //if the drone isn't assigned to a parcel, then we dont want to find this parcel
                         if (d.ParcelId != null)
@@ -234,7 +229,7 @@ namespace IBL.BO
                             Location = d.Location,
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
-                            Parcel = d.ParcelId==null?null:d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
+                            Parcel = d.ParcelId == null ? null : d.Status == DroneStatuses.Delivery ? new ParcelDeliver()
                             { //if drone is delivering a parcel, create a ParcelDeliver instance
                                 Id = (int)d.ParcelId,
                                 Priority = p.Priority,
@@ -244,10 +239,10 @@ namespace IBL.BO
                                 Destination = Request<Customer>(p.Receiver.Id).location,
                                 Source = Request<Customer>(p.Sender.Id).location,
                                 Weight = p.Weight,
-                           // Priority = (Priorities)pi.Priority,
-                            //Weight = (WeightCategories)pi.Weight,
-                            Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<IDAL.DO.Customer>(pi.ReceiverId).Name },
-                            Sender = new CustomerParcel() { Id = pi.SenderId, Name = dal.Request<IDAL.DO.Customer>(pi.SenderId).Name },
+                                Distance = Location.distance(Request<Customer>(p.Receiver.Id).location, Request<Customer>(p.Sender.Id).location)
+                            } : null,
+                            Status = d.Status
+                        }, typeof(T));
                         break;
                     case nameof(Parcel):
                         IDAL.DO.Parcel pi = dal.Request<IDAL.DO.Parcel>(id);
@@ -256,10 +251,10 @@ namespace IBL.BO
                         {
                             Id = pi.Id,
                             Drone = new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
-                            Priority = (Priorities)pi.Priority,
-                            Weight = (WeightCategories)pi.Weight,
-                            Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = Request<Customer>(pi.ReceiverId).Name },
-                            Sender = new CustomerParcel() { Id = pi.SenderId, Name = Request<Customer>(pi.SenderId).Name },
+                            // Priority = (Priorities)pi.Priority,
+                            //Weight = (WeightCategories)pi.Weight,
+                            Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<IDAL.DO.Customer>(pi.ReceiverId).Name },
+                            Sender = new CustomerParcel() { Id = pi.SenderId, Name = dal.Request<IDAL.DO.Customer>(pi.SenderId).Name },
                             Delivered = pi.Delivered,
                             PickedUp = pi.PickedUp,
                             Requested = pi.Requested,
@@ -322,7 +317,7 @@ namespace IBL.BO
                         //Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
                         ReceiverName = dal.Request<IDAL.DO.Customer>(p.ReceiverId).Name,
                         SenderName = dal.Request<IDAL.DO.Customer>(p.SenderId).Name,
-                        Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled,p.Requested),
+                        Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
                         //Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
 
                     });
@@ -397,7 +392,7 @@ namespace IBL.BO
         public void Deliver(int id)
         {
             Drone d = Request<Drone>(id);
-           
+
             //find the drone in the drone list
             DroneToList a = Drones.Find(x => x.Id == id);
 
@@ -408,11 +403,11 @@ namespace IBL.BO
             //drone didn't pick up the parcel yet
             if (d.Parcel.Status == EnumParcelDeliver.PickUp)
                 throw new ParcelWasntPickedUpException("Drone didn't pick up the parcel\n");
-            
+
             //change data in list drones in bl, and dal
             dal.DeliverParcel(d.Parcel.Id);//called function in dal
             a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
-            a.Battery -= MinBattery(Location.distance(Request<Customer>(d.Parcel.Sender.Id).location,d.Location), d.Id);//update drone's battery
+            a.Battery -= MinBattery(Location.distance(Request<Customer>(d.Parcel.Sender.Id).location, d.Location), d.Id);//update drone's battery
             a.Location = Request<Customer>(d.Parcel.Receiver.Id).location;//update drone's location to receiver location
             a.Status = DroneStatuses.Available;//change drone status to available
         }
@@ -438,8 +433,8 @@ namespace IBL.BO
             dal.PickUpParcel(d.Parcel.Id);//update data in dals
             DroneToList a = Drones.Find(x => x.Id == id);//get drone from bl
 
-            Location sender  = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
-            a.Battery -= MinBattery(Location.distance(d.Location,sender), d.Id);//update drone's battery
+            Location sender = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
+            a.Battery -= MinBattery(Location.distance(d.Location, sender), d.Id);//update drone's battery
             a.Location = sender;//update drone's location
 
 
@@ -479,7 +474,7 @@ namespace IBL.BO
             if (d.Status != DroneStatuses.Available) //the drone isn't available
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList();
-            
+
             //var stations = dal.RequestList<IDAL.DO.Station>().ToList(); //getting list of all stations
             stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations with no available charge slots
             stations.OrderByDescending(x => Location.distance(d.Location, x.location)); //sorting station list by distance from drone to station
@@ -507,7 +502,7 @@ namespace IBL.BO
         /// </summary>
         public void UpdateStation(int id, string name = null, int? slots = null)
         {
-            Station s= Request<Station>(id); //getting station
+            Station s = Request<Station>(id); //getting station
             dal.Delete<IDAL.DO.Station>(id); //deleting old station
             dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()
             {
@@ -556,9 +551,9 @@ namespace IBL.BO
                 {
                     Latitude = c.location.Latitude,
                     Longitude = c.location.Longitude
-                },              
+                },
                 Name = name == null ? c.Name : name,
-                Phone = phone == null? c.Phone:phone
+                Phone = phone == null ? c.Phone : phone
             }); //creating updated customer
         }
         #endregion Update
@@ -572,14 +567,14 @@ namespace IBL.BO
         {
             var a = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
             var p = a.Find(x => x.Drone.Id == d.Id);
-            if(p.Delivered == null) //if the parcel isn't delivered yet
+            if (p.Delivered == null) //if the parcel isn't delivered yet
             {
                 d.ParcelId = p.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
                 return true;
             }
             return false;
         }
-        
+
         /// <summary>
         /// function that returns the location of the closest station to given location
         /// </summary>
@@ -607,12 +602,12 @@ namespace IBL.BO
         {
             DroneToList d = Drones.Find(x => x.Id == id);
             if (d.Status == DroneStatuses.Available) //if drone is available, return corresponding battery per entered distance
-                return info[0] * distance; 
+                return info[0] * distance;
             else //if a parcel is assigned to drone
             {
                 Parcel p = Request<Parcel>((int)d.ParcelId);
-               
-                if(p.Delivered == null) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
+
+                if (p.Delivered == null) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
                     return info[0] * distance;
                 else // distance is distance to deliver parcel
                     return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
