@@ -388,7 +388,7 @@ namespace IBL.BO
                 }
                 //there's no parcel the drone can take
                 if (!found)
-                    throw new NoParcelException("Not found parcel for the drone with id: " + id + '\n');
+                    throw new NotFoundException("Not found parcel for the drone with id: " + id + '\n');
             }
         }
 

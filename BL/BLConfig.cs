@@ -45,7 +45,7 @@ namespace IBL.BO
                 if (isDroneAssigned(Current))
                 {
                     Current.Status = DroneStatuses.Delivery;
-                    var p = Request<Parcel>(Current.ParcelId); //the parcel assigned to the current drone
+                    var p = Request<Parcel>((int)Current.ParcelId); //the parcel assigned to the current drone
                     var c = Request<Customer>(p.Sender.Id); // the parcel's sender and receiver
                     var t = Request<Customer>(p.Receiver.Id);
                     double distance = Location.distance(c.location, t.location); //distance from sender to receiver
