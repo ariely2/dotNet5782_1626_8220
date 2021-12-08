@@ -58,7 +58,7 @@ namespace IBL.BO
                         StationToList station = RequestList<StationToList>().ToList().Find(s => Request<Station>(s.Id).location.Equals(d.Location));
                         //check if the drone location is the same as exist station
 
-                        if (station.Equals(default(Station)))
+                        if (station.Equals(default(Station)))//do we need this?
                             throw new NotExistException("There is no station in this location\n");
 
                         //check if the station have place for the drone
@@ -87,7 +87,8 @@ namespace IBL.BO
                         });
 
                         //update station info, reduce available slots by 1
-                        UpdateStation(station.Id, null, station.Available + station.Occupied);
+                        //UpdateStation(station.Id, null, station.Available + station.Occupied); //we need to update station's available slots //792441851 415445976
+                        dal.ChargeDrone(d.Id, station.Id);
                         break;
 
                     case Parcel p:
@@ -96,8 +97,8 @@ namespace IBL.BO
                             Id = p.Id,
                             SenderId = p.Sender.Id,
                             ReceiverId = p.Receiver.Id,
-                            // Weight = p.Weight == WeightCategories.Heavy? IDAL.DO.WeightCategories.Heavy,
-                            //Priority = (IDAL.DO.Priorities)p.Priority,
+                            Weight = (IDAL.DO.WeightCategories)p.Weight,//p.Weight == WeightCategories.Heavy? IDAL.DO.WeightCategories.Heavy,
+                            Priority = (IDAL.DO.Priorities)p.Priority,
                             DroneId = null,
                             Requested = DateTime.Now,
                             Scheduled = null,
@@ -217,8 +218,11 @@ namespace IBL.BO
 
                         //find the drone
                         DroneToList d = Drones.Find(b => b.Id == id);
-                        Parcel p = default(Parcel);
 
+                        if (d == null)
+                            throw new NotExistException("drone doesn't exist\n");
+
+                        Parcel p = default(Parcel);
                         //if the drone isn't assigned to a parcel, then we dont want to find this parcel
                         if (d.ParcelId != null)
                             p = Request<Parcel>((int)d.ParcelId);
@@ -270,7 +274,7 @@ namespace IBL.BO
             {
                 throw new NotSupportException(ex.Message, ex);
             }
-            catch (IDAL.DO.NotExistException ex)
+            catch (IDAL.DO.NotExistException ex)//bug: exception unhandled
             {
                 throw new NotExistException(ex.Message, ex);
             }
@@ -343,6 +347,8 @@ namespace IBL.BO
             //find the drone
             DroneToList d = Drones.Find(x => x.Id == id);
 
+            if (d==null)
+                throw new NotExistException("drone doesn't exist\n");
             //if drone isn't available
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
@@ -425,8 +431,6 @@ namespace IBL.BO
         {
             Drone d = Request<Drone>(id);
 
-            //DroneToList d = Drones.Find(x => x.Id == id);
-
             //if drone isn't assigned to a parcel
             if (d.Parcel == null)
                 throw new DroneIsntAssignedException("Drone isn't assigned to a parcle\n");
@@ -464,6 +468,9 @@ namespace IBL.BO
 
             d.Status = DroneStatuses.Available;//update drone status
             d.Battery += info[4] * t;//updating drone's battery
+            if (d.Battery > 100) //if battery became bigger than 100, lower it to 100
+
+                d.Battery = 100; 
             dal.ReleaseDrone(d.Id);//update data in dal
 
         }
@@ -476,6 +483,10 @@ namespace IBL.BO
         public void SendDroneToCharge(int id)
         {
             DroneToList d = Drones.Find(x => x.Id == id);
+
+            if (d==null)
+                throw new NotExistException("drone doesn't exist\n");
+
             if (d.Status != DroneStatuses.Available) //the drone isn't available
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList();

@@ -78,7 +78,7 @@ namespace IBL.BO
                         var p = dal.Receivers();
                         int i = r.Next(0, p.Length);
                         var receiver = Request<Customer>(p[i]); // getting a random receiver
-                        Current.Location = GetStationLocation(receiver.Id);
+                        Current.Location = GetCustomerLocation(receiver.Id);
                         double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
                         Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
                     }
@@ -94,7 +94,7 @@ namespace IBL.BO
         public bool isDroneAssigned(DroneToList d)
         {
             var p = dal.RequestList<IDAL.DO.Parcel>().ToList().Find(x => x.DroneId == d.Id);
-            if (p.Delivered == null) //if the parcel isn't delivered yet
+            if (!p.Equals(default(IDAL.DO.Parcel)) && p.Delivered == null) //if the parcel isn't delivered yet
             {
                 d.ParcelId = p.Id; //updating drone's parcel id, because it's 0 (we use this function when configuring the drone list)
                 return true;

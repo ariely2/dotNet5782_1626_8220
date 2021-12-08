@@ -219,8 +219,8 @@ namespace ConsoleUI_BL
                 bl.Create<Drone>(new Drone()
                 {
                     Id = InputInt(),
+                    Model = Console.ReadLine(), //check if a string is entered? also in customer and station name and phone
                     MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                    Model = Console.ReadLine(),
                     Location = bl.Request<Station>(InputInt()).location
                 });
             }
