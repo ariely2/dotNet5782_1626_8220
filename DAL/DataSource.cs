@@ -69,8 +69,8 @@ namespace IDAL
                     }
 
                     //initialize 3 stations
-                    string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon" };
-                    for (int i = 0; i < 3; i++)
+                    string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon","TelAviv"};
+                    for (int i = 0; i < 4; i++)
                     {
                         //check that there is no 2 station with the same id
                         int id;
@@ -88,7 +88,7 @@ namespace IDAL
                                 Longitude = (random.NextDouble() * 0.1) + lowerLatitude,//Random Longitude between 35 - 35.1
                                 Latitude = (random.NextDouble() * 0.1) + lowerLongitude//Random Latitude between 37 - 37.1
                             },
-                            ChargeSlots = random.Next(1, 4)//Random number of available slots between 1 and 3
+                            ChargeSlots = random.Next(3, 5)//Random number of available slots between 2 and 4
                         });
                     }
 
@@ -114,7 +114,7 @@ namespace IDAL
                     }
 
                     //initialize 10 parcels
-                    //array to check if we already used this drone
+                    //array to check if we already used this drone for carrying a parcel
                     bool[] used = new bool[5] { false, false, false, false, false };
 
                     for (int i = 0; i < 10; i++)
