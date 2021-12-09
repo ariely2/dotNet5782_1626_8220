@@ -24,7 +24,7 @@ namespace IDAL
                 private const double lowerLatitude = 37;
                 private const double upperLatitude = 37.1;
 
-                //id of parcel - number with 8 digit
+                //id of parcel - number with 8 digits
                 public static int IdOfParcel {set; get; } = Parcel.LowerBoundId;
                 public static double AvailableUse = 1; //an available drone uses 1% battery per kilometer
                 public static double LightUse = 2; //a drone carrying light weight uses 2% battery per kilometer
@@ -85,8 +85,8 @@ namespace IDAL
                             Name = SNames[i],//Name from Name array.
                             Location = new Location()
                             {
-                                Longitude = (random.NextDouble() * 0.1) + lowerLatitude,//Random Longitude between 35 - 35.1
-                                Latitude = (random.NextDouble() * 0.1) + lowerLongitude//Random Latitude between 37 - 37.1
+                                Longitude = (random.NextDouble() * 0.1) + lowerLongitude,//Random Longitude between 35 - 35.1
+                                Latitude = (random.NextDouble() * 0.1) + lowerLatitude//Random Latitude between 37 - 37.1
                             },
                             ChargeSlots = random.Next(1, 4)//Random number of available slots between 1 and 3
                         });

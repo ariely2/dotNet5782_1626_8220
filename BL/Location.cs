@@ -76,28 +76,39 @@ namespace IBL
 				// a function named toRadians
 				// which converts from degrees
 				// to radians.
+				var baseRad = Math.PI * g1.Latitude / 180;
+				var targetRad = Math.PI * g2.Latitude / 180;
+				var theta = g1.Longitude - g2.Longitude;
+				var thetaRad = Math.PI * theta / 180;
 
-				double lon1 = toRadians(g1.Longitude);
-				double lon2 = toRadians(g2.Longitude);
-				double lat1 = toRadians(g1.Latitude);
-				double lat2 = toRadians(g2.Latitude);
+				double dist =
+					Math.Sin(baseRad) * Math.Sin(targetRad) + Math.Cos(baseRad) *
+					Math.Cos(targetRad) * Math.Cos(thetaRad);
+				dist = Math.Acos(dist);
+				dist = dist * 180 / Math.PI;
+				dist = dist * 60 * 1.1515;
+				return dist * 1.609344;
+				//double lon1 = toRadians(g1.Longitude);
+				//double lon2 = toRadians(g2.Longitude);
+				//double lat1 = toRadians(g1.Latitude);
+				//double lat2 = toRadians(g2.Latitude);
 
-				// Haversine formula
-				double dlon = lon2 - lon1;
-				double dlat = lat2 - lat1;
-				double a = Math.Pow(Math.Sin(dlat / 2), 2) +
-						   Math.Cos(lat1) * Math.Cos(lat2) *
-						   Math.Pow(Math.Sin(dlon / 2), 2);
+				//// Haversine formula
+				//double dlon = lon2 - lon1;
+				//double dlat = lat2 - lat1;
+				//double a = Math.Pow(Math.Sin(dlat / 2), 2) +
+				//		   Math.Cos(lat1) * Math.Cos(lat2) *
+				//		   Math.Pow(Math.Sin(dlon / 2), 2);
 
-				double c = 2 * Math.Asin(Math.Sqrt(a));
+				//double c = 2 * Math.Asin(Math.Sqrt(a));
 
-				// Radius of earth in
-				// kilometers.
+				//// Radius of earth in
+				//// kilometers.
 
-				double r = 3956;
+				//double r = 3956;
 
-				// calculate the result
-				return (c * r);
+				//// calculate the result
+				//return (c * r);
 			}
 		}
 

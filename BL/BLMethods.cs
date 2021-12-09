@@ -301,7 +301,7 @@ namespace IBL.BO
                         Id = s.Id,
                         Name = s.Name,
                         Available = s.ChargeSlots,
-                        Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(s.Location)).Count()//?
+                        Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(s.Location)).Count()
                     });
 
                 case nameof(CustomerToList):
@@ -323,11 +323,11 @@ namespace IBL.BO
                     return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>().Select(p => new ParcelToList
                     {
                         Id = p.Id,
-                        //Priority = (Priorities)Enum.Parse(typeof(Priorities), p.Priority.ToString()),
+                        Priority = (Priorities)p.Priority,
                         ReceiverName = dal.Request<IDAL.DO.Customer>(p.ReceiverId).Name,
                         SenderName = dal.Request<IDAL.DO.Customer>(p.SenderId).Name,
                         Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
-                        //Weight = (WeightCategories)Enum.Parse(typeof(Priorities), p.Weight.ToString()),
+                        Weight = (WeightCategories)p.Weight,
 
                     });
                 default:
@@ -355,51 +355,38 @@ namespace IBL.BO
 
             //need to change to requestList from bl
             List<Parcel> AllParcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
-            AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels that the drone can't take
-            bool found = false;
-            while (!found && AllParcels.Count() != 0) //while there are potential parcels left
-            {
-                Console.WriteLine("in first while");
-                int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list
-                var priority = AllParcels.Where(x => (int)x.Priority == max); //getting list of parcels with max priority
-                AllParcels.RemoveAll(x => (int)x.Priority == max); //removing parcels that don't have max priority (because we moved them to another list)
-                while (!found && priority.Count() != 0) //while there are potential parcels with max priority left
-                {
-                    Console.WriteLine("in second while");
-                    max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcels with max priority list
-                    var weight = AllParcels.Where(x => (int)x.Weight == max).ToList(); // getting list of parcels with max weight and priority
-                    AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
-                    weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.Sender.Id))); //sorting list by distance from drone to parcel's sender
-                    while (!found && weight.Count() != 0) //while there are potential parcels with max priority and weight left
-                    {
-                        Console.WriteLine("in third while");
-                        var best = weight.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
-                        Location sender = GetCustomerLocation(best.Sender.Id);
-                        Location receiver = GetCustomerLocation(best.Receiver.Id);
-                        double distance =
-                              Location.distance(d.Location, sender)
-                            + Location.distance(sender, receiver)
-                            + Location.distance(receiver, ClosestStation(receiver));
-                        Console.WriteLine(distance);//////////////////////////////////
-                        Console.WriteLine(d.Battery);//////////////////////////////////
-                        double min = info[((int)best.Weight) + 1] * distance; //getting minimum battery required
+            AllParcels.RemoveAll(x => x.Scheduled != null); //removing parcels that don't need to be assigned
+            AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels too heavy for drone
 
-                        if (min <= d.Battery) //checking if drone has enough battery
-                        {
-                            found = true;
-                            d.Status = DroneStatuses.Delivery;
-                            Parcel selected = Request<Parcel>(best.Id);
-                            d.ParcelId = selected.Id;
-                            dal.AssignParcel(selected.Id, d.Id);
-                        }
-                        else
-                            weight.Remove(best); //if the drone doesn't have enough battery to deliver best parcel we can find, remove it from list 
-                    }
+            var s = from p in AllParcels
+                         orderby p.Priority, p.Weight, Location.distance(d.Location, GetCustomerLocation(p.Sender.Id)) descending
+                         select p;
+
+            List<Parcel> sorted = s.ToList();
+            bool found = false;
+            while (!found && sorted.Count() != 0) //while there are potential parcels left
+            {
+                var best = sorted.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
+                Location sender = GetCustomerLocation(best.Sender.Id);
+                Location receiver = GetCustomerLocation(best.Receiver.Id);
+                double distance =
+                      Location.distance(d.Location, sender)
+                    + Location.distance(sender, receiver)
+                    + Location.distance(receiver, ClosestStation(receiver));
+                double min = info[((int)best.Weight) + 1] * distance; //getting minimum battery required
+                if (min <= d.Battery) //checking if drone has enough battery
+                {
+                    found = true;
+                    d.Status = DroneStatuses.Delivery;
+                    Parcel selected = Request<Parcel>(best.Id);
+                    d.ParcelId = selected.Id;
+                    dal.AssignParcel(selected.Id, d.Id);
                 }
-                //there's no parcel the drone can take
-                if (!found)
-                    throw new NotFoundException("Not found parcel for the drone with id: " + id + '\n');
+                else
+                    sorted.Remove(best); //if the drone doesn't have enough battery to deliver best parcel we can find, remove it from list 
             }
+            if (!found)
+                throw new NotFoundException("Not found parcel for the drone with id: " + id + '\n');
         }
 
         /// <summary>
@@ -423,8 +410,8 @@ namespace IBL.BO
 
             //change data in list drones in bl, and dal
             dal.DeliverParcel(d.Parcel.Id);//called function in dal
-            a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
             a.Battery -= MinBattery(Location.distance(Request<Customer>(d.Parcel.Sender.Id).location, d.Location), d.Id);//update drone's battery
+            a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
             a.Location = Request<Customer>(d.Parcel.Receiver.Id).location;//update drone's location to receiver location
             a.Status = DroneStatuses.Available;//change drone status to available
         }
@@ -591,7 +578,6 @@ namespace IBL.BO
         /// <returns>reutrn the location of the closest location</returns>
         public Location ClosestStation(Location d)
         {
-            
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
             Location ans = stations.First().location;
