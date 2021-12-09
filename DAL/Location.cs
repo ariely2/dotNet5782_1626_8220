@@ -48,7 +48,7 @@ namespace IDAL
 				double seconds = (minutes - (int)minutes) * 60;
 				ans += ' ' + string.Format("{0:0.000}\"", seconds);
 
-				return ans + (type ? (a < 0 ? 'S' : 'N') : (a < 0 ? 'W' : 'E'));
+				return ans + (!type ? (a < 0 ? 'S' : 'N') : (a < 0 ? 'W' : 'E'));
 			}
 
 

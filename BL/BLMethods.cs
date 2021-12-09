@@ -196,9 +196,9 @@ namespace IBL.BO
                             {
                                 Id = p.Id,
                                 Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
-                                // = (Priorities)p.Priority,
+                                Priority = (Priorities)p.Priority,
                                 Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
-                                //Weight = (WeightCategories)p.Weight
+                                Weight = (WeightCategories)p.Weight
                             }).ToList(),
 
                             From = RequestList<ParcelToList>().ToList().Select(p => dal.Request<IDAL.DO.Parcel>(p.Id)).ToList() // list of all parcels sent from customer, can be empty
@@ -207,9 +207,9 @@ namespace IBL.BO
                             {
                                 Id = p.Id,
                                 Customer = new CustomerParcel() { Id = c.Id, Name = c.Name },
-                                //Priority = (Priorities)p.Priority,
+                                Priority = (Priorities)p.Priority,
                                 Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
-                                //Weight = (WeightCategories)p.Weight
+                                Weight = (WeightCategories)p.Weight
                             }).ToList()
 
                         }, typeof(T));
@@ -256,8 +256,8 @@ namespace IBL.BO
                             Id = pi.Id,
                             //if the parcel wasn't assigned yet to a drone
                             Drone = a == null?null:new DroneParcel() { Id = a.Id, Baterry = a.Battery, Location = a.Location },
-                            // Priority = (Priorities)pi.Priority,
-                            //Weight = (WeightCategories)pi.Weight,
+                            Priority = (Priorities)pi.Priority,
+                            Weight = (WeightCategories)pi.Weight,
                             Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<IDAL.DO.Customer>(pi.ReceiverId).Name },
                             Sender = new CustomerParcel() { Id = pi.SenderId, Name = dal.Request<IDAL.DO.Customer>(pi.SenderId).Name },
                             Delivered = pi.Delivered,
@@ -359,17 +359,20 @@ namespace IBL.BO
             bool found = false;
             while (!found && AllParcels.Count() != 0) //while there are potential parcels left
             {
+                Console.WriteLine("in first while");
                 int max = AllParcels.Max(x => (int)x.Priority); //finding max priority that exists in parcel list
                 var priority = AllParcels.Where(x => (int)x.Priority == max); //getting list of parcels with max priority
                 AllParcels.RemoveAll(x => (int)x.Priority == max); //removing parcels that don't have max priority (because we moved them to another list)
                 while (!found && priority.Count() != 0) //while there are potential parcels with max priority left
                 {
+                    Console.WriteLine("in second while");
                     max = priority.Max(x => (int)x.Weight); //finding max weight that exists in parcels with max priority list
                     var weight = AllParcels.Where(x => (int)x.Weight == max).ToList(); // getting list of parcels with max weight and priority
                     AllParcels.RemoveAll(x => (int)x.Weight == max); //removing parcels that don't have max weight
                     weight.OrderByDescending(x => Location.distance(d.Location, GetCustomerLocation(x.Sender.Id))); //sorting list by distance from drone to parcel's sender
                     while (!found && weight.Count() != 0) //while there are potential parcels with max priority and weight left
                     {
+                        Console.WriteLine("in third while");
                         var best = weight.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
                         Location sender = GetCustomerLocation(best.Sender.Id);
                         Location receiver = GetCustomerLocation(best.Receiver.Id);
@@ -377,7 +380,10 @@ namespace IBL.BO
                               Location.distance(d.Location, sender)
                             + Location.distance(sender, receiver)
                             + Location.distance(receiver, ClosestStation(receiver));
+                        Console.WriteLine(distance);//////////////////////////////////
+                        Console.WriteLine(d.Battery);//////////////////////////////////
                         double min = info[((int)best.Weight) + 1] * distance; //getting minimum battery required
+
                         if (min <= d.Battery) //checking if drone has enough battery
                         {
                             found = true;
