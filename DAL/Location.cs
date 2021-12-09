@@ -25,8 +25,11 @@ namespace IDAL
 			/// <returns>return the location in sexagesimal representations</returns>
 			public override string ToString()
 			{
-				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" +
-					   $"          Latitude:  {SexagesimalRepresentation(Latitude, false)}";
+				string str = "";
+				for (int i = 0; i < Print.n; i++)
+					str += ' ';
+				return $"Latitude:  {SexagesimalRepresentation(Latitude, false)}" +
+					   $"{str} + Longitude: {SexagesimalRepresentation(Longitude, true)}\n";
 			}
 
 			/// <summary>

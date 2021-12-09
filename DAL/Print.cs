@@ -11,7 +11,7 @@ namespace IDAL
     { 
 
         //this variable represent the amount of spaces in start of every line.
-        static int n = 0;
+        public static int n = 0;
 
         /// <summary>
         /// the function print the properties in the object using refactoring
