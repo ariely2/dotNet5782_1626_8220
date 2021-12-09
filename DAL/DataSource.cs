@@ -10,7 +10,6 @@ namespace IDAL
     {
         public class DataSource
         {
-
             internal static List<Customer> Customers = new List<Customer>(100);
             internal static List<Parcel> Parcels = new List<Parcel>(1000);
             internal static List<Drone> Drones = new List<Drone>(10);
@@ -18,14 +17,20 @@ namespace IDAL
             internal static List<DroneCharge> DroneCharges = new List<DroneCharge>();
             internal class Config
             {
-                
+                //longitude between 35 to 35.1
+                //latitude between 37 to 37.1
+                private const double lowerLongitude = 35;
+                private const double upperLongitude = 35.1;
+                private const double lowerLatitude = 37;
+                private const double upperLatitude = 37.1;
+
                 //id of parcel - number with 8 digit
                 public static int IdOfParcel {set; get; } = Parcel.LowerBoundId;
-                public static double AvailableUse = 10; //an available drone uses 10% battery per kilometer
-                public static double LightUse = 15; //a drone carrying light weight uses 15% battery per kilometer
-                public static double MediumUse = 20; //a drone carrying medium weight uses 20% battery per kilometer
-                public static double HeavyUse = 25; //a drone carrying heavy weight uses 25% battery per kilometer
-                public static double ChargeRate = 15; //a drone charges 15% per hour
+                public static double AvailableUse = 1; //an available drone uses 1% battery per kilometer
+                public static double LightUse = 2; //a drone carrying light weight uses 2% battery per kilometer
+                public static double MediumUse = 2.5; //a drone carrying medium weight uses 2.5% battery per kilometer
+                public static double HeavyUse = 3; //a drone carrying heavy weight uses 3% battery per kilometer
+                public static double ChargeRate = 25; //a drone charges 25% per hour
 
                 private static Random random = new Random();
 
@@ -48,11 +53,7 @@ namespace IDAL
                         } while (Customers.Exists(x => x.Id == id));
 
                         //check that there is no 2 customers with the same phone number
-                        string phone;
-                        do
-                        {
-                            phone = random.Next(111111, 999999).ToString("000000");
-                        } while (Customers.Exists(x => x.Phone == phone));
+                        string phone = random.Next(111111, 999999).ToString("000000");
 
                         Customers.Add(new Customer()
                         {
@@ -61,8 +62,8 @@ namespace IDAL
                             Phone = phone,//calculate before
                             Location = new Location()
                             {
-                                Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
-                                Latitude = (random.NextDouble() * 180) - 90//Random latitude between -90 and 90
+                                Longitude = (random.NextDouble() * 0.1) + lowerLongitude,//Random Longitude between 35 - 35.1
+                                Latitude = (random.NextDouble() * 0.1) + lowerLatitude//Random latitude between 37 - 37.1
                             }
                         });
                     }
@@ -84,8 +85,8 @@ namespace IDAL
                             Name = SNames[i],//Name from Name array.
                             Location = new Location()
                             {
-                                Longitude = (random.NextDouble() * 260) - 180,//Random Longitude between -180 and 80
-                                Latitude = (random.NextDouble() * 180) - 90//Random Latitude between -90 and 90
+                                Longitude = (random.NextDouble() * 0.1) + lowerLatitude,//Random Longitude between 35 - 35.1
+                                Latitude = (random.NextDouble() * 0.1) + lowerLongitude//Random Latitude between 37 - 37.1
                             },
                             ChargeSlots = random.Next(1, 4)//Random number of available slots between 1 and 3
                         });
@@ -131,6 +132,8 @@ namespace IDAL
                         bool picked = (random.Next(2) == 0);
                         //random customer index
                         int randomCustomer = random.Next(Customers.Count());
+
+                        
                         Parcels.Add(new Parcel()
                         {
                             Id = IdOfParcel++,//Id equals to IdOfParcle
@@ -141,8 +144,8 @@ namespace IDAL
                             Priority = EnumExtension.RandomEnumValue<Priorities>(),//Random priority
                             Requested = DateTime.Now,//the person requested the parcel now
                             Scheduled = (j != 5 ? DateTime.Now : null),
-                            PickedUp = (picked ? DateTime.Now : null),
-                            Delivered = (picked && random.Next(2) == 0 ? DateTime.Now : null)
+                            PickedUp = (picked && j!=5 ? DateTime.Now : null),
+                            Delivered = (j!=5&&picked && random.Next(2) == 0 ? DateTime.Now : null)
                         });
                     }
                 }
