@@ -41,9 +41,21 @@ namespace IBL.BO
                 n += finfo.Name.Count() + 2;
                 //if the value is null, then we can't use ToString(), so instead we add N/A
                 if (finfo.GetValue(t) == null)
-                    ans += (string)(space + finfo.Name + ": N/A\n");
+                    ans += (string)(finfo.Name + ": N/A\n");
+                else if (finfo.GetValue(t) is List<DroneCharge>)
+                {
+                    ans += (string)(finfo.Name + ": " + '\n');
+                    foreach (var item in finfo.GetValue(t) as List<DroneCharge>)
+                        ans += '\t' + print<DroneCharge>(item).Replace("\n", "\n\t") + "\n";
+                }
+                else if (finfo.GetValue(t) is List<ParcelAtCustomer>)
+                {
+                    ans += (string)(finfo.Name + ": " + '\n');
+                    foreach (var item in finfo.GetValue(t) as List<ParcelAtCustomer>)
+                        ans += '\t' + print<ParcelAtCustomer>(item).Replace("\n", "\n\t") + "\n";
+                }
                 else
-                    ans += (string)(space + finfo.Name + ": " + finfo.GetValue(t).ToString() + '\n');
+                    ans += (string)(finfo.Name + ": " + finfo.GetValue(t).ToString().Replace("\n", "\n\t") + "\n");
                 n -= (finfo.Name.Count() + 2);
             }
             return ans;

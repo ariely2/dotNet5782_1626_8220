@@ -26,7 +26,7 @@ namespace IBL
 			public override string ToString()
 			{
 				return $"Longitude: {SexagesimalRepresentation(Longitude, true)}\n" +
-					   $"          Latitude:  {SexagesimalRepresentation(Latitude, false)}";
+					   $"  Latitude:  {SexagesimalRepresentation(Latitude, false)}\n";
 			}
 
 			/// <summary>
