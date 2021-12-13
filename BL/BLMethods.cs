@@ -301,7 +301,7 @@ namespace IBL.BO
                         Id = s.Id,
                         Name = s.Name,
                         Available = s.ChargeSlots,
-                        Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(s.Location)).Count()
+                        Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(GetStationLocation(s.Id))).Count()
                     });
 
                 case nameof(CustomerToList):
