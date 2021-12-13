@@ -580,6 +580,10 @@ namespace IBL.BO
         {
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
+            Console.WriteLine(distance);
+            Console.WriteLine(stations.First().location);
+            Console.WriteLine(d);
+
             Location ans = stations.First().location;
             foreach (var b in stations)
             {

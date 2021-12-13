@@ -17,8 +17,7 @@ namespace IBL.BO
             public List<DroneCharge> Charging { get; set; }
             public override string ToString()
             {
-            return Print.print<Station>(this);
-
-        }
+                return Print.print<Station>(this);
+            }
         }
 }
