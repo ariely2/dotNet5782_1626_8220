@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "targil0", "targil0\targil0.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D71B0788-43C5-4720-A901-B0EFA00AED47}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
 		README.md = README.md
 	EndProjectSection
 EndProject
