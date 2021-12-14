@@ -317,9 +317,7 @@ namespace IBL.BO
                         Id = s.Id,
                         Name = s.Name,
                         Available = s.ChargeSlots,
-                        Occupied = (from DroneToList d in Drones
-                                   where d.Status == DroneStatuses.Maintenance && d.Location.Equals(new Location() { Latitude = s.Location.Latitude,Longitude = s.Location.Longitude})
-                                   select d).Count()
+                        Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(GetStationLocation(s.Id))).Count()
                     });
 
                 case nameof(CustomerToList):
@@ -607,6 +605,10 @@ namespace IBL.BO
         {
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
+            Console.WriteLine(distance);
+            Console.WriteLine(stations.First().location);
+            Console.WriteLine(d);
+
             Location ans = stations.First().location;
             foreach (var b in stations)
             {
