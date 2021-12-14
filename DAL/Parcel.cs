@@ -50,18 +50,7 @@ namespace IDAL
             /// <summary>
             /// override the function ToString in class Object
             /// </summary>
-            /// <returns>the string format look like that:
-            /// Id: Id.ToString()
-            /// SenderId: SenderId.ToString()
-            /// TargetId: TargetId.ToString()
-            /// Weight: Weight.ToString()
-            /// Priority: Priority.ToString()
-            /// DroneId: DroneId.ToString()
-            /// Requested: Requested.ToString()
-            /// Scheduled: Scheduled.ToString()
-            /// PickedUp: PickedUp.ToString()
-            /// Delivered: Delivered.ToString()
-            /// </returns>
+            /// <returns>string with parcel info</returns>
             public override string ToString()
             {
                 return Print.print<Parcel>(this);

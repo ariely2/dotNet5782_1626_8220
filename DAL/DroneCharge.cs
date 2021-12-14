@@ -22,10 +22,7 @@ namespace IDAL
             /// <summary>
             /// Override the function ToString in class Object
             /// </summary>
-            /// <returns>return a string in this fromat:
-            /// DroneId: DroneId.ToString()
-            /// StationId: StationId.ToString()
-            /// </returns>
+            /// <returns>string with drone charge info </returns>
             public override string ToString()
             {
                 return Print.print<DroneCharge>(this);

@@ -31,11 +31,7 @@ namespace IDAL
             /// <summary>
             /// override the function ToString in class Object
             /// </summary>
-            /// <returns>return a string in this format:
-            /// Id: Id.ToString()
-            /// Name: Name.ToString()
-            /// Location: Location.ToString()
-            /// ChargeSlots: ChargeSlots.ToString()</returns>
+            /// <returns>string with station info</returns>
             public override string ToString()
             {
                 return Print.print<Station>(this);

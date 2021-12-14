@@ -13,11 +13,44 @@ namespace IDAL
 		/// </summary>
 		public struct Location
 		{
-			//longitude coordinate
-			public double Longitude { set; get; }
+			/// <summary>
+			/// longitude coordinate
+			/// </summary>
+			public static readonly double lowerBoundLongitude = -180;
+			public static readonly double upperBoundLongitude = 80;
+			public double Longitude
+			{
+				set
+				{
+					//check if longitude in bounds
+					if (value < lowerBoundLongitude || value > upperBoundLongitude)
+						throw new OutOfBoundsException("Longtidue out of bounds");
+					Longitude = value;
+				}
+				get
+				{
+					return Longitude;
+				}
+			}
 
-			//latitude coordinate
-			public double Latitude { set; get; }
+			/// <summary>
+			/// latitude coordinate
+			/// </summary>
+			public static readonly double lowerBoundLatitude = -90;
+			public static readonly double upperBoundLatitude = 90;
+			public double Latitude {
+				set
+				{
+					//check if latitude is in bounds
+					if (value < lowerBoundLatitude || value > upperBoundLatitude)
+						throw new OutOfBoundsException("Latitude out of boudns\n");
+					Latitude = value;
+				}
+                get
+                {
+					return Latitude;
+                }
+			}
 
 			/// <summary>
 			/// the function return a string with longitude and latitude in sexagesimal representation

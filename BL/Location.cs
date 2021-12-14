@@ -11,12 +11,16 @@ namespace IBL
 		/// <summary>
 		/// the class represent a location in earth
 		/// </summary>
-		public struct Location
+		public class Location
 		{
-			//longitude coordinate
+			/// <summary>
+			/// longitude coordinate
+			/// </summary>
 			public double Longitude { set; get; }
 
-			//latitude coordinate
+			/// <summary>
+			/// latitude coordinate
+			/// </summary>
 			public double Latitude { set; get; }
 
 			/// <summary>
