@@ -85,14 +85,6 @@ namespace IBL.BO
                 }
             }
 
-            foreach (var d in Drones)
-                Console.WriteLine(d);
-            foreach (var s in dal.RequestList<IDAL.DO.Station>())
-                Console.WriteLine(s);
-            foreach (var p in dal.RequestList<IDAL.DO.Parcel>())
-                Console.WriteLine(p);
-            foreach (var c in dal.RequestList<IDAL.DO.Customer>())
-                Console.WriteLine(c);
         }
         /// <summary>
         /// function that checks if the drone is assigned to a parcel

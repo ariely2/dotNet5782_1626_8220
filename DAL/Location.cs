@@ -29,7 +29,7 @@ namespace IDAL
 				for (int i = 0; i < Print.n; i++)
 					str += ' ';
 				return $"Latitude:  {SexagesimalRepresentation(Latitude, false)}" +
-					   $"{str} + Longitude: {SexagesimalRepresentation(Longitude, true)}\n";
+					   $"{str}+Longitude: {SexagesimalRepresentation(Longitude, true)}\n";
 			}
 
 			/// <summary>
@@ -112,6 +112,20 @@ namespace IDAL
 
 				//// calculate the result
 				//return (c * r);
+			}
+
+
+			/// <summary>
+			/// override the funciton equals
+			/// </summary>
+			/// <param name="obj">other location</param>
+			/// <returns>return true, if the loations equals, otherwise return false</returns>
+			public override bool Equals(object obj)
+			{
+				if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+					return false;
+				Location l = (Location)obj;
+				return this.Latitude == l.Latitude && this.Longitude == l.Longitude;
 			}
 		}
 

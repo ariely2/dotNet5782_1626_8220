@@ -70,7 +70,7 @@ namespace IDAL
 
                     //initialize 3 stations
                     string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon","TelAviv"};
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < 3; i++)
                     {
                         //check that there is no 2 station with the same id
                         int id;
@@ -88,7 +88,7 @@ namespace IDAL
                                 Longitude = (random.NextDouble() * 0.1) + lowerLongitude,//Random Longitude between 35 - 35.1
                                 Latitude = (random.NextDouble() * 0.1) + lowerLatitude//Random Latitude between 37 - 37.1
                             },
-                            ChargeSlots = random.Next(3, 5)//Random number of available slots between 2 and 4
+                            ChargeSlots = random.Next(2, 4)//Random number of available slots between 2 and 3
                         });
                     }
 

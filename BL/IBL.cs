@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using IBL.BO;
 namespace IBL
 {
+    /// <summary>
+    /// interface with all the methods needed
+    /// </summary>
     public interface IBL
     {
-        public void Create<T>(T t) where T : class; //check if zacceses modifiers are correct 
+        public void Create<T>(T t) where T : class;
         public T Request<T>(int id) where T : class;
         public IEnumerable<T> RequestList<T>() where T : class;
         public void SendDroneToCharge(int d); //dronetolist or drone?

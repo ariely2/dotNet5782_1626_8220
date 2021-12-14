@@ -5,14 +5,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IDAL
+namespace IDAL.DO
 {
     class Print
-    { 
+    {
 
         //this variable represent the amount of spaces in start of every line.
         public static int n = 0;
-
+        //this variable tell if we need to add the space string or not
+        private static bool help = false;
         /// <summary>
         /// the function print the properties in the object using refactoring
         /// we add n spaces in the start of every line in case of struct inside another struct,because We want to print the values ​​hierarchically
@@ -26,24 +27,46 @@ namespace IDAL
         /// .......
         /// </returns>
         public static string print<T>(T t)
-
         {
+            help = false;
             string ans = "";
 
             //create string of n spaces
-            
+
             string space = "";
             for (int i = 0; i < n; i++)
                 space += ' ';
             foreach (PropertyInfo finfo in typeof(T).GetProperties())
             {
-
+                //increase n
                 n += finfo.Name.Count() + 2;
+
+                if (help)
+                    ans += space;
+
+                //add the name of the obj to the string
+                ans += (finfo.Name + ": ");
+                help = true;
+
                 //if the value is null, then we can't use ToString(), so instead we add N/A
                 if (finfo.GetValue(t) == null)
-                    ans += (string)(space + finfo.Name + ": N/A\n");
+                    ans += ("N/A");
+
+                //if the value is a list, then we go through all the values on the list
+                else if (typeof(System.Collections.IList).IsAssignableFrom(finfo.PropertyType))
+                {
+
+                    var l = (System.Collections.IList)finfo.GetValue(t);
+                    for (int i = 0; i < l.Count; i++)
+                        ans += l[i].ToString();
+                }
                 else
-                    ans += (string)(space + finfo.Name + ": " + finfo.GetValue(t).ToString() + '\n');
+                {
+                    ans += (finfo.GetValue(t).ToString());
+                }
+                //if we already add \n to the end of the string, then we don't want to do it again.
+                if (!ans.EndsWith('\n'))
+                    ans += '\n';
                 n -= (finfo.Name.Count() + 2);
             }
             return ans;

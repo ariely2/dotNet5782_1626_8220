@@ -5,20 +5,46 @@ using System.Text;
 using System.Threading.Tasks;
 namespace IBL.BO
 {
+    /// <summary>
+    /// the class represents a station
+    /// </summary>
+    public class Station
+    {
         /// <summary>
-        /// the class represents a station
+        /// id of the station
+        /// consist of 3 digits
         /// </summary>
-        public class Station
+        public int Id { get; set; }
+
+        /// <summary>
+        /// name of the station
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// location of the station
+        /// </summary>
+        public Location location { set; get; }
+
+        /// <summary>
+        /// available slots in the station
+        /// </summary>
+        public int AvailableSlots { get; set; }
+
+        /// <summary>
+        /// list of drone that currently charging in the station
+        /// </summary>
+        public IEnumerable<DroneCharge> Charging { get; set; }
+
+        /// <summary>
+        /// override the function ToString
+        /// </summary>
+        /// <returns>a string that consists all the info about the station</returns>
+        public override string ToString()
         {
-            public int Id { get; set; }//id with 3 digits
-            public string Name { get; set; }
-            public Location location { set; get; }
-            public int AvailableSlots { get; set; }
-            public List<DroneCharge> Charging { get; set; }
-            public override string ToString()
-            {
             return Print.print<Station>(this);
 
+
         }
-        }
+    }
 }
