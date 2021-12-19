@@ -165,7 +165,7 @@ namespace IBL.BO
                     case nameof(Station):
                         //get a IDAL.DO.station with this id, convert it to a BL.BO.station
                         IDAL.DO.Station s = dal.Request<IDAL.DO.Station>(id);
-
+                        
                         ans = (T)Convert.ChangeType(new Station()
                         {
                             AvailableSlots = s.ChargeSlots,
@@ -176,8 +176,8 @@ namespace IBL.BO
                                 Longitude = s.Location.Longitude
                             },
                             Name = s.Name,
-                            Charging = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals((new Location() { Longitude = s.Location.Longitude, Latitude = s.Location.Latitude })))
-                                             .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery }).ToList()
+                            Charging = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && (new Location() { Longitude = s.Location.Longitude, Latitude = s.Location.Latitude }).Equals(d.Location))
+                                             .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery })
                         }, typeof(T));
                         break;
 
@@ -566,6 +566,8 @@ namespace IBL.BO
                 MaxWeight = (IDAL.DO.WeightCategories)d.MaxWeight,
                 Model = model == null ? d.Model : model
             }); //creating updated drone
+            DroneToList a = Drones.Find(x => x.Id == id);
+            a.Model = model == null ? a.Model : model;
         }
 
         /// <summary>
@@ -605,10 +607,6 @@ namespace IBL.BO
         {
             List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
             double distance = Location.distance(stations.First().location, d);
-            Console.WriteLine(distance);
-            Console.WriteLine(stations.First().location);
-            Console.WriteLine(d);
-
             Location ans = stations.First().location;
             foreach (var b in stations)
             {

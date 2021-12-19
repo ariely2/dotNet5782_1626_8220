@@ -20,17 +20,7 @@ namespace IDAL
 			public static readonly double upperBoundLongitude = 80;
 			public double Longitude
 			{
-				set
-				{
-					//check if longitude in bounds
-					if (value < lowerBoundLongitude || value > upperBoundLongitude)
-						throw new OutOfBoundsException("Longtidue out of bounds");
-					Longitude = value;
-				}
-				get
-				{
-					return Longitude;
-				}
+				set; get;
 			}
 
 			/// <summary>
@@ -38,18 +28,9 @@ namespace IDAL
 			/// </summary>
 			public static readonly double lowerBoundLatitude = -90;
 			public static readonly double upperBoundLatitude = 90;
-			public double Latitude {
-				set
-				{
-					//check if latitude is in bounds
-					if (value < lowerBoundLatitude || value > upperBoundLatitude)
-						throw new OutOfBoundsException("Latitude out of boudns\n");
-					Latitude = value;
-				}
-                get
-                {
-					return Latitude;
-                }
+			public double Latitude
+			{
+				set; get;
 			}
 
 			/// <summary>
@@ -58,11 +39,8 @@ namespace IDAL
 			/// <returns>return the location in sexagesimal representations</returns>
 			public override string ToString()
 			{
-				string str = "";
-				for (int i = 0; i < Print.n; i++)
-					str += ' ';
 				return $"Latitude:  {SexagesimalRepresentation(Latitude, false)}" +
-					   $"{str}+Longitude: {SexagesimalRepresentation(Longitude, true)}\n";
+					   $"{new string(' ',Print.n)}+Longitude: {SexagesimalRepresentation(Longitude, true)}\n";
 			}
 
 			/// <summary>
