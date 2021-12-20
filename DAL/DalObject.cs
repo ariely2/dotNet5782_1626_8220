@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +45,7 @@ namespace IDAL
                         //station with negative charge slots
                         if (s.ChargeSlots < 0)
                             throw new NotPossibleException("Can't be station with negative available slots\n");
-                        
+
                         //add station
                         DataSource.Stations.Add(s);
                         break;
@@ -133,7 +134,7 @@ namespace IDAL
                 }
                 //if it isn't exist
                 if (ans.Equals(default(T)))
-                    throw new NotExistException(typeof(T).Name + " with id: " + id +  " isn't exist\n");
+                    throw new NotExistException(typeof(T).Name + " with id: " + id + " isn't exist\n");
                 return ans;
             }
 
@@ -145,8 +146,14 @@ namespace IDAL
             /// <returns></returns>
             public IEnumerable<T> RequestList<T>() where T : struct
             {
+
+
+
                 switch (typeof(T).Name)
                 {
+
+
+
                     case nameof(Station):
                         return (IEnumerable<T>)DataSource.Stations;
                     case nameof(Customer):
