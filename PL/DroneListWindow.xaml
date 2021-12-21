@@ -19,9 +19,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="StatusSelector" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" SelectionChanged ="StatusSelection"/>
+            <ComboBox x:Name="StatusSelector" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" SelectionChanged ="Selection"/>
             <Label Content="Label" Grid.Column="0"/>
-            <ComboBox x:Name="WeightSelector" Grid.Column="2" SelectionChanged ="WeightSelection"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="2" SelectionChanged ="Selection"/>
             <Label Content="Label" Grid.Column="0"/>
         </Grid>
 

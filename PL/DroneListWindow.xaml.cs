@@ -39,29 +39,14 @@ namespace PL
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>();
         }
-        private void StatusSelection(object sender, SelectionChangedEventArgs e)//grey out options that don't exist?
+        private void Selection(object sender, SelectionChangedEventArgs e)//grey out options that don't exist?
         {
             var a = StatusSelector.SelectedItem;
-            if (a.GetType() == typeof(string))
-                DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>();
-            else
-            {
-                var b = DronesListView.ItemsSource as List<IBL.BO.DroneToList>;
-                DronesListView.ItemsSource = b.FindAll(x => x.Status == (IBL.BO.DroneStatuses)a);
-            }
-        }
-                //DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>().ToList().FindAll(x => x.Status == (IBL.BO.DroneStatuses)a);
-        private void WeightSelection(object sender, SelectionChangedEventArgs e)//fix so you can use both selectors at same time
-        {
-            var a = WeightSelector.SelectedItem;
-            if (a.GetType() == typeof(string))
-                DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>();
-            else
-            {
-                var b = DronesListView.ItemsSource as List<IBL.BO.DroneToList>;
-                DronesListView.ItemsSource = b.FindAll(x => x.MaxWeight == (IBL.BO.WeightCategories)a);
-            }    
-                //DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>().ToList().FindAll(x => x.MaxWeight == (IBL.BO.WeightCategories)a);
+            var b = WeightSelector.SelectedItem;
+            var c = bl.RequestList<IBL.BO.DroneToList>().ToList();
+            c.RemoveAll(x => (a != null && a.GetType().IsEnum) ? x.Status != (IBL.BO.DroneStatuses)a : false);
+            c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (IBL.BO.WeightCategories)b : false);
+            DronesListView.ItemsSource = c;
         }
     }
 }
