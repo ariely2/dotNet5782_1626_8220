@@ -1,28 +1,31 @@
-﻿<Window x:Class="PL.DroneListWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
         Title="DroneListWindow" Height="640" Width="800">
-    <Grid Name="MainGrid">
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
             <RowDefinition Height="400*"/>
         </Grid.RowDefinitions>
-        <Grid Name ="UpGrid" HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
+        <Grid x:Name ="UpGrid" HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox Name="StatusSelector" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1"/>
+            <ComboBox x:Name="StatusSelector" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1" SelectionChanged ="StatusSelection"/>
+            <Label Content="Label" Grid.Column="0"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="2" SelectionChanged ="WeightSelection"/>
             <Label Content="Label" Grid.Column="0"/>
         </Grid>
-        
-        
+
+
         <ListView Grid.Row="1" x:Name="DronesListView">
             <ListView.View>
                 <GridView>
@@ -30,7 +33,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        
-        
+
+
     </Grid>
 </Window>
