@@ -19,14 +19,17 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selection" />
-            <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selection"/>
-            <Button Content="Main Window" HorizontalAlignment="Center" VerticalAlignment="Center" Click ="ToMain" Height="30" Width="140" RenderTransformOrigin="0.643,-0.085"/>
-            <Button Content="Add Drone" HorizontalAlignment="Center" VerticalAlignment="Center" Click ="AddDrone" Height="30" Width="140" RenderTransformOrigin="0.643,-0.085" Grid.Column="1"/>
+            <Label Content="        Filter Drone list: " Grid.Column="1" FontSize="20" HorizontalAlignment="Center" Width="200" Margin="0,-7,0,6"/>
+            <Label Content="&#x9;         Status" Grid.Column="2"/>
+            <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selection" Margin="0,20,0,0" />
+            <Label Content="&#x9;     Max Weight" Grid.Column="3"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selection" Margin="0,20,0,0"/>
+            <Button Content="Main Window" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="ToMain" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085"/>
+            <Button Content="Add Drone" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="AddDrone" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085" Margin="0,39,0,0"/>
         </Grid>
 
 
-        <ListView Grid.Row="1" x:Name="DronesListView">
+        <ListView Grid.Row="1" x:Name="DronesListView" MouseDoubleClick="DronesListView_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>

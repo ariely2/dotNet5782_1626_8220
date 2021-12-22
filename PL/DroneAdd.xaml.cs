@@ -28,6 +28,12 @@ namespace PL
         {
             InitializeComponent();
             bl = b;
+            WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

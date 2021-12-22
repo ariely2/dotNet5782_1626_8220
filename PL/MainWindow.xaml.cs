@@ -21,10 +21,9 @@ namespace PL
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IBL.IBL bl;
+        private static IBL.IBL bl = new IBL.BO.BL(); //static so all the data in bl will be saved when user closes main window
         public MainWindow()
         {
-            bl = new IBL.BO.BL();
             InitializeComponent();
         }
         private void ShowDrones(object sender, RoutedEventArgs e)
