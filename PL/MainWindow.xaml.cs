@@ -27,5 +27,9 @@ namespace PL
             bl = new IBL.BO.BL();
             InitializeComponent();
         }
+        private void ShowDrones(object sender, RoutedEventArgs e)
+        {
+            new DroneListWindow(bl).Show();
+        }
     }
 }
