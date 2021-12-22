@@ -1,5 +1,7 @@
 ﻿using IDAL.DO;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace IDAL 
 {
@@ -11,9 +13,7 @@ namespace IDAL
         void Create<T>(T t) where T : struct;
         public T Request<T>(int id) where T : struct;
         double[] GetBatteryUsageInfo();
-        public IEnumerable<T> RequestList<T>() where T : struct;
-        IEnumerable<Station> GetAvailableStations();
-        IEnumerable<Parcel> UnassignedParcels();
+        public IEnumerable<T> RequestList<T>(Expression<Func<T,bool>> ex = null) where T : struct;
         double GetDistanceFrom<T>(Location location, int id) where T : struct;
         void AssignParcel(int ParcelId, int DroneId);
         void ChargeDrone(int DroneId, int StationId);
