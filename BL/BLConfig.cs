@@ -64,10 +64,10 @@ namespace IBL.BO
                 }
                 else
                 {
-                    Current.Status = (DroneStatuses)r.Next(0, 2); 
+                    Current.Status = (DroneStatuses)r.Next(0, 2);
                     if (Current.Status == DroneStatuses.Maintenance)
                     {
-                        var Stations = dal.GetAvailableStations(); // we need an availble station to charge the drone
+                        var Stations = dal.RequestList<IDAL.DO.Station>(s => s.ChargeSlots != 0); // we need an availble station to charge the drone
                         var s = Stations.ElementAt(r.Next(0, Stations.Count())); //getting random station
                         Current.Location = GetStationLocation(s.Id);
                         Current.Battery = r.Next(0, 21);

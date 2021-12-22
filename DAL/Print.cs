@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IDAL.DO
 {
-    class Print
+    public class Print
     {
 
         //this variable represent the amount of spaces in start of every line.
@@ -28,47 +28,56 @@ namespace IDAL.DO
         /// </returns>
         public static string print<T>(T t)
         {
-            help = false;
             string ans = "";
 
-            //create string of n spaces
-
-            string space = "";
-            for (int i = 0; i < n; i++)
-                space += ' ';
             foreach (PropertyInfo finfo in typeof(T).GetProperties())
             {
-                //increase n
-                n += finfo.Name.Count() + 2;
 
                 if (help)
-                    ans += space;
+                    ans += new string(' ', n);
+
 
                 //add the name of the obj to the string
+
                 ans += (finfo.Name + ": ");
-                help = true;
+                help = false;
+
+                //increase n
+                n += finfo.Name.Count() + 2;
 
                 //if the value is null, then we can't use ToString(), so instead we add N/A
                 if (finfo.GetValue(t) == null)
                     ans += ("N/A");
 
-                //if the value is a list, then we go through all the values on the list
-                else if (typeof(System.Collections.IList).IsAssignableFrom(finfo.PropertyType))
+                //if the value is IEnumerable and not a string, then we go through all the values on the list
+                else if (finfo.PropertyType != typeof(string) && typeof(System.Collections.IEnumerable).IsAssignableFrom(finfo.PropertyType))
                 {
+                    int num = 1;
 
-                    var l = (System.Collections.IList)finfo.GetValue(t);
-                    for (int i = 0; i < l.Count; i++)
-                        ans += l[i].ToString();
+                    foreach (var p in (System.Collections.IEnumerable)finfo.GetValue(t))
+                    {
+                        help = true;
+                        if (num != 1)
+                            ans += new string(' ', n) + $"#{num.ToString()}\n";
+                        else
+                            ans += $"#{num.ToString()}\n";
+                        ans += p.ToString();
+                        num++;
+                    }
                 }
+
                 else
                 {
                     ans += (finfo.GetValue(t).ToString());
                 }
+
                 //if we already add \n to the end of the string, then we don't want to do it again.
                 if (!ans.EndsWith('\n'))
                     ans += '\n';
                 n -= (finfo.Name.Count() + 2);
+                help = true;
             }
+
             return ans;
         }
     }

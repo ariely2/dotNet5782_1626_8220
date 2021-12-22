@@ -144,45 +144,29 @@ namespace IDAL
             /// </summary>
             /// <typeparam name="T">type of the requested list</typeparam>
             /// <returns></returns>
-            public IEnumerable<T> RequestList<T>() where T : struct
+            public IEnumerable<T> RequestList<T>(Expression<Func<T, bool>> ex = null) where T : struct
             {
-
-
-
                 switch (typeof(T).Name)
                 {
-
-
-
                     case nameof(Station):
-                        return (IEnumerable<T>)DataSource.Stations;
+                        if (ex == null)
+                            return (IEnumerable<T>)DataSource.Stations;
+                        return (IEnumerable<T>)DataSource.Stations.FindAll(Expression.Lambda<Func<Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                     case nameof(Customer):
-                        return (IEnumerable<T>)DataSource.Customers;
+                        if (ex == null)
+                            return (IEnumerable<T>)DataSource.Customers;
+                        return (IEnumerable<T>)DataSource.Customers.FindAll(Expression.Lambda<Func<Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                     case nameof(Drone):
-                        return (IEnumerable<T>)DataSource.Drones;
+                        if (ex == null)
+                            return (IEnumerable<T>)DataSource.Drones;
+                        return (IEnumerable<T>)DataSource.Drones.FindAll(Expression.Lambda<Func<Drone, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                     case nameof(Parcel):
-                        return (IEnumerable<T>)DataSource.Parcels;
+                        if (ex == null)
+                            return (IEnumerable<T>)DataSource.Parcels;
+                        return (IEnumerable<T>)DataSource.Parcels.FindAll(Expression.Lambda<Func<Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                     default:
                         throw new NotSupportException("Not support this struct");
                 }
-            }
-
-            /// <summary>
-            /// find station with avaiable chargeslots
-            /// </summary>
-            /// <returns>list of station with chargeSlots >0</returns>
-            public IEnumerable<Station> GetAvailableStations()
-            {
-                return (IEnumerable<Station>)DataSource.Stations.FindAll(s => s.ChargeSlots != 0);
-            }
-
-            /// <summary>
-            /// The function returns parcels without a drone assigned with them
-            /// </summary>
-            /// <returns>list of parcels</returns>
-            public IEnumerable<Parcel> UnassignedParcels()
-            {
-                return (IEnumerable<Parcel>)DataSource.Parcels.FindAll(x => x.DroneId == null);
             }
 
             /// <summary>
@@ -348,6 +332,7 @@ namespace IDAL
 
                 }
             }
+
             #endregion Delete
         }
     }

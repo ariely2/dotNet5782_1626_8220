@@ -439,7 +439,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayUnassignedParcels()
         {
-            foreach (Parcel p in DataBase.UnassignedParcels())
+            foreach (Parcel p in DataBase.RequestList<Parcel>(x=>x.DroneId==null))
                 Console.WriteLine(p);
         }
 
@@ -448,7 +448,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayAvailableStations()
         {
-            foreach (Station s in DataBase.GetAvailableStations())
+            foreach (Station s in DataBase.RequestList<Station>(x => x.ChargeSlots != 0))
                 Console.WriteLine(s);
         }
     }
