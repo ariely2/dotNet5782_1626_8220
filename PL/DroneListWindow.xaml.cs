@@ -48,5 +48,16 @@ namespace PL
             c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (IBL.BO.WeightCategories)b : false);
             DronesListView.ItemsSource = c;
         }
+
+        private void ToMain(object sender, RoutedEventArgs e)
+        {
+            new MainWindow().Show();
+            this.Close();
+        }
+        private void AddDrone(object sender, RoutedEventArgs e)
+        {
+            new DroneAdd(bl).Show();
+            this.Close();
+        }
     }
 }

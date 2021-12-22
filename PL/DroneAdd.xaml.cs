@@ -10,27 +10,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using IBL;
 
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DroneAdd : Window
     {
         private IBL.IBL bl;
-        public MainWindow()
+        public DroneAdd()
         {
-            bl = new IBL.BO.BL();
             InitializeComponent();
         }
-        private void ShowDrones(object sender, RoutedEventArgs e)
+        public DroneAdd(IBL.IBL b)
         {
-            new DroneListWindow(bl).Show();
-            this.Close();
+            InitializeComponent();
+            bl = b;
         }
     }
 }

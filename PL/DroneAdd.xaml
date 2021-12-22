@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
-        xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneAdd"
         mc:Ignorable="d"
-        Title="DroneListWindow" Height="640" Width="800">
+        Title="DroneAdd" Height="640" Width="800">
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
@@ -19,14 +19,17 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selection" />
-            <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selection"/>
-            <Button Content="Main Window" HorizontalAlignment="Center" VerticalAlignment="Center" Click ="ToMain" Height="30" Width="140" RenderTransformOrigin="0.643,-0.085"/>
-            <Button Content="Add Drone" HorizontalAlignment="Center" VerticalAlignment="Center" Click ="AddDrone" Height="30" Width="140" RenderTransformOrigin="0.643,-0.085" Grid.Column="1"/>
+            <Label Content="&#x9;       Drone ID" />
+            <TextBox Name="ID" Margin="5,21,5,5"/>
+            <Label Content="&#x9;    Drone Model" Grid.Column="1"/>
+            <TextBox Name="Model" Margin="5,21,5,5" Grid.Column="1"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="2"/>
+            <Label Content="            Initial Station Location" Grid.Column="3"/><!--divide to longitude and latitude-->
+            <TextBox Name="Station" Margin="5,21,5,5" Grid.Column="3"/>
         </Grid>
 
 
-        <ListView Grid.Row="1" x:Name="DronesListView">
+        <ListView Grid.Row="1" x:Name="DroneAddView">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
