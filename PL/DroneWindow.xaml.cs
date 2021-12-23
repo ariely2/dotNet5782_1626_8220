@@ -44,6 +44,7 @@ namespace PL
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            drone.Location = bl.Request<IBL.BO.Station>((int)StationSelector.SelectedItem).location;
             bl.Create<IBL.BO.Drone>(drone);
         }
     }

@@ -28,9 +28,8 @@
             <ComboBox x:Name="WeightSelector" Grid.Column="2" Margin="0,21,0,0" SelectedItem="{Binding MaxWeight}"/>
             <Label Content="                  Initial Station" Grid.Column="3"/>
             <ComboBox x:Name="StationSelector" Grid.Column="3" Margin="0,21,0,0" 
-                      	DisplayMemberPath="Name" SelectedValuePath="Location"/>
-            <!--DisplayMemberPath="Name" SelectedValuePath="Location"/>-->
-            <!--SelectedItem="{Binding Location}"/>-->
+                      	DisplayMemberPath="Name" SelectedValue="Id"/> 
+            <!--need to select id (stationtolist has no location) and convert to location for drone-->
         </Grid>
         <ListView Grid.Row="1" x:Name="DroneAddView" Margin="0,58,0,0">
             <ListView.View>
