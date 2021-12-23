@@ -56,7 +56,7 @@ namespace PL
         }
         private void AddDrone(object sender, RoutedEventArgs e)
         {
-            new DroneAdd(bl).Show();
+            new DroneWindow(bl).Show();
             this.Close();
         }
 

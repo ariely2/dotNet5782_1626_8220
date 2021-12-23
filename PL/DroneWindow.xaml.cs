@@ -17,23 +17,32 @@ namespace PL
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class DroneAdd : Window
+    public partial class DroneWindow : Window
     {
+        IBL.BO.Drone drone;
         private IBL.IBL bl;
-        public DroneAdd()
-        {
-            InitializeComponent();
-        }
-        public DroneAdd(IBL.IBL b)
+        public DroneWindow(IBL.IBL b)
         {
             InitializeComponent();
             bl = b;
+            drone = new IBL.BO.Drone();
+            DataContext = drone;
+            WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
+        }
+
+        public DroneWindow(IBL.IBL b, IBL.BO.Drone drone)
+        {
+            InitializeComponent();
+            bl = b;
+            this.drone = drone;
+            DataContext = drone;
+
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            bl.Create<IBL.BO.Drone>(drone);
         }
     }
 }

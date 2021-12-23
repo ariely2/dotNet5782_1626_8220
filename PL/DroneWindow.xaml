@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
-        xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneAdd"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime"
+        xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneWindow"
         mc:Ignorable="d"
         Title="DroneAdd" Height="640" Width="800">
     <Grid x:Name="MainGrid" Margin="0,42,0,0">
@@ -20,11 +21,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="&#x9;       Drone ID" />
-            <TextBox Name="ID" Margin="5,21,5,5"/>
+            <TextBox Name="ID" Margin="5,21,5,5" Text="{Binding Id}"/>
             <Label Content="&#x9;    Drone Model" Grid.Column="1"/>
-            <TextBox Name="Model" Margin="5,21,5,5" Grid.Column="1"/>
+            <TextBox Name="Model" Margin="5,21,5,5" Grid.Column="1" Text ="{Binding Model}"/>
             <Label Content="&#x9;     Max Weight" Grid.Column="2"/>
-            <ComboBox x:Name="WeightSelector" Grid.Column="2" Margin="0,21,0,0"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="2" Margin="0,21,0,0" SelectedItem="{Binding MaxWeight}"/>
             <Label Content="            Initial Station Location" Grid.Column="3"/>
             <!--divide to longitude and latitude-->
             <TextBox Name="Station" Margin="5,21,5,5" Grid.Column="3"/>
@@ -39,7 +40,7 @@
             </ListView.View>
         </ListView>
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="639,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20"/>
-        <Button Content="Add" HorizontalAlignment="Left" Margin="484,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" />
+        <Button Content="Add" HorizontalAlignment="Left" Margin="484,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Button_Click" />
         <Label Content="Enter Drone details" HorizontalAlignment="Center" Margin="0,-48,0,0" VerticalAlignment="Top" FontSize="25"/>
 
 
