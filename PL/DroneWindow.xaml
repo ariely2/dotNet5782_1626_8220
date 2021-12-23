@@ -26,16 +26,12 @@
             <TextBox Name="Model" Margin="5,21,5,5" Grid.Column="1" Text ="{Binding Model}"/>
             <Label Content="&#x9;     Max Weight" Grid.Column="2"/>
             <ComboBox x:Name="WeightSelector" Grid.Column="2" Margin="0,21,0,0" SelectedItem="{Binding MaxWeight}"/>
-            <Label Content="            Initial Station Location" Grid.Column="3"/>
-            <Label Content="  Latitude" Grid.Column="3" VerticalAlignment="Center" Height="23" Margin="0,0,130,0"/>
-            <Label Content="  Longitude" Grid.Column="3" VerticalAlignment="Top" Height="31" Margin="0,40,122,0"/>
-
-            <!--divide to longitude and latitude-->
-            <TextBox Name="Latitude" Margin="78,44,0,0" Grid.Column="3" Text="{Binding Location.Latitude}"/>
-            <TextBox Name="Longitude" Margin="78,21,0,21" Grid.Column="3" Text="{Binding Location.Longitude}"/>
+            <Label Content="                  Initial Station" Grid.Column="3"/>
+            <ComboBox x:Name="StationSelector" Grid.Column="3" Margin="0,21,0,0" 
+                      	DisplayMemberPath="Name" SelectedValuePath="Location"/>
+            <!--DisplayMemberPath="Name" SelectedValuePath="Location"/>-->
+            <!--SelectedItem="{Binding Location}"/>-->
         </Grid>
-
-
         <ListView Grid.Row="1" x:Name="DroneAddView" Margin="0,58,0,0">
             <ListView.View>
                 <GridView>
@@ -46,7 +42,5 @@
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="639,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20"/>
         <Button Content="Add" HorizontalAlignment="Left" Margin="484,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Button_Click" />
         <Label Content="Enter Drone details" HorizontalAlignment="Center" Margin="0,-48,0,0" VerticalAlignment="Top" FontSize="25"/>
-
-
     </Grid>
 </Window>
