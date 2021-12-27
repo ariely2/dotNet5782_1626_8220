@@ -11,7 +11,7 @@ namespace IDAL
 		/// <summary>
 		/// the class represent a location in earth
 		/// </summary>
-		public class Location
+		public struct Location
 		{
 			/// <summary>
 			/// longitude coordinate

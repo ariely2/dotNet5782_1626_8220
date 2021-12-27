@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 namespace IBL.BO
@@ -24,7 +25,7 @@ namespace IBL.BO
                     case Station s:
 
                         //if station already exist in the exact location
-                        if (RequestList<StationToList>().Select(x => Request<Station>(x.Id)).Select(x => x.location).Contains(s.location))
+                        if (!dal.RequestList<IDAL.DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
                             throw new NotPossibleException("Station already exist in the exact location\n");
 
 
@@ -176,8 +177,12 @@ namespace IBL.BO
                                 Longitude = s.Location.Longitude
                             },
                             Name = s.Name,
-                            Charging = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && (new Location() { Longitude = s.Location.Longitude, Latitude = s.Location.Latitude }).Equals(d.Location))
-                                             .Select(d => new DroneCharge() { Id = d.Id, Battery = d.Battery })
+                            Charging = from DroneToList dr in RequestList<DroneToList>(d => d.Status == DroneStatuses.Maintenance && (new Location() { Longitude = s.Location.Longitude, Latitude = s.Location.Latitude }).Equals(d.Location))
+                                       select new DroneCharge()
+                                       {
+                                           Id = dr.Id,
+                                           Battery = dr.Battery
+                                       }
                         }, typeof(T));
                         break;
 
@@ -307,12 +312,13 @@ namespace IBL.BO
         /// </summary>
         /// <typeparam name="T">type of object can be: StationToList, CustomerToList, DroneToList, ParcelToList</typeparam>
         /// <returns>return the list</returns>
-        public IEnumerable<T> RequestList<T>() where T : class
+        public IEnumerable<T> RequestList<T>(Expression<Func<T, bool>> ex = null) where T : class
         {
             switch (typeof(T).Name)
             {
                 case nameof(StationToList):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>().Select(s => new StationToList()
+
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>(Expression.Lambda<Func<IDAL.DO.Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(s => new StationToList()
                     {
                         Id = s.Id,
                         Name = s.Name,
@@ -323,7 +329,7 @@ namespace IBL.BO
                 case nameof(CustomerToList):
                     IEnumerable<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id));
                    
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>().Select(c => new CustomerToList()
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>(Expression.Lambda<Func<IDAL.DO.Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(c => new CustomerToList()
                     {
                         Id = c.Id,
                         Name = c.Name,
@@ -343,9 +349,11 @@ namespace IBL.BO
                     });
 
                 case nameof(DroneToList):
-                    return (IEnumerable<T>)Drones;
+                    if (ex == null)
+                        return (IEnumerable<T>)Drones;
+                    return (IEnumerable<T>)Drones.FindAll(Expression.Lambda<Func<DroneToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                 case nameof(ParcelToList):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>().Select(p => new ParcelToList
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>(Expression.Lambda<Func<IDAL.DO.Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(p => new ParcelToList
                     {
                         Id = p.Id,
                         Priority = (Priorities)p.Priority,
