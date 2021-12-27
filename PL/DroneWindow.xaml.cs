@@ -26,7 +26,9 @@ namespace PL
             InitializeComponent();
             bl = b;
             drone = new IBL.BO.Drone();
+            drone.Location = new IBL.BO.Location();
             DataContext = drone;
+            StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>();
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
         }
 
@@ -36,12 +38,13 @@ namespace PL
             bl = b;
             this.drone = drone;
             DataContext = drone;
-
+            StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>();
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            drone.Location = bl.Request<IBL.BO.Station>((int)StationSelector.SelectedItem).location;
             bl.Create<IBL.BO.Drone>(drone);
         }
     }
