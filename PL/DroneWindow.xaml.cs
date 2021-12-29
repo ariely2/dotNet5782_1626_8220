@@ -42,10 +42,43 @@ namespace PL
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Add_Click(object sender, RoutedEventArgs e)
         {
-            drone.Location = bl.Request<IBL.BO.Station>((int)StationSelector.SelectedItem).location;
-            bl.Create<IBL.BO.Drone>(drone);
+            string errorMessage = "A new drone could not be created for the following reasons:";
+            if(Validation.GetErrors(ID).Count()!=0)
+            {
+                errorMessage += "ID needs to be a string!\n";
+                if (Validation.GetErrors(Model).Count() != 0)
+                {
+                    errorMessage += "Model needs to be a string!\n";
+                    if (WeightSelector.SelectedItem == null)
+                    {
+                        errorMessage += "A Max Weight must be selected!\n";
+                        if (StationSelector.SelectedItem == null)//maybe selected value?
+                            errorMessage += "An Initial Station Must be Selected!\n";
+                    }
+                }
+                errorMessage += "\nPlease Try Again.";
+                MessageBox.Show(errorMessage);
+            }
+            drone.Location = bl.Request<IBL.BO.Station>((int)StationSelector.SelectedValue).location;
+            try
+            {
+                bl.Create<IBL.BO.Drone>(drone);
+            }
+            catch (Exception ex)//consolewriteline or messagebox?
+            {
+                Console.WriteLine("Failed to add Drone for the following reason: \n" +
+                ex.Message +
+                "Try again\n");
+                return;//clear textboxes?
+            }
+            Console.WriteLine("Added Drone!");
+            DialogResult = true;//?
+        }
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

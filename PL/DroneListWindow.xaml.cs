@@ -35,8 +35,8 @@ namespace PL
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>();
         }
-        private void Selection(object sender, SelectionChangedEventArgs e)//grey out options that don't exist?
-        {
+        private void Selection()//grey out options that don't exist?
+        {// need object sender, SelectionChangedEventArgs e?
             var a = StatusSelector.SelectedItem;
             var b = WeightSelector.SelectedItem;
             var c = bl.RequestList<IBL.BO.DroneToList>().ToList();
@@ -52,7 +52,11 @@ namespace PL
         }
         private void AddDrone(object sender, RoutedEventArgs e)
         {
-            new DroneWindow(bl).Show();
+            //new DroneWindow(bl).Show();
+            DroneWindow d = new DroneWindow(bl);
+            d.Show();
+            //if (d.ShowDialog() == true)
+            //    Selection();
             this.Close();
         }
 
