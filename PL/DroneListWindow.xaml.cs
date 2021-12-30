@@ -25,22 +25,25 @@ namespace PL
         {
             bl = b;
             InitializeComponent();
-            StatusSelector.Items.Add("All");
+            StatusSelector.Items.Add("All"); //adding all status options. do we need this line?
             var statuses  = Enum.GetValues(typeof(IBL.BO.DroneStatuses));
             foreach (var a in statuses)
                 StatusSelector.Items.Add(a);
-            WeightSelector.Items.Add("All");
+            WeightSelector.Items.Add("All");//do we need this line?
             var weights = Enum.GetValues(typeof(IBL.BO.WeightCategories));
             foreach (var a in weights)
                 WeightSelector.Items.Add(a);
-            DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>();
+            DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>(); //getting list of drones to display
         }
-        private void Selection()//grey out options that don't exist?
+        private void Selection()//grey out options that don't exist? //is it ok that i deleted arguments?
         {// need object sender, SelectionChangedEventArgs e?
-            var a = StatusSelector.SelectedItem;
-            var b = WeightSelector.SelectedItem;
+            var a = StatusSelector.SelectedItem; //selected status
+            var b = WeightSelector.SelectedItem; //selected max weight
             var c = bl.RequestList<IBL.BO.DroneToList>().ToList();
+            // if no status was selected, or "all" was selected, don't remove any drone.
+            // if a status was selected, remove drones whose status isn't the selected status:
             c.RemoveAll(x => (a != null && a.GetType().IsEnum) ? x.Status != (IBL.BO.DroneStatuses)a : false);
+            // do the same for maxweight selection:
             c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (IBL.BO.WeightCategories)b : false);
             DronesListView.ItemsSource = c;
         }
@@ -60,9 +63,14 @@ namespace PL
             this.Close();
         }
 
-        private void DronesListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
 
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true; //if "X" was clicked, don't close window.
         }
     }
 }

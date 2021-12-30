@@ -38,17 +38,16 @@ namespace PL
             bl = b;
             this.drone = drone;
             DataContext = drone;
-            StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>();
-            WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
+            AddGrid.Visibility = Visibility.Hidden;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             string errorMessage = "A new drone could not be created for the following reasons:";
-            if(Validation.GetErrors(ID).Count()!=0)
+            if(Validation.GetErrors(ID).Any())
             {
-                errorMessage += "ID needs to be a string!\n";
-                if (Validation.GetErrors(Model).Count() != 0)
+                errorMessage += "ID needs to be an int!\n";
+                if (Validation.GetErrors(Model).Any())
                 {
                     errorMessage += "Model needs to be a string!\n";
                     if (WeightSelector.SelectedItem == null)
@@ -79,6 +78,10 @@ namespace PL
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
