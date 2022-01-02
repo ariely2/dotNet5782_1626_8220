@@ -318,7 +318,7 @@ namespace IBL.BO
             {
                 case nameof(StationToList):
 
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>(Expression.Lambda<Func<IDAL.DO.Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(s => new StationToList()
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Station>(ex ==null?null:Expression.Lambda<Func<IDAL.DO.Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(s => new StationToList()
                     {
                         Id = s.Id,
                         Name = s.Name,
@@ -329,7 +329,7 @@ namespace IBL.BO
                 case nameof(CustomerToList):
                     IEnumerable<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id));
                    
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>(Expression.Lambda<Func<IDAL.DO.Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(c => new CustomerToList()
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Customer>(ex == null ? null : Expression.Lambda<Func<IDAL.DO.Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(c => new CustomerToList()
                     {
                         Id = c.Id,
                         Name = c.Name,
@@ -353,7 +353,7 @@ namespace IBL.BO
                         return (IEnumerable<T>)Drones;
                     return (IEnumerable<T>)Drones.FindAll(Expression.Lambda<Func<DroneToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
                 case nameof(ParcelToList):
-                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>(Expression.Lambda<Func<IDAL.DO.Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(p => new ParcelToList
+                    return (IEnumerable<T>)dal.RequestList<IDAL.DO.Parcel>(ex == null ? null : Expression.Lambda<Func<IDAL.DO.Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(p => new ParcelToList
                     {
                         Id = p.Id,
                         Priority = (Priorities)p.Priority,
