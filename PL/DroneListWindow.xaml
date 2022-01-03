@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
-        Title="DroneListWindow" Height="640" Width="800" Closing="Window_Closing">
+        Title="DroneListWindow" Height="640" Width="800" Closing="Window_Closing" Activated="Window_Activated">
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="39*"/>
@@ -28,12 +28,12 @@
             <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selection" Margin="0,20,0,0" />
             <Label Content="&#x9;     Max Weight" Grid.Column="3"/>
             <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selection" Margin="0,20,0,0"/>
-            <Button Content="Main Window" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="ToMain" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085"/>
+            <Button Content="Close" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="Close" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085"/>
             <Button Content="Add Drone" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="AddDrone" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085" Margin="0,39,0,0"/>
         </Grid>
 
 
-        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Grid.ColumnSpan="2" Margin="0,69,0,0" Grid.RowSpan="2">
+        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Grid.ColumnSpan="2" Margin="0,69,400,0" Grid.RowSpan="2">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>

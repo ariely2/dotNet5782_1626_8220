@@ -24,9 +24,9 @@ namespace IBL.BO
                 {
                     case Station s:
 
-                        //if station already exist in the exact location
+                        //if station already exists in the exact location
                         if (!dal.RequestList<IDAL.DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
-                            throw new NotPossibleException("Station already exist in the exact location\n");
+                            throw new NotPossibleException("A Station already exists in the entered location\n");
 
 
                         //create station in dal
@@ -72,7 +72,7 @@ namespace IBL.BO
 
                         //check if the station have place for the drone
                         if (station.AvailableSlots == 0)
-                            throw new NotPossibleException("This station have no enough place\n");
+                            throw new NotPossibleException("The station doesn't have enough place\n");
 
                         //create the drone in dal
                         dal.Create<IDAL.DO.Drone>(new IDAL.DO.Drone()

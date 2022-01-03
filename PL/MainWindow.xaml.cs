@@ -29,7 +29,6 @@ namespace PL
         private void ShowDrones(object sender, RoutedEventArgs e)
         {
             new DroneListWindow(bl).Show();
-            this.Close();
         }
     }
 }

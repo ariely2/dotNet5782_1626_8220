@@ -21,6 +21,8 @@ namespace PL
     public partial class DroneListWindow : Window
     {
         private IBL.IBL bl;
+        private bool close = false;
+        private bool refresh = false;
         public DroneListWindow(IBL.IBL b)
         {
             bl = b;
@@ -35,7 +37,7 @@ namespace PL
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>(); //getting list of drones to display
         }
-        private void Selection()//grey out options that don't exist? //is it ok that i deleted arguments?
+        private void Selection(object sender, SelectionChangedEventArgs e)//remove/grey out options that don't exist?
         {// need object sender, SelectionChangedEventArgs e?
             var a = StatusSelector.SelectedItem; //selected status
             var b = WeightSelector.SelectedItem; //selected max weight
@@ -48,19 +50,19 @@ namespace PL
             DronesListView.ItemsSource = c;
         }
 
-        private void ToMain(object sender, RoutedEventArgs e)
+        private void Close(object sender, RoutedEventArgs e)
         {
-            new MainWindow().Show();
+            close = true;
             this.Close();
         }
         private void AddDrone(object sender, RoutedEventArgs e)
         {
-            //new DroneWindow(bl).Show();
-            DroneWindow d = new DroneWindow(bl);
-            d.Show();
-            //if (d.ShowDialog() == true)
-            //    Selection();
-            this.Close();
+            refresh = true;
+            new DroneWindow(bl).Show();
+            //DroneWindow d = new DroneWindow(bl);
+            //d.Show();
+            //while (!this.IsActive) ;
+            //DronesListView.Items.Refresh();
         }
 
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
@@ -70,7 +72,17 @@ namespace PL
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true; //if "X" was clicked, don't close window.
+            if(!close)
+                e.Cancel = true; //if "X" was clicked, don't close window.
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            if (refresh)
+            {
+                DronesListView.Items.Refresh();
+                refresh = false;
+            }
         }
     }
 }

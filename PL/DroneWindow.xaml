@@ -8,7 +8,7 @@
         xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneWindow"
         mc:Ignorable="d"
         Title="DroneWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing">
-    <!--<Grid x:Name="AddGrid" Margin="0,42,0,0">
+    <Grid x:Name="AddGrid" Margin="0,42,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
@@ -33,9 +33,9 @@
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="140,4,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Cancel_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
         <Button Content="Add" HorizontalAlignment="Left" Margin="140,6,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Add_Click" Grid.Column="2" Grid.ColumnSpan="2" />
         <Label Content="Enter Drone details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="25,-46,25,0"/>
-    </Grid>-->
+    </Grid>
 
-    <Grid x:Name="DroneGrid" Margin="0,42,0,0">
+    <!--<Grid x:Name="DroneGrid" Margin="0,42,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
@@ -53,6 +53,6 @@
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
         <Label Content="Drone details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="12,-41,12,0" Height="40"/>
-    </Grid>
+    </Grid>-->
 
 </Window>

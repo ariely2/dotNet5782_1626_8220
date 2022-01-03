@@ -44,7 +44,7 @@ namespace IDAL
 
                         //station with negative charge slots
                         if (s.ChargeSlots < 0)
-                            throw new NotPossibleException("Can't be station with negative available slots\n");
+                            throw new NotPossibleException("A Station can't have a negative number of available slots\n");
 
                         //add station
                         DataSource.Stations.Add(s);
@@ -55,7 +55,7 @@ namespace IDAL
                             throw new OutOfBoundsException("Drone's id out of bounds\n");
                         //id already exist
                         if (DataSource.Drones.Exists(x => x.Id == d.Id))
-                            throw new AlreadyExistException("Drone's id already exist\n");
+                            throw new AlreadyExistException("A Drone with the same ID already exist\n");
 
                         //add drone
                         DataSource.Drones.Add(d);
@@ -68,7 +68,7 @@ namespace IDAL
 
                         //id already exist
                         if (DataSource.Customers.Exists(x => x.Id == c.Id))
-                            throw new AlreadyExistException("Customer's id already exist\n");
+                            throw new AlreadyExistException("Customer's id already exists\n");
 
                         //add customer
                         DataSource.Customers.Add(c);
