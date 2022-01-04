@@ -42,6 +42,11 @@ namespace PL
             bl = b;
             this.drone = bl.Request<IBL.BO.Drone>(drone.Id);
             DataContext = drone;
+            Charging.Items.Add("Send To Charge");
+            Charging.Items.Add("Release From Charge");
+            Delivery.Items.Add("Assign a Parcel");
+            Delivery.Items.Add("Pick Up Parcel");
+            Delivery.Items.Add("Deliver Parcel");
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -97,6 +102,103 @@ namespace PL
         {
             if(!close)
                 e.Cancel = true;
+        }
+
+        private void Update(object sender, RoutedEventArgs e)//can't update model twice (doesn't really update?
+        {
+            bl.UpdateDrone(drone.Id, Model_d.Text); //can this ever return an exception?
+            MessageBox.Show("Updated Drone Model!");
+            //refresh model_d somehow?
+        }
+
+        private void Charge_Update(object sender, SelectionChangedEventArgs e)
+        {
+            if (Charging.SelectedIndex > 0)
+            {
+                if (Charging.SelectedValue == "Send To Charge")
+                {
+                    try
+                    {
+                        bl.SendDroneToCharge(drone.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to send Drone to charge for the following reason: \n" + ex.Message);
+                        return;
+                    }
+                    MessageBox.Show("Sent Drone To Charge!");
+                }
+                if (Charging.SelectedValue == "Release From Charge")
+                {
+                    var w = new InputWindow();
+                    double hours = 0;
+                    if (w.ShowDialog() == false)
+                        hours = w.time;
+                    try
+                    {
+                        bl.ReleaseDrone(drone.Id, hours);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to Release Drone from charge for the following reason: \n" + ex.Message);
+                        return;
+                    }
+                    MessageBox.Show("Released Drone from Charge!");
+                }
+            }
+            //refresh battery?
+        }
+
+        private void Delivery_Update(object sender, SelectionChangedEventArgs e)
+        {
+            if (Delivery.SelectedIndex > 0)
+            {
+                if (Delivery.SelectedValue == "Assign a Parcel")
+                {
+                    try
+                    {
+                        bl.AssignDrone(drone.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to Assign Parcel to Drone for the following reason: \n" + ex.Message);
+                        return;
+                    }
+                    MessageBox.Show("Assigned Parcel to Drone!");
+                }
+                if (Delivery.SelectedValue == "Pick Up Parcel")
+                {
+                    try
+                    {
+                        bl.PickUp(drone.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to Pick Up Parcel for the following reason: \n" + ex.Message);
+                        return;
+                    }
+                    MessageBox.Show("Picked Up Parcel!");
+                }
+                if (Delivery.SelectedValue == "Deliver Parcel")
+                {
+                    try
+                    {
+                        bl.Deliver(drone.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to Deliver Parcel for the following reason: \n" + ex.Message);
+                        return;
+                    }
+                    MessageBox.Show("Delivered Parcel!");
+                }
+            }
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            close = true;
+            this.Close();
         }
     }
 }
