@@ -60,7 +60,7 @@ namespace IBL.BO
                     else
                         Current.Location = GetCustomerLocation(sender.Id);
                     double b = MinBattery(distance, Current.Id);
-                    Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
+                    Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace IBL.BO
                         var receiver = Request<Customer>(p[i]); // getting a random receiver
                         Current.Location = GetCustomerLocation(receiver.Id);
                         double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
-                        Current.Battery = r.NextDouble() * (100 - b) + b; //random battery between minimum battery needed to 100
+                        Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
                     }
                 }
             }

@@ -25,22 +25,22 @@ namespace PL
         public DroneWindow(IBL.IBL b)
         {
             InitializeComponent();
-            //DroneGrid.Visibility = Visibility.Hidden;
+            DroneGrid.Visibility = Visibility.Hidden;
             bl = b;
             drone = new IBL.BO.Drone();
             drone.Location = new IBL.BO.Location();
             DataContext = drone;
             StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>().ToList().FindAll(x => x.Available != 0);
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
-            //make default weight null!
+            //make default weight null?
         }
 
-        public DroneWindow(IBL.IBL b, IBL.BO.Drone drone)
+        public DroneWindow(IBL.IBL b, IBL.BO.DroneToList drone)
         {
-            AddGrid.Visibility = Visibility.Hidden;//before or after initialize
             InitializeComponent();
+            AddGrid.Visibility = Visibility.Hidden;
             bl = b;
-            this.drone = drone;
+            this.drone = bl.Request<IBL.BO.Drone>(drone.Id);
             DataContext = drone;
         }
 

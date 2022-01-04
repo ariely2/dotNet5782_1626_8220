@@ -87,7 +87,7 @@ namespace IBL.BO
                         Drones.Add(new DroneToList()
                         {
                             Id = d.Id,
-                            Battery = r.NextDouble() * 20 + 20,//nubmer between 20 to 40
+                            Battery = (double)r.Next(2000, 4000)/100, //double between 20 to 40 with 2 digits after point
                             Location = d.Location,
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,

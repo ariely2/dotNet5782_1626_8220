@@ -466,7 +466,7 @@ namespace ConsoleUI_BL
             try {
                 Console.WriteLine(bl.Request<T>(InputInt()));
             }
-            catch(NotExistException ex)
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message + "try again");
             }

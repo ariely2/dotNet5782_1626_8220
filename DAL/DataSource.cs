@@ -62,8 +62,8 @@ namespace IDAL
                             Phone = phone,//calculate before
                             Location = new Location()
                             {
-                                Longitude = (random.NextDouble() * 0.1) + lowerLongitude,//Random Longitude between 35 - 35.1
-                                Latitude = (random.NextDouble() * 0.1) + lowerLatitude//Random latitude between 37 - 37.1
+                                Longitude = ((double)random.Next(0, 1000) / 10000) + lowerLongitude,//Random Longitude between 35 - 35.1
+                                Latitude = ((double)random.Next(0, 1000) / 10000) + lowerLatitude//Random latitude between 37 - 37.1
                             }
                         });
                     }
@@ -85,8 +85,8 @@ namespace IDAL
                             Name = SNames[i],//Name from Name array.
                             Location = new Location()
                             {
-                                Longitude = (random.NextDouble() * 0.1) + lowerLongitude,//Random Longitude between 35 - 35.1
-                                Latitude = (random.NextDouble() * 0.1) + lowerLatitude//Random Latitude between 37 - 37.1
+                                Longitude = ((double)random.Next(0, 1000) / 10000) + lowerLongitude,//Random Longitude between 35 - 35.1
+                                Latitude = ((double)random.Next(0, 1000) / 10000) + lowerLatitude//Random Latitude between 37 - 37.1
                             },
                             ChargeSlots = random.Next(2, 4)//Random number of available slots between 2 and 3
                         });
