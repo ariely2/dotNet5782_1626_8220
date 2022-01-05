@@ -444,7 +444,7 @@ namespace IBL.BO
             //change data in list drones in bl, and dal
             dal.DeliverParcel(d.Parcel.Id);//called function in dal
             a.Battery -= MinBattery(Location.distance(d.Location, d.Parcel.Destination), d.Id);//update drone's battery
-            a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity); //rounding the battery so it won't look ugly
+            //a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity); //rounding the battery so it won't look ugly
             a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
             a.Location = d.Parcel.Destination;//update drone's location to receiver location
             a.Status = DroneStatuses.Available;//change drone status to available
@@ -471,7 +471,7 @@ namespace IBL.BO
 
             Location sender = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
             a.Battery -= MinBattery(Location.distance(d.Location, sender), d.Id);//update drone's battery
-            a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+            //a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
             a.Location = sender;//update drone's location
         }
 
@@ -495,7 +495,7 @@ namespace IBL.BO
 
             d.Status = DroneStatuses.Available;//update drone status
             d.Battery += info[4] * t;//updating drone's battery
-            d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+           // d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
             if (d.Battery > 100) //if battery became bigger than 100, lower it to 100
                 d.Battery = 100; 
             dal.ReleaseDrone(d.Id);//update data in dal
@@ -528,7 +528,7 @@ namespace IBL.BO
                 {
                     found = true;
                     d.Battery -= MinBattery(distance, d.Id);
-                    d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+                    //d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
                     d.Location = stations.Last().location;
                     d.Status = DroneStatuses.Maintenance;
                     dal.ChargeDrone(d.Id, stations.Last().Id); //is this it?
