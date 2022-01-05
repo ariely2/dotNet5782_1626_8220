@@ -42,6 +42,9 @@ namespace PL
             bl = b;
             this.drone = bl.Request<IBL.BO.Drone>(drone.Id);
             DataContext = drone;
+            Parcel.Text = drone.ParcelId.ToString();
+            if (Parcel.Text == string.Empty)
+                Parcel.Text = "N/A";
             Charging.Items.Add("Send To Charge");
             Charging.Items.Add("Release From Charge");
             Delivery.Items.Add("Assign a Parcel");
@@ -108,90 +111,103 @@ namespace PL
         {
             bl.UpdateDrone(drone.Id, Model_d.Text); //can this ever return an exception?
             MessageBox.Show("Updated Drone Model!");
-            //refresh model_d somehow?
         }
 
         private void Charge_Update(object sender, SelectionChangedEventArgs e)
         {
-            if (Charging.SelectedIndex > 0)
+            bool s = false;
+            if (Charging.SelectedValue == "Send To Charge")
             {
-                if (Charging.SelectedValue == "Send To Charge")
+                try
                 {
-                    try
-                    {
-                        bl.SendDroneToCharge(drone.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to send Drone to charge for the following reason: \n" + ex.Message);
-                        return;
-                    }
-                    MessageBox.Show("Sent Drone To Charge!");
+                    bl.SendDroneToCharge(drone.Id);
                 }
-                if (Charging.SelectedValue == "Release From Charge")
+                catch (Exception ex)
                 {
-                    var w = new InputWindow();
-                    double hours = 0;
-                    if (w.ShowDialog() == false)
-                        hours = w.time;
-                    try
-                    {
-                        bl.ReleaseDrone(drone.Id, hours);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to Release Drone from charge for the following reason: \n" + ex.Message);
-                        return;
-                    }
-                    MessageBox.Show("Released Drone from Charge!");
+                    MessageBox.Show("Failed to send Drone to charge for the following reason: \n" + ex.Message);
+                    return;
                 }
+                MessageBox.Show("Sent Drone To Charge!");
+                s = true;
             }
-            //refresh battery?
+            if (Charging.SelectedValue == "Release From Charge")
+            {
+                var w = new InputWindow();
+                double hours = 0;
+                if (w.ShowDialog() == false)
+                    hours = w.time;
+                try
+                {
+                    bl.ReleaseDrone(drone.Id, hours);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to Release Drone from charge for the following reason: \n" + ex.Message);
+                    return;
+                }
+                MessageBox.Show("Released Drone from Charge!");
+                s = true;
+            }
+            if (s)
+            {
+                int id = drone.Id;
+                drone = bl.Request<IBL.BO.Drone>(id);
+                DataContext = drone;
+            }
         }
 
         private void Delivery_Update(object sender, SelectionChangedEventArgs e)
         {
-            if (Delivery.SelectedIndex > 0)
+            bool s = false;
+            if (Delivery.SelectedValue == "Assign a Parcel")
             {
-                if (Delivery.SelectedValue == "Assign a Parcel")
+                try
                 {
-                    try
-                    {
-                        bl.AssignDrone(drone.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to Assign Parcel to Drone for the following reason: \n" + ex.Message);
-                        return;
-                    }
-                    MessageBox.Show("Assigned Parcel to Drone!");
+                    bl.AssignDrone(drone.Id);
                 }
-                if (Delivery.SelectedValue == "Pick Up Parcel")
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        bl.PickUp(drone.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to Pick Up Parcel for the following reason: \n" + ex.Message);
-                        return;
-                    }
-                    MessageBox.Show("Picked Up Parcel!");
+                    MessageBox.Show("Failed to Assign Parcel to Drone for the following reason: \n" + ex.Message);
+                    return;
                 }
-                if (Delivery.SelectedValue == "Deliver Parcel")
+                MessageBox.Show("Assigned Parcel to Drone!");
+                Parcel.Text = bl.Request<IBL.BO.Drone>(drone.Id).Parcel.Id.ToString();
+                s = true;
+            }
+            if (Delivery.SelectedValue == "Pick Up Parcel")
+            {
+                try
                 {
-                    try
-                    {
-                        bl.Deliver(drone.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Failed to Deliver Parcel for the following reason: \n" + ex.Message);
-                        return;
-                    }
-                    MessageBox.Show("Delivered Parcel!");
+                    bl.PickUp(drone.Id);
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to Pick Up Parcel for the following reason: \n" + ex.Message);
+                    return;
+                }
+                MessageBox.Show("Picked Up Parcel!");
+                s = true;
+            }
+            if (Delivery.SelectedValue == "Deliver Parcel")
+            {
+                try
+                {
+                    bl.Deliver(drone.Id);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to Deliver Parcel for the following reason: \n" + ex.Message);
+                    return;
+                }
+                MessageBox.Show("Delivered Parcel!");
+                Parcel.Text = "N/A";
+                s = true;
+            }
+            if(s)
+            { 
+                int id = drone.Id;
+                drone = bl.Request<IBL.BO.Drone>(id);
+                DataContext = drone;
             }
         }
 
@@ -199,6 +215,16 @@ namespace PL
         {
             close = true;
             this.Close();
+        }
+
+        private void Delivery_DropDownClosed(object sender, EventArgs e)
+        {
+            Delivery.SelectedItem = Delivery.Items.GetItemAt(0);
+        }
+
+        private void Charging_DropDownClosed(object sender, EventArgs e)
+        {
+            Charging.SelectedItem = Charging.Items.GetItemAt(0);
         }
     }
 }

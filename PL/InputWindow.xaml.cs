@@ -31,14 +31,24 @@ namespace PL
 
         private bool Check_Text()
         {
-            if (!double.TryParse(Hours.Text, out time))
-            {
-                MessageBox.Show("Number of Hours must be a number!\n Please Try again.");
-                return false;
-            }
+            double check = 0;
             if (Hours.Text == string.Empty)
             {
                 MessageBox.Show("Please Enter Number of Hours!");
+                return false;
+            }
+            if (double.TryParse(Hours.Text, out check))
+            {
+                if(check<0)
+                {
+                    MessageBox.Show("Number of Hours can't be negative!\n Please Try again.");
+                    return false;
+                }
+                time = check;
+            }
+            else
+            {
+                MessageBox.Show("Number of Hours must be a number!\n Please Try again.");
                 return false;
             }
             return true;

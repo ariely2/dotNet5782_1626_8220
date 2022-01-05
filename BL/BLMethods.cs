@@ -443,9 +443,10 @@ namespace IBL.BO
 
             //change data in list drones in bl, and dal
             dal.DeliverParcel(d.Parcel.Id);//called function in dal
-            a.Battery -= MinBattery(Location.distance(Request<Customer>(d.Parcel.Sender.Id).location, d.Location), d.Id);//update drone's battery
+            a.Battery -= MinBattery(Location.distance(d.Location, d.Parcel.Destination), d.Id);//update drone's battery
+            a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity); //rounding the battery so it won't look ugly
             a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
-            a.Location = Request<Customer>(d.Parcel.Receiver.Id).location;//update drone's location to receiver location
+            a.Location = d.Parcel.Destination;//update drone's location to receiver location
             a.Status = DroneStatuses.Available;//change drone status to available
         }
 
@@ -470,9 +471,8 @@ namespace IBL.BO
 
             Location sender = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
             a.Battery -= MinBattery(Location.distance(d.Location, sender), d.Id);//update drone's battery
+            a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
             a.Location = sender;//update drone's location
-
-
         }
 
         /// <summary>
@@ -490,15 +490,15 @@ namespace IBL.BO
             //if drone isn't charging
             if (d.Status != DroneStatuses.Maintenance)
                 throw new DroneIsntChargeException("Drone with id: " + id + " isn't cahrging\n");
-
+            if (t < 0)
+                throw new Exception("Number of Hours can't be negative\n");
 
             d.Status = DroneStatuses.Available;//update drone status
             d.Battery += info[4] * t;//updating drone's battery
+            d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
             if (d.Battery > 100) //if battery became bigger than 100, lower it to 100
-
                 d.Battery = 100; 
             dal.ReleaseDrone(d.Id);//update data in dal
-
         }
 
         /// <summary>
@@ -528,6 +528,7 @@ namespace IBL.BO
                 {
                     found = true;
                     d.Battery -= MinBattery(distance, d.Id);
+                    d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
                     d.Location = stations.Last().location;
                     d.Status = DroneStatuses.Maintenance;
                     dal.ChargeDrone(d.Id, stations.Last().Id); //is this it?
@@ -639,11 +640,13 @@ namespace IBL.BO
             else //if a parcel is assigned to drone
             {
                 Parcel p = Request<Parcel>((int)d.ParcelId);
-
                 if (p.Delivered == null) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
                     return info[0] * distance;
                 else // distance is distance to deliver parcel
+                {
+                    double a = info[((int)p.Weight) + 1] * distance;
                     return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
+                }
             }
         }
         /// <summary>

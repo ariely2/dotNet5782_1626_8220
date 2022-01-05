@@ -25,9 +25,9 @@
             </Grid.ColumnDefinitions>
             <Label Content="        Filter Drone list: " Grid.Column="1" FontSize="20" HorizontalAlignment="Center" Width="200" Margin="0,-7,0,6"/>
             <Label Content="&#x9;         Status" Grid.Column="2"/>
-            <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selection" Margin="0,20,0,0" />
+            <ComboBox x:Name="StatusSelector" Grid.Column="2" SelectionChanged ="Selected_Filter" Margin="0,20,0,0" />
             <Label Content="&#x9;     Max Weight" Grid.Column="3"/>
-            <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selection" Margin="0,20,0,0"/>
+            <ComboBox x:Name="WeightSelector" Grid.Column="3" SelectionChanged ="Selected_Filter" Margin="0,20,0,0"/>
             <Button Content="Close" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="Close" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085"/>
             <Button Content="Add Drone" HorizontalAlignment="Left" VerticalAlignment="Top" Click ="AddDrone" Height="30" Width="190" RenderTransformOrigin="0.643,-0.085" Margin="0,39,0,0"/>
         </Grid>

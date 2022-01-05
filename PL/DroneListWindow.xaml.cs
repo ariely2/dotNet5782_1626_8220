@@ -22,7 +22,6 @@ namespace PL
     {
         private IBL.IBL bl;
         private bool close = false;
-        private bool refresh = false;
         public DroneListWindow(IBL.IBL b)
         {
             bl = b;
@@ -37,8 +36,13 @@ namespace PL
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>(); //getting list of drones to display
         }
-        private void Selection(object sender, SelectionChangedEventArgs e)//remove/grey out options that don't exist?
-        {// need object sender, SelectionChangedEventArgs e?
+        private void Selected_Filter(object sender, SelectionChangedEventArgs e)//remove/grey out options that don't exist?
+        {
+            Selection();
+        }
+
+        private void Selection()//remove/grey out options that don't exist?
+        {
             var a = StatusSelector.SelectedItem; //selected status
             var b = WeightSelector.SelectedItem; //selected max weight
             var c = bl.RequestList<IBL.BO.DroneToList>().ToList();
@@ -49,7 +53,6 @@ namespace PL
             c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (IBL.BO.WeightCategories)b : false);
             DronesListView.ItemsSource = c;
         }
-
         private void Close(object sender, RoutedEventArgs e)
         {
             close = true;
@@ -57,7 +60,6 @@ namespace PL
         }
         private void AddDrone(object sender, RoutedEventArgs e)
         {
-            refresh = true;
             new DroneWindow(bl).Show();
             //DroneWindow d = new DroneWindow(bl);
             //d.Show();
@@ -67,7 +69,6 @@ namespace PL
 
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            refresh = true;
             new DroneWindow(bl, (IBL.BO.DroneToList)DronesListView.SelectedItem).Show();
         }
 
@@ -79,11 +80,8 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (refresh)
-            {
-                DronesListView.Items.Refresh();
-                refresh = false;
-            }
+            DronesListView.Items.Refresh();
+            Selection();
         }
     }
 }
