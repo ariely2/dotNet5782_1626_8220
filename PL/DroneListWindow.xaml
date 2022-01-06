@@ -6,28 +6,28 @@
         xmlns:local="clr-namespace:PL"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
-        Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Width="auto" Height="auto">
-    <Grid x:Name="MainGrid" Width="456">
-        <Grid x:Name ="UpGrid" Height="auto" Grid.Row="0" Width="auto" Grid.ColumnSpan="2" Background="DarkSlateGray" Margin="-195,0,0,437" Grid.RowSpan="2">
-            <Label Content="Filter Drone list:" FontSize="27" Margin="10,66,354,0" VerticalContentAlignment="Center" Foreground="MistyRose" HorizontalContentAlignment="Center"/>
+        Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="auto">
+    <Grid x:Name="MainGrid">
+        <Grid x:Name ="UpGrid"  Grid.Row="0" Background="DarkSlateGray" Margin="0,0,0,470">
+            <Label Content="Filter Drone list:" FontSize="30" Margin="-380,-100,0,0" VerticalContentAlignment="Center" Foreground="MistyRose" HorizontalContentAlignment="Center"/>
             <Label Content="Status" Foreground="MistyRose" Margin="263,92,200,48" FontSize="26" HorizontalContentAlignment="Center"/>
-            <ComboBox x:Name="StatusSelector" SelectionChanged ="Selected_Filter" Margin="263,139,193,0" Width="195" />
+            <ComboBox x:Name="StatusSelector" SelectionChanged ="Selected_Filter" Margin="263,139,193,178"/>
             <Label Content="Max Weight" Margin="456,89,0,51" Foreground="MistyRose" FontSize="26" HorizontalContentAlignment="Center"/>
-            <ComboBox x:Name="WeightSelector" SelectionChanged ="Selected_Filter" Margin="456,138,0,0" Width="195"/>
-            <Border BorderThickness="4" BorderBrush="SlateGray" Grid.ColumnSpan="4" Margin="0,66,0,0"/>
-            <Label Content="Drone List" HorizontalAlignment="Center" VerticalAlignment="Top" Width="400" Grid.Column="1" Grid.ColumnSpan="2" Height="61" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="42" Foreground="MistyRose"/>
+            <ComboBox x:Name="WeightSelector" SelectionChanged ="Selected_Filter" Margin="456,139,0,178"/>
+            <Border BorderThickness="4" BorderBrush="SlateGray" Grid.ColumnSpan="4" Margin="0,66,0,177"/>
+            <Label Content="Drone List" HorizontalAlignment="Center" VerticalAlignment="Top" Width="213" Height="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="42" Foreground="MistyRose" Background="#4F2F4F"/>
         </Grid>
 
-        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="-195,185,0,61">
+        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="0,195,0,100">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Grid x:Name ="DownGrid" Grid.Row="0" Margin="-195,554,0,0" Background="DarkSlateGray" Grid.ColumnSpan="2" Width="auto" Height="auto">
-            <Button Content="Add Drone" Click ="AddDrone" Height="65" Width="213" RenderTransformOrigin="0.643,-0.085" FontSize="35" Margin="438,3,0,0"/>
-            <Button Content="Close" Click ="Close" Height="65" Width="213" RenderTransformOrigin="0.643,-0.085" FontSize="35" Margin="0,3,438,0" />
+        <Grid x:Name ="DownGrid" Margin="0,600,0, 0" Background="DarkSlateGray" Grid.ColumnSpan="2" Width="auto" Height="65">
+            <Button Content="Add Drone" Click ="AddDrone" Height="65" Width="213" FontSize="35" Margin="438,0,0,0"/>
+            <Button Content="Close" Click ="Close" Height="65" Width="213" FontSize="35" Margin="0,0,438,0" />
         </Grid>
     </Grid>
 </Window>

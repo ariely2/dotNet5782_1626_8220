@@ -20,6 +20,7 @@ namespace PL
     public partial class InputWindow : Window
     {
         public double time;
+        public bool release = false;
         public InputWindow()
         {
             InitializeComponent();
@@ -57,7 +58,10 @@ namespace PL
         private void Release(object sender, RoutedEventArgs e)
         {
             if (Check_Text())
+            {
+                release = true;
                 this.Close();
+            }
         }
     }
 }

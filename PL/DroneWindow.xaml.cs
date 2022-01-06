@@ -134,8 +134,10 @@ namespace PL
             {
                 var w = new InputWindow();
                 double hours = 0;
-                if (w.ShowDialog() == false)
+                if (w.ShowDialog() == false && w.release)
                     hours = w.time;
+                else
+                    return;
                 try
                 {
                     bl.ReleaseDrone(drone.Id, hours);
