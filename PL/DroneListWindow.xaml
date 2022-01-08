@@ -7,29 +7,28 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
         Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="auto">
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" Height="752">
         <Grid x:Name ="UpGrid"  Grid.Row="0" Background="DarkSlateGray" Margin="0,0,0,470">
-            <Label Content="Filter Drone list:" FontSize="30" Margin="-380,-100,0,0" VerticalContentAlignment="Center" Foreground="MistyRose" HorizontalContentAlignment="Center"/>
+            <Label Content="Filter Drone list:" FontSize="30" Margin="31,68,260,90" VerticalContentAlignment="Center" Foreground="MistyRose" RenderTransformOrigin="0.59,0.47"/>
             <Label Content="Status" Foreground="MistyRose" Margin="263,92,200,48" FontSize="26" HorizontalContentAlignment="Center"/>
-            <ComboBox x:Name="StatusSelector" SelectionChanged ="Selected_Filter" Margin="263,139,193,178"/>
+            <ComboBox x:Name="StatusSelector" SelectionChanged ="Selected_Filter" Margin="256,150,200,87"/>
             <Label Content="Max Weight" Margin="456,89,0,51" Foreground="MistyRose" FontSize="26" HorizontalContentAlignment="Center"/>
-            <ComboBox x:Name="WeightSelector" SelectionChanged ="Selected_Filter" Margin="456,139,0,178"/>
-            <Border BorderThickness="4" BorderBrush="SlateGray" Grid.ColumnSpan="4" Margin="0,66,0,177"/>
+            <ComboBox x:Name="WeightSelector" SelectionChanged ="Selected_Filter" Margin="451,150,0,88"/>
+            <Border BorderThickness="4" BorderBrush="SlateGray" Margin="0,66,0,87"/>
             <Label Content="Drone List" HorizontalAlignment="Center" VerticalAlignment="Top" Width="213" Height="66" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="42" Foreground="MistyRose" Background="#4F2F4F"/>
         </Grid>
 
-        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="0,195,0,100">
+        <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="0,195,0,65">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Grid x:Name ="DownGrid" Margin="0,600,0, 0" Background="DarkSlateGray" Grid.ColumnSpan="2" Width="auto" Height="65">
+        <Grid x:Name ="DownGrid" Margin="0,687,0,0" Background="DarkSlateGray" Width="auto" Height="65">
             <Button Content="Add Drone" Click ="AddDrone" Height="65" Width="213" FontSize="35" Margin="438,0,0,0"/>
             <Button Content="Close" Click ="Close" Height="65" Width="213" FontSize="35" Margin="0,0,438,0" />
             <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#81C280" Width="225" HorizontalContentAlignment="Center" FontSize="42" Background="#2f4f4f"/>
-
         </Grid>
     </Grid>
 </Window>
