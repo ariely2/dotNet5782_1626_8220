@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.ComponentModel;
 using IBL;
 
 namespace PL
@@ -82,6 +83,12 @@ namespace PL
         {
             DronesListView.Items.Refresh();
             Selection();
+        }
+
+        private void Sort_Click(object sender, RoutedEventArgs e)
+        {
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(DronesListView.ItemsSource);
+            view.SortDescriptions.Add(new SortDescription("Status", ListSortDirection.Ascending));
         }
     }
 }

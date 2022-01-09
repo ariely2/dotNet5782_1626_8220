@@ -21,6 +21,7 @@ namespace PL
     public partial class LoginWindow : Window
     {
         public string secret = "1121";
+        private static IBL.IBL bl = new IBL.BO.BL(); 
         public LoginWindow()
         {
             InitializeComponent();
@@ -29,10 +30,10 @@ namespace PL
         private void Employee_log(object sender, RoutedEventArgs e)
         {
             var w = new CodeWindow();
-            //if (w.ShowDialog() == false && w.correct)
-            //    ....
-            //else
-            //    MessageBox.Show("The Correct Code was not Entered");
+            if (w.ShowDialog() == false && w.correct)
+                new DroneListWindow(bl).Show();
+            else
+                MessageBox.Show("The Correct Code was not Entered");
         }
 
         private void Customer_log(object sender, RoutedEventArgs e)
