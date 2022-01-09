@@ -70,7 +70,8 @@ namespace PL
 
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new DroneWindow(bl, (IBL.BO.DroneToList)DronesListView.SelectedItem).Show();
+            if(DronesListView.SelectedItem != null)
+                new DroneWindow(bl, (IBL.BO.DroneToList)DronesListView.SelectedItem).Show();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
