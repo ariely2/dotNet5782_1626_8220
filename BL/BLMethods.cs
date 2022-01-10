@@ -25,9 +25,8 @@ namespace IBL.BO
                     case Station s:
 
                         //if station already exists in the exact location
-                        if (!dal.RequestList<IDAL.DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
+                        if (dal.RequestList<IDAL.DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
                             throw new NotPossibleException("A Station already exists in the entered location\n");
-
 
                         //create station in dal
                         dal.Create<IDAL.DO.Station>(new IDAL.DO.Station()

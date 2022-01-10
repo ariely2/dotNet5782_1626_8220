@@ -7,25 +7,30 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime" xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
         Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="590">
-    <TabControl Grid.ColumnSpan="3">
-        <TabItem Header="Drone List" Background="#f1faee"  FontSize="31">
-            <Grid x:Name="MainGrid" Height="520">
+    <TabControl x:Name="Tabs" Grid.ColumnSpan="3" SelectionChanged="Tab_Changed">
+        <TabItem Header="Drone List"  FontSize="31">
+            <Grid x:Name="DroneGrid" Height="520" Width="815">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="122*"/>
-                    <ColumnDefinition Width="41*"/>
-                    <ColumnDefinition Width="163*"/>
+                    <ColumnDefinition Width="111*"/>
+                    <ColumnDefinition Width="25*"/>
+                    <ColumnDefinition Width="136*"/>
+                    <ColumnDefinition Width="136*"/>
                 </Grid.ColumnDefinitions>
-                <Grid x:Name ="UpGrid"  Grid.Row="0" Background="#a8dadc" Margin="0,0,0,403" Grid.ColumnSpan="3">
+                <Grid x:Name ="UpGrid"  Grid.Row="0" Background="#a8dadc" Margin="0,0,0,403" Grid.ColumnSpan="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="227*"/>
+                        <ColumnDefinition Width="588*"/>
+                    </Grid.ColumnDefinitions>
                     <!--<Label Content="Filter Drone list:" FontSize="30" Margin="113,17,384,61" VerticalContentAlignment="Center" Foreground="MistyRose" RenderTransformOrigin="0.59,0.47"/>-->
-                    <Label Content="Status" Foreground="#1d3557" Margin="445,17,185,61" FontSize="26" HorizontalContentAlignment="Center"/>
-                    <ComboBox x:Name="StatusSelector" SelectionChanged ="Selected_Filter" Margin="445,70,185,0" FontSize="18" Width="185"/>
-                    <Label Content="Max Weight" Margin="630,17,0,52" Foreground="#1d3557" FontSize="26" HorizontalContentAlignment="Center"/>
-                    <ComboBox x:Name="WeightSelector" SelectionChanged ="Selected_Filter" Margin="630,70,0,2" Width="185" FontSize="18"/>
-                    <Button Content="Sort by Status" Margin="69,0,478,31" Height="52" VerticalAlignment="Bottom" FontSize="25" Click="Sort_Click" Foreground="#1d3557"/>
-                    <Border BorderThickness="4" BorderBrush="SlateGray"/>
+                    <Label Content="Status" Foreground="#1d3557" Margin="218,17,185,61" FontSize="26" HorizontalContentAlignment="Center" Grid.Column="1"/>
+                    <ComboBox x:Name="StatusSelector" SelectionChanged ="Drone_Filter" Margin="218,70,185,0" FontSize="18" Width="185" Grid.Column="1"/>
+                    <Label Content="Max Weight" Margin="403,17,0,52" Foreground="#1d3557" FontSize="26" HorizontalContentAlignment="Center" Grid.Column="1"/>
+                    <ComboBox x:Name="WeightSelector" SelectionChanged ="Drone_Filter" Margin="403,70,0,2" Width="185" FontSize="18" Grid.Column="1"/>
+                    <Button Content="Sort by Status" Margin="69,0,478,31" Height="52" VerticalAlignment="Bottom" FontSize="25" Click="Sort_Click" Foreground="#1d3557" Grid.ColumnSpan="2"/>
+                    <Border BorderThickness="4" BorderBrush="SlateGray" Grid.ColumnSpan="2"/>
                 </Grid>
 
-                <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="0,122,0,65" Grid.ColumnSpan="3" FontSize="20" Foreground="#1d3557">
+                <ListView x:Name="DronesListView" MouseDoubleClick="DroneDoubleClick" Margin="0,122,0,65" Grid.ColumnSpan="4" FontSize="20" Foreground="#1d3557">
                     <ListView.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="#FFDAE5B9"/>
@@ -45,17 +50,50 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Grid x:Name ="DownGrid" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
-                    <Button Content="Add Drone" Click ="AddDrone" FontSize="35" Margin="535,0,0,-3" Width="280"/>
+                <Grid x:Name ="DownGrid" Margin="0,455,0,-5" Background="DarkSlateGray" Grid.ColumnSpan="4">
+                    <Button Content="Add Drone" Click ="AddDrone" FontSize="35" Margin="535,0,0,0" Width="280"/>
+                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,534,0" />
+                    <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Station List"  FontSize="31">
+            <Grid x:Name="StationGrid" Height="520">
+                <Grid x:Name ="UpGrid_s" Background="#a8dadc" Margin="0,0,0,403" Width="815" Grid.ColumnSpan="3">
+                    <CheckBox x:Name="Only_Available" Content="Only show Stations with available slots" Margin="60,10,204,59" VerticalContentAlignment="Center" Checked="Filter_Stations" Unchecked="All_Stations"/>
+                    <CheckBox x:Name="Sort_Stations" Content="Sort Stations by number of available slots" Margin="60,58,150,11" VerticalContentAlignment="Center" Checked="Filter_Stations"/>
+                    <Border BorderThickness="4" BorderBrush="SlateGray"/>
+                </Grid>
+
+                <ListView x:Name="StationListView" MouseDoubleClick="StationDoubleClick" Margin="0,122,0,65" Grid.ColumnSpan="3" FontSize="20" Foreground="#1d3557">
+                    <ListView.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFDAE5B9"/>
+                            <GradientStop Color="#FFA8DADC" Offset="1"/>
+                        </LinearGradientBrush>
+                    </ListView.Background>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="ID" Width="200" DisplayMemberBinding="{Binding Id}" />
+                            <GridViewColumn Header="Available Slots" Width="200" DisplayMemberBinding="{Binding Available}" />
+                            <GridViewColumn Header="Occupied Slots" Width="200" DisplayMemberBinding="{Binding Occupied}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Grid x:Name ="DownGrid_s" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
+                    <Button Content="Add Station" Click ="AddStation" FontSize="35" Margin="535,0,0,-3" Width="280"/>
                     <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,535,0" Width="280" />
                     <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
                 </Grid>
             </Grid>
         </TabItem>
-        <TabItem Header="Station List" Background="#f1faee"  FontSize="31">
-            <Grid/>
-        </TabItem>
-        <TabItem Header="Customer List" Background="#f1faee"  FontSize="31">
+        <TabItem Header="Customer List" FontSize="31">
             <Grid/>
         </TabItem>
         <TabItem Header="Parcel List" Background="#f1faee" FontSize="31">

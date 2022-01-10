@@ -28,21 +28,22 @@ namespace PL
             DroneGrid.Visibility = Visibility.Hidden;
             bl = b;
             drone = new IBL.BO.Drone();
-            drone.Location = new IBL.BO.Location();
+            drone.Location = new IBL.BO.Location(); //so DataBinding will work
             DataContext = drone;
             StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>().ToList().FindAll(x => x.Available != 0);
             WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
             //make default weight null?
         }
 
-        public DroneWindow(IBL.IBL b, IBL.BO.DroneToList drone)
+        public DroneWindow(IBL.IBL b, IBL.BO.Drone d)
         {
             InitializeComponent();
             AddGrid.Visibility = Visibility.Hidden;
             bl = b;
-            this.drone = bl.Request<IBL.BO.Drone>(drone.Id);
-            DataContext = drone;
-            Parcel.Text = drone.ParcelId.ToString();
+            this.drone = d;
+            DataContext = d;
+            if(drone.Parcel != null)
+                Parcel.Text = drone.Parcel.Id.ToString();
             if (Parcel.Text == string.Empty)
                 Parcel.Text = "N/A";
             Charging.Items.Add("Send To Charge");

@@ -190,7 +190,7 @@ namespace ConsoleUI_BL
         }
         static void AddStation()
         {
-            Console.WriteLine("Enter Id, StationName, NumberOfChargeSlots, Longitude and Latitude");
+            Console.WriteLine("Enter Id, Station Name, Number Of Charge Slots, Longitude and Latitude");
             try
             {
                 bl.Create<Station>(new Station()
