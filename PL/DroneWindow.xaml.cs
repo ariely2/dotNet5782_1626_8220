@@ -47,6 +47,7 @@ namespace PL
                 Parcel.Text = "N/A";
             Charging.Items.Add("Send To Charge");
             Charging.Items.Add("Release From Charge");
+            Delivery.Items.Add("Open Parcel Window");
             Delivery.Items.Add("Assign a Parcel");
             Delivery.Items.Add("Pick Up Parcel");
             Delivery.Items.Add("Deliver Parcel");
@@ -161,6 +162,13 @@ namespace PL
         private void Delivery_Update(object sender, SelectionChangedEventArgs e)
         {
             bool s = false;
+            if(Delivery.SelectedValue == "Open Parcel Window")
+            {
+                if (drone.Parcel != null)
+                    new ParcelWindow(drone.Parcel).Show();
+                else
+                    MessageBox.Show("There's no parcel assigned to the drone");
+            }
             if (Delivery.SelectedValue == "Assign a Parcel")
             {
                 try
