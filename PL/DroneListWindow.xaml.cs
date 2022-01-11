@@ -37,8 +37,8 @@ namespace PL
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<BO.DroneToList>(); //getting list of drones to display
             StationListView.ItemsSource = bl.RequestList<BO.StationToList>(); //getting list of stations to display
-           // CustomerListView.ItemsSource = bl.RequestList<IBL.BO.CustomerToList>(); //getting list of drones to display
-           // CustomerListView.ItemsSource = bl.RequestList<IBL.BO.CustomerToList>(); //getting list of drones to display
+           // CustomerListView.ItemsSource = bl.RequestList<BO.CustomerToList>(); //getting list of drones to display
+           // CustomerListView.ItemsSource = bl.RequestList<BO.CustomerToList>(); //getting list of drones to display
         }
         private void Drone_Filter(object sender = null, SelectionChangedEventArgs e = null)//remove/grey out options that don't exist? //move selection to here with null
         {
@@ -110,7 +110,7 @@ namespace PL
         private void StationDoubleClick(object sender, MouseButtonEventArgs e) //make regions
         {
             if (StationListView.SelectedItem != null)
-                new StationWindow(bl, (IBL.BO.StationToList)StationListView.SelectedItem).Show();
+                new StationWindow(bl, (BO.StationToList)StationListView.SelectedItem).Show();
         }
 
         private void Tab_Changed(object sender, SelectionChangedEventArgs e)
@@ -137,14 +137,14 @@ namespace PL
 
         private void Filter_Stations(object sender = null, RoutedEventArgs e = null)
         {
-            var a = bl.RequestList<IBL.BO.StationToList>().ToList();
+            var a = bl.RequestList<BO.StationToList>().ToList();
             if (Only_Available.IsChecked == true)
             {
                 a.Clear();
                 foreach (var s in StationListView.Items)
                 {
-                    if (((IBL.BO.StationToList)s).Available != 0)
-                        a.Add((IBL.BO.StationToList)s);
+                    if (((BO.StationToList)s).Available != 0)
+                        a.Add((BO.StationToList)s);
                 }
             }
             StationListView.ItemsSource = a;
@@ -153,7 +153,7 @@ namespace PL
 
         private void All_Stations(object sender, RoutedEventArgs e)
         {
-            StationListView.ItemsSource = bl.RequestList<IBL.BO.StationToList>(); //getting list of stations to display
+            StationListView.ItemsSource = bl.RequestList<BO.StationToList>(); //getting list of stations to display
             SortStationList();
         }
 

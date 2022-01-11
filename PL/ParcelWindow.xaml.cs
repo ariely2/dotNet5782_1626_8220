@@ -19,16 +19,16 @@ namespace PL
     /// </summary>
     public partial class ParcelWindow : Window
     {
-        IBL.BO.Parcel a;
-        IBL.BO.ParcelDeliver b;
-        IBL.BO.ParcelAtCustomer c;
+        BO.Parcel a;
+        BO.ParcelDeliver b;
+        BO.ParcelAtCustomer c;
 
-        public ParcelWindow(IBL.BO.Parcel p)
+        public ParcelWindow(BO.Parcel p)
         {
             InitializeComponent();
             a = p;
         }
-        public ParcelWindow(IBL.BO.ParcelDeliver p)
+        public ParcelWindow(BO.ParcelDeliver p)
         {
             InitializeComponent();
             b = p;
@@ -36,7 +36,7 @@ namespace PL
             Sender.Text = b.Sender.Id.ToString();
             Receiver.Text = b.Receiver.Id.ToString();
         }
-        public ParcelWindow(IBL.BO.ParcelAtCustomer p, int id)
+        public ParcelWindow(BO.ParcelAtCustomer p, int id)
         {
             InitializeComponent();
             c = p;

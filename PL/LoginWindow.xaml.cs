@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using BlApi;
 namespace PL
 {
     /// <summary>
@@ -21,7 +21,7 @@ namespace PL
     public partial class LoginWindow : Window
     {
         public string secret = "1121";
-        private static IBL.IBL bl = new IBL.BO.BL(); 
+        private static IBL bl = BlApi.BlFactory.GetBl();
         public LoginWindow()
         {
             InitializeComponent();

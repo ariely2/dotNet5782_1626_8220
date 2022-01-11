@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using BlApi;
 namespace PL
 {
     /// <summary>
@@ -19,24 +19,24 @@ namespace PL
     /// </summary>
     public partial class StationWindow : Window
     {
-        IBL.BO.Station station;
-        private IBL.IBL bl;
-        public StationWindow(IBL.IBL b)
+        BO.Station station;
+        private IBL bl;
+        public StationWindow(IBL b)
         {
             InitializeComponent();
             StationGrid.Visibility = Visibility.Hidden;
             bl = b;
-            station = new IBL.BO.Station();
-            station.location = new IBL.BO.Location();
+            station = new BO.Station();
+            station.location = new BO.Location();
             DataContext = station;
         }
-        public StationWindow(IBL.IBL b, IBL.BO.StationToList s)
+        public StationWindow(IBL b, BO.StationToList s)
         {
             InitializeComponent();
             AddGrid.Visibility = Visibility.Hidden;
             bl = b;
-            station = bl.Request<IBL.BO.Station>(s.Id);
-            station.location = new IBL.BO.Location();
+            station = bl.Request<BO.Station>(s.Id);
+            station.location = new BO.Location();
             DataContext = station;
             DronesListView.ItemsSource = station.Charging; //getting list of drones to display
         }
@@ -73,7 +73,7 @@ namespace PL
             }
             try
             {
-                bl.Create<IBL.BO.Station>(station);
+                bl.Create<BO.Station>(station);
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace PL
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e) //refresh because drone might leave
         {
             if (DronesListView.SelectedItem != null)
-                new DroneWindow(bl, bl.Request<IBL.BO.Drone>(((IBL.BO.DroneCharge)DronesListView.SelectedItem).Id)).Show();
+                new DroneWindow(bl, bl.Request<BO.Drone>(((BO.DroneCharge)DronesListView.SelectedItem).Id)).Show();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
@@ -98,9 +98,9 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (station.Equals(default(IBL.BO.Station)))
+            if (station.Equals(default(BO.Station)))
             {
-                station = bl.Request<IBL.BO.Station>(station.Id);
+                station = bl.Request<BO.Station>(station.Id);
                 DronesListView.ItemsSource = station.Charging; //getting list of drones to display
                 DataContext = station;
             }
