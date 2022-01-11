@@ -94,7 +94,34 @@
             </Grid>
         </TabItem>
         <TabItem Header="Customer List" FontSize="31">
-            <Grid/>
+            <Grid x:Name="CustomerGrid" Height="520">
+                <ListView x:Name="CustomerListView" MouseDoubleClick="StationDoubleClick" Margin="0,122,0,65" Grid.ColumnSpan="3" FontSize="20" Foreground="#1d3557">
+                    <ListView.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFDAE5B9"/>
+                            <GradientStop Color="#FFA8DADC" Offset="1"/>
+                        </LinearGradientBrush>
+                    </ListView.Background>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="ID" Width="200" DisplayMemberBinding="{Binding Id}" />
+                            <GridViewColumn Header="Available Slots" Width="200" DisplayMemberBinding="{Binding Available}" />
+                            <GridViewColumn Header="Occupied Slots" Width="200" DisplayMemberBinding="{Binding Occupied}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <Grid x:Name ="DownGrid_c" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
+                    <Button Content="Add Customer" Click ="AddStation" FontSize="35" Margin="535,0,0,-3" Width="280"/>
+                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,535,0" Width="280" />
+                    <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
+                </Grid>
+            </Grid>
         </TabItem>
         <TabItem Header="Parcel List" Background="#f1faee" FontSize="31">
             <Grid/>
