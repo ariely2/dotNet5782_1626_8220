@@ -28,25 +28,27 @@ namespace PL
             DroneGrid.Visibility = Visibility.Hidden;
             bl = b;
             drone = new BO.Drone();
-            drone.Location = new BO.Location();
+            drone.Location = new BO.Location(); //so DataBinding will work
             DataContext = drone;
             StationSelector.ItemsSource = bl.RequestList<BO.StationToList>().ToList().FindAll(x => x.Available != 0);
             WeightSelector.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories));
             //make default weight null?
         }
 
-        public DroneWindow(IBL b,BO.DroneToList drone)
+        public DroneWindow(IBL b, BO.Drone d)
         {
             InitializeComponent();
             AddGrid.Visibility = Visibility.Hidden;
             bl = b;
-            this.drone = bl.Request<BO.Drone>(drone.Id);
-            DataContext = drone;
-            Parcel.Text = drone.ParcelId.ToString();
+            this.drone = d;
+            DataContext = d;
+            if(drone.Parcel != null)
+                Parcel.Text = drone.Parcel.Id.ToString();
             if (Parcel.Text == string.Empty)
                 Parcel.Text = "N/A";
             Charging.Items.Add("Send To Charge");
             Charging.Items.Add("Release From Charge");
+            Delivery.Items.Add("Open Parcel Window");
             Delivery.Items.Add("Assign a Parcel");
             Delivery.Items.Add("Pick Up Parcel");
             Delivery.Items.Add("Deliver Parcel");
@@ -161,6 +163,13 @@ namespace PL
         private void Delivery_Update(object sender, SelectionChangedEventArgs e)
         {
             bool s = false;
+            if(Delivery.SelectedValue == "Open Parcel Window")
+            {
+                if (drone.Parcel != null)
+                    new ParcelWindow(drone.Parcel).Show();
+                else
+                    MessageBox.Show("There's no parcel assigned to the drone");
+            }
             if (Delivery.SelectedValue == "Assign a Parcel")
             {
                 try

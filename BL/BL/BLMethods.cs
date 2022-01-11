@@ -27,9 +27,8 @@ namespace BL
                     case Station s:
 
                         //if station already exists in the exact location
-                        if (!dal.RequestList<DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
+                        if (dal.RequestList<DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
                             throw new NotPossibleException("A Station already exists in the entered location\n");
-
 
                         //create station in dal
                         dal.Create<DO.Station>(new DO.Station()

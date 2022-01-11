@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.ComponentModel;
 using BlApi;
 
 namespace PL
@@ -22,7 +23,7 @@ namespace PL
     {
         private IBL bl;
         private bool close = false;
-        public DroneListWindow(IBL b)
+        public DroneListWindow(IBL b) //initializing all the tabs, lists, and controls
         {
             bl = b;
             InitializeComponent();
@@ -35,13 +36,11 @@ namespace PL
             foreach (var a in weights)
                 WeightSelector.Items.Add(a);
             DronesListView.ItemsSource = bl.RequestList<BO.DroneToList>(); //getting list of drones to display
+            StationListView.ItemsSource = bl.RequestList<BO.StationToList>(); //getting list of stations to display
+           // CustomerListView.ItemsSource = bl.RequestList<IBL.BO.CustomerToList>(); //getting list of drones to display
+           // CustomerListView.ItemsSource = bl.RequestList<IBL.BO.CustomerToList>(); //getting list of drones to display
         }
-        private void Selected_Filter(object sender, SelectionChangedEventArgs e)//remove/grey out options that don't exist?
-        {
-            Selection();
-        }
-
-        private void Selection()//remove/grey out options that don't exist?
+        private void Drone_Filter(object sender = null, SelectionChangedEventArgs e = null)//remove/grey out options that don't exist? //move selection to here with null
         {
             var a = StatusSelector.SelectedItem; //selected status
             var b = WeightSelector.SelectedItem; //selected max weight
@@ -69,7 +68,8 @@ namespace PL
 
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new DroneWindow(bl, (BO.DroneToList)DronesListView.SelectedItem).Show();
+            if(DronesListView.SelectedItem != null)
+                new DroneWindow(bl, bl.Request<BO.Drone>(((BO.DroneToList)DronesListView.SelectedItem).Id)).Show();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -80,8 +80,91 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            DronesListView.Items.Refresh();
-            Selection();
+            if (Tabs.SelectedIndex == 0)
+            {
+                DronesListView.Items.Refresh(); //need this?
+                Drone_Filter();
+            }
+            else if (Tabs.SelectedIndex == 1)
+            {
+                StationListView.Items.Refresh();
+                Filter_Stations();
+            }
+        }
+
+        private void Sort_Click(object sender, RoutedEventArgs e)
+        {
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(DronesListView.ItemsSource);
+            view.SortDescriptions.Add(new SortDescription("Status", ListSortDirection.Ascending));
+        }
+
+        private void SortStationList()
+        {
+            if (Sort_Stations.IsChecked == true)
+            {
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(StationListView.ItemsSource);
+                view.SortDescriptions.Add(new SortDescription("Available", ListSortDirection.Descending));
+            }
+        }
+
+        private void StationDoubleClick(object sender, MouseButtonEventArgs e) //make regions
+        {
+            if (StationListView.SelectedItem != null)
+                new StationWindow(bl, (IBL.BO.StationToList)StationListView.SelectedItem).Show();
+        }
+
+        private void Tab_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is TabControl)
+            {
+                if (Tabs.SelectedIndex == 0)
+                {
+                    Drone_Filter();
+                }
+                else if (Tabs.SelectedIndex == 1)
+                {
+                    Filter_Stations();
+                    StationListView.Items.Refresh();
+                }
+                //else if (Tabs.SelectedIndex == 2)
+                //{
+                //}
+                //else if (Tabs.SelectedIndex == 3)
+                //{
+                //}
+            }
+        }
+
+        private void Filter_Stations(object sender = null, RoutedEventArgs e = null)
+        {
+            var a = bl.RequestList<IBL.BO.StationToList>().ToList();
+            if (Only_Available.IsChecked == true)
+            {
+                a.Clear();
+                foreach (var s in StationListView.Items)
+                {
+                    if (((IBL.BO.StationToList)s).Available != 0)
+                        a.Add((IBL.BO.StationToList)s);
+                }
+            }
+            StationListView.ItemsSource = a;
+            SortStationList();
+        }
+
+        private void All_Stations(object sender, RoutedEventArgs e)
+        {
+            StationListView.ItemsSource = bl.RequestList<IBL.BO.StationToList>(); //getting list of stations to display
+            SortStationList();
+        }
+
+        private void AddStation(object sender, RoutedEventArgs e)
+        {
+            new StationWindow(bl).Show();
+        }
+
+        private void Tab_Changed(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

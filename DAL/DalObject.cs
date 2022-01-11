@@ -34,30 +34,34 @@ namespace Dal
         public void Create<T>(T t) where T : struct
         {
 
-            switch (t)
-            {
-                case Station s:
-                    //id out of bounds
-                    if (!s.Check())
-                        throw new OutOfBoundsException("Station's id out of bounds\n");
-                    //id already exist
-                    if (DataSource.Stations.Exists(x => x.Id == s.Id))
-                        throw new AlreadyExistException("Station's id already exist\n");
-
-                    //station with negative charge slots
-                    if (s.ChargeSlots < 0)
-                        throw new NotPossibleException("A Station can't have a negative number of available slots\n");
-
-                    //add station
-                    DataSource.Stations.Add(s);
-                    break;
-                case Drone d:
-                    //id out of bounds
-                    if (!d.Check())
-                        throw new OutOfBoundsException("Drone's id out of bounds\n");
-                    //id already exist
-                    if (DataSource.Drones.Exists(x => x.Id == d.Id))
-                        throw new AlreadyExistException("A Drone with the same ID already exist\n");
+                switch (t)
+                {
+                    case Station s:
+                        //id out of bounds
+                        if (!s.Check())
+                            throw new OutOfBoundsException("Station's id out of bounds\n");
+                        //id already exist
+                        if (DataSource.Stations.Exists(x => x.Id == s.Id))
+                            throw new AlreadyExistException("Station's id already exist\n");
+                        //invalid latitude
+                        if (s.Location.Latitude < -90 || s.Location.Latitude > 90)
+                            throw new Exception("Invalid Latitude. Must be between -90 and 90\n");
+                        //inalid longitude
+                        if (s.Location.Longitude < -180 || s.Location.Latitude > 180)
+                            throw new Exception("Invalid Latitude. Must be between -180 and 180\n");
+                        //station with negative charge slots
+                        if (s.ChargeSlots < 0)
+                            throw new NotPossibleException("A Station can't have a negative number of available slots\n");
+                        //add station
+                        DataSource.Stations.Add(s);
+                        break;
+                    case Drone d:
+                        //id out of bounds
+                        if (!d.Check())
+                            throw new OutOfBoundsException("Drone's id out of bounds\n");
+                        //id already exist
+                        if (DataSource.Drones.Exists(x => x.Id == d.Id))
+                            throw new AlreadyExistException("A Drone with the same ID already exist\n");
 
                     //add drone
                     DataSource.Drones.Add(d);

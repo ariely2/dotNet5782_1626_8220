@@ -57,7 +57,7 @@ namespace BO
         /// <summary>
         /// transport distance
         /// </summary>
-        public double Distance { set; get; }
+        public double Distance { set; get; } //can use this in blmethods instead of stuff
 
         /// <summary>
         /// override the function ToString

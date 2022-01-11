@@ -27,7 +27,7 @@ namespace BO
         public Location location { set; get; }
 
         /// <summary>
-        /// available slots in the station
+        /// available slots in the station (in initialization it's the number of charge slots in the station)
         /// </summary>
         public int AvailableSlots { get; set; }
 
