@@ -12,10 +12,6 @@ namespace DO
     /// </summary>
     public struct Parcel
     {
-        //bounds of id
-        public static readonly int LowerBoundId = (int)1e8;
-        public static readonly int UpperBoundId = (int)1e9;
-
         //id of the parcel, 8 digit number
         public int Id { get; set; }
 
@@ -53,15 +49,6 @@ namespace DO
         public override string ToString()
         {
             return Print.print<Parcel>(this);
-        }
-
-        /// <summary>
-        /// function to check if the id is in bounds
-        /// </summary>
-        /// <returns>return true/false, depends on the id</returns>
-        public bool Check()
-        {
-            return this.Id >= LowerBoundId && this.Id < UpperBoundId;
         }
     }
 }

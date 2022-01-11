@@ -25,14 +25,14 @@ namespace Dal
             internal static double upperLatitude = 37.1;
 
             //id of parcel - number with 8 digits
-            internal static int IdOfParcel { set; get; } = Parcel.LowerBoundId;
+            internal static int IdOfParcel { set; get; } = 10000000;
 
             //battery info
             internal static double AvailableUse = 1; //an available drone uses 1% battery per kilometer
             internal static double LightUse = 2; //a drone carrying light weight uses 2% battery per kilometer
-            internal static double MediumUse = 2.5; //a drone carrying medium weight uses 2.5% battery per kilometer
-            internal static double HeavyUse = 3; //a drone carrying heavy weight uses 3% battery per kilometer
-            internal static double ChargeRate = 25; //a drone charges 25% per hour
+            internal static double MediumUse = 3; //a drone carrying medium weight uses 2.5% battery per kilometer
+            internal static double HeavyUse = 4; //a drone carrying heavy weight uses 3% battery per kilometer
+            internal static double ChargeRate = 15; //a drone charges 25% per hour
 
 
         }

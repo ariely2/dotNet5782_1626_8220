@@ -107,7 +107,7 @@ namespace Dal
         #region Request
 
         /// <summary>
-        /// request an object (customer, parcel, station, drone)
+        /// request an object (customer, parcel, station, drone,droneCharge)
         /// if the object isn't exist, the function throw an exception
         /// </summary>
         /// <typeparam name="T">type of the requested object is T</typeparam>
@@ -135,6 +135,9 @@ namespace Dal
 
                     ans = (T)Convert.ChangeType(DataSource.Parcels.Find(p => p.Id == id), typeof(T));
                     break;
+                case nameof(DroneCharge):
+                    ans = (T)Convert.ChangeType(DataSource.DroneCharges.Find(dc => dc.DroneId == id), typeof(T));
+                    break;
                 default:
                     throw new NotSupportException("Not support this struct\n");
             }
@@ -155,21 +158,13 @@ namespace Dal
             switch (typeof(T).Name)
             {
                 case nameof(Station):
-                    if (ex == null)
-                        return (IEnumerable<T>)DataSource.Stations;
-                    return (IEnumerable<T>)DataSource.Stations.FindAll(Expression.Lambda<Func<Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
+                    return (IEnumerable<T>)DataSource.Stations.FindAll(ex == null ? x => true : Expression.Lambda<Func<Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 case nameof(Customer):
-                    if (ex == null)
-                        return (IEnumerable<T>)DataSource.Customers;
-                    return (IEnumerable<T>)DataSource.Customers.FindAll(Expression.Lambda<Func<Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
+                    return (IEnumerable<T>)DataSource.Customers.FindAll(ex == null ? x => true : Expression.Lambda<Func<Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 case nameof(Drone):
-                    if (ex == null)
-                        return (IEnumerable<T>)DataSource.Drones;
-                    return (IEnumerable<T>)DataSource.Drones.FindAll(Expression.Lambda<Func<Drone, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
+                    return (IEnumerable<T>)DataSource.Drones.FindAll(ex == null ? x => true : Expression.Lambda<Func<Drone, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 case nameof(Parcel):
-                    if (ex == null)
-                        return (IEnumerable<T>)DataSource.Parcels;
-                    return (IEnumerable<T>)DataSource.Parcels.FindAll(Expression.Lambda<Func<Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
+                    return (IEnumerable<T>)DataSource.Parcels.FindAll(ex == null ? x => true : Expression.Lambda<Func<Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 default:
                     throw new NotSupportException("Not support this struct");
             }
@@ -215,11 +210,11 @@ namespace Dal
                     DataSource.Config.ChargeRate };
             return info;
         }
-
+        //need to move it to bl
         public int[] Receivers()
         {
-            List<Parcel> d = (List<Parcel>)DataSource.Parcels.FindAll(x => x.Delivered != DateTime.MinValue); //all delivered parcels
-                                                                                                              //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
+            IEnumerable<Parcel> d = RequestList<Parcel>(x => x.Delivered != null); //all delivered parcels
+            //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
             int[] t = d.Select(x => x.ReceiverId).ToArray(); //getting receiver ids
             return t.Distinct().ToArray(); //return array without duplicates
         }
@@ -295,14 +290,11 @@ namespace Dal
             //if the drone isn't exist, request function would send an exception  
             Drone d = Request<Drone>(droneId);
             //assume that the drone is currently charging, bl responsible for checking that
-            DroneCharge c = DataSource.DroneCharges.Find(x => x.DroneId == droneId);
-
+            DroneCharge c = Request<DroneCharge>(droneId);
             Station s = Request<Station>(c.StationId);
             s.ChargeSlots++;
-
             DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
-
-            DataSource.DroneCharges.Remove(c);
+            Delete<DroneCharge>(droneId);
         }
         #endregion Update
         #region Delete
@@ -332,6 +324,11 @@ namespace Dal
                 case nameof(Parcel):
                     Parcel p = Request<Parcel>(id);
                     DataSource.Parcels.Remove(p);
+                    break;
+                case nameof(DroneCharge):
+                    //find the charge according to drone id
+                    DroneCharge dc = Request<DroneCharge>(id);
+                    DataSource.DroneCharges.Remove(dc);
                     break;
                 default:
                     throw new NotSupportException("Not support" + typeof(T).Name + "struct\n");

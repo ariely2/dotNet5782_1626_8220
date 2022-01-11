@@ -140,7 +140,6 @@ namespace ConsoleUI
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            new DalApi.DalConfig();
             dal = DalApi.DalFactory.GetDal();
             int option;
             do

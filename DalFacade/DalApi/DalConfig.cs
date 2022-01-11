@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace DalApi
 {
-    public class DalConfig
+    internal class DalConfig
     {
         internal static string DalName;
         internal static Dictionary<string, string> DalPackages;
@@ -16,7 +16,7 @@ namespace DalApi
         /// Static constructor extracts Dal packages list and Dal type from
         /// Dal configuration file dal-config.xml
         /// </summary>
-        public DalConfig()
+        static DalConfig()
         {
             //load the xml file
             XElement dalconfig = XElement.Load(@"xml\dal-config.xml");

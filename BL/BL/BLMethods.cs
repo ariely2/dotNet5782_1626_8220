@@ -318,19 +318,18 @@ namespace BL
             switch (typeof(T).Name)
             {
                 case nameof(StationToList):
-
-                    return (IEnumerable<T>)dal.RequestList<DO.Station>(ex ==null?null:Expression.Lambda<Func<DO.Station, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(s => new StationToList()
+                    return (IEnumerable<T>)dal.RequestList<DO.Station>().Select(s => new StationToList()
                     {
                         Id = s.Id,
                         Name = s.Name,
                         Available = s.ChargeSlots,
                         Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(GetStationLocation(s.Id))).Count()
-                    });
+                    }).Where(ex==null?x=>true:Expression.Lambda<Func<StationToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
 
                 case nameof(CustomerToList):
-                    IEnumerable<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id));
+                    IEnumerable<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).AsEnumerable();
                    
-                    return (IEnumerable<T>)dal.RequestList<DO.Customer>(ex == null ? null : Expression.Lambda<Func<DO.Customer, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(c => new CustomerToList()
+                    return (IEnumerable<T>)dal.RequestList<DO.Customer>().Select(c => new CustomerToList()
                     {
                         Id = c.Id,
                         Name = c.Name,
@@ -347,14 +346,14 @@ namespace BL
                         Received = (from Parcel p in parcels
                                     where p.Receiver.Id == c.Id && p.Delivered == null
                                     select p).Count()
-                    });
+                    }).Where(ex == null ? x => true : Expression.Lambda<Func<CustomerToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
 
                 case nameof(DroneToList):
                     if (ex == null)
                         return (IEnumerable<T>)Drones;
-                    return (IEnumerable<T>)Drones.FindAll(Expression.Lambda<Func<DroneToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke);
+                    return (IEnumerable<T>)Drones.FindAll(ex == null ? x => true : Expression.Lambda<Func<DroneToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 case nameof(ParcelToList):
-                    return (IEnumerable<T>)dal.RequestList<DO.Parcel>(ex == null ? null : Expression.Lambda<Func<DO.Parcel, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters)).Select(p => new ParcelToList
+                    return (IEnumerable<T>)dal.RequestList<DO.Parcel>().Select(p => new ParcelToList
                     {
                         Id = p.Id,
                         Priority = (Priorities)p.Priority,
@@ -363,7 +362,7 @@ namespace BL
                         Status = EnumExtension.GetStatus(p.Delivered, p.PickedUp, p.Scheduled, p.Requested),
                         Weight = (WeightCategories)p.Weight,
 
-                    });
+                    }).Where(ex == null ? x => true : Expression.Lambda<Func<ParcelToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
                 default:
                     throw new NotSupportException("Not support " + typeof(T).Name + '\n');
             }
@@ -381,26 +380,20 @@ namespace BL
             //find the drone
             DroneToList d = Drones.Find(x => x.Id == id);
 
-            if (d==null)
+            if (d == null)
                 throw new NotExistException("drone doesn't exist\n");
             //if drone isn't available
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
 
-            //need to change to requestList from bl
-            List<Parcel> AllParcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).ToList(); //getting list of all parcels
-            AllParcels.RemoveAll(x => x.Scheduled != null); //removing parcels that don't need to be assigned
-            AllParcels.RemoveAll(x => (int)x.Weight > (int)d.MaxWeight); //removing parcels too heavy for drone
+            IEnumerable<Parcel> allParcels = RequestList<ParcelToList>(x => x.Status == ParcelStatuses.Created && (int)x.Weight > (int)d.MaxWeight).Select(p => Request<Parcel>(p.Id)); //getting list of all parcels
 
-            var s = from p in AllParcels
-                         orderby p.Priority, p.Weight, Location.distance(d.Location, GetCustomerLocation(p.Sender.Id)) descending
+            allParcels = from p in allParcels
+                         orderby p.Priority descending, p.Weight descending, Location.distance(d.Location, GetCustomerLocation(p.Sender.Id))
                          select p;
-
-            List<Parcel> sorted = s.ToList();
-            bool found = false;
-            while (!found && sorted.Count() != 0) //while there are potential parcels left
+            foreach (Parcel best in allParcels)
             {
-                var best = sorted.Last(); //geting parcel with shortest distance from drone to parcel's sender from list
+                
                 Location sender = GetCustomerLocation(best.Sender.Id);
                 Location receiver = GetCustomerLocation(best.Receiver.Id);
                 double distance =
@@ -410,17 +403,14 @@ namespace BL
                 double min = info[((int)best.Weight) + 1] * distance; //getting minimum battery required
                 if (min <= d.Battery) //checking if drone has enough battery
                 {
-                    found = true;
                     d.Status = DroneStatuses.Delivery;
                     Parcel selected = Request<Parcel>(best.Id);
                     d.ParcelId = selected.Id;
                     dal.AssignParcel(selected.Id, d.Id);
+                    return;
                 }
-                else
-                    sorted.Remove(best); //if the drone doesn't have enough battery to deliver best parcel we can find, remove it from list 
             }
-            if (!found)
-                throw new NotFoundException("Not found parcel for the drone with id: " + id + '\n');
+            throw new NotFoundException("Not found parcel for the drone with id: " + id + '\n');
         }
 
         /// <summary>
