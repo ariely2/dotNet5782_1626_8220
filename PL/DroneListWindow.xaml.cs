@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using IBL;
+using BlApi;
 
 namespace PL
 {
@@ -20,21 +20,21 @@ namespace PL
     /// </summary>
     public partial class DroneListWindow : Window
     {
-        private IBL.IBL bl;
+        private IBL bl;
         private bool close = false;
-        public DroneListWindow(IBL.IBL b)
+        public DroneListWindow(IBL b)
         {
             bl = b;
             InitializeComponent();
             StatusSelector.Items.Add("All"); //adding all status options. do we need this line?
-            var statuses  = Enum.GetValues(typeof(IBL.BO.DroneStatuses));
+            var statuses  = Enum.GetValues(typeof(BO.DroneStatuses));
             foreach (var a in statuses)
                 StatusSelector.Items.Add(a);
             WeightSelector.Items.Add("All");//do we need this line?
-            var weights = Enum.GetValues(typeof(IBL.BO.WeightCategories));
+            var weights = Enum.GetValues(typeof(BO.WeightCategories));
             foreach (var a in weights)
                 WeightSelector.Items.Add(a);
-            DronesListView.ItemsSource = bl.RequestList<IBL.BO.DroneToList>(); //getting list of drones to display
+            DronesListView.ItemsSource = bl.RequestList<BO.DroneToList>(); //getting list of drones to display
         }
         private void Selected_Filter(object sender, SelectionChangedEventArgs e)//remove/grey out options that don't exist?
         {
@@ -45,12 +45,12 @@ namespace PL
         {
             var a = StatusSelector.SelectedItem; //selected status
             var b = WeightSelector.SelectedItem; //selected max weight
-            var c = bl.RequestList<IBL.BO.DroneToList>().ToList();
+            var c = bl.RequestList<BO.DroneToList>().ToList();
             // if no status was selected, or "all" was selected, don't remove any drone.
             // if a status was selected, remove drones whose status isn't the selected status:
-            c.RemoveAll(x => (a != null && a.GetType().IsEnum) ? x.Status != (IBL.BO.DroneStatuses)a : false);
+            c.RemoveAll(x => (a != null && a.GetType().IsEnum) ? x.Status != (BO.DroneStatuses)a : false);
             // do the same for maxweight selection:
-            c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (IBL.BO.WeightCategories)b : false);
+            c.RemoveAll(x => (b != null && b.GetType().IsEnum) ? x.MaxWeight != (BO.WeightCategories)b : false);
             DronesListView.ItemsSource = c;
         }
         private void Close(object sender, RoutedEventArgs e)
@@ -69,7 +69,7 @@ namespace PL
 
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new DroneWindow(bl, (IBL.BO.DroneToList)DronesListView.SelectedItem).Show();
+            new DroneWindow(bl, (BO.DroneToList)DronesListView.SelectedItem).Show();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

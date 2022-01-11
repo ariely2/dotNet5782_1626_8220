@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using IDAL.DalObject;
-using IDAL.DO;
+using Dal;
+using DO;
 namespace ConsoleUI
 {
     class Program
     {
+
+        #region enum
+        public enum AddOption { Station = 1, Drone, Customer, Parcel }
+        public enum UpdateOption { ConnectParceltoDrone = 1, PickUpParcel, DeliverParcel, SendDroneToCharge, ReleaseDrone }
+        public enum RequestOption { Station = 1, Drone, Customer, Parcel, DistanceFromStation, DistanceFromCustomer }
+        public enum RequestListOption { Stations = 1, Drones, Customers, Parcels, UnassignParcles, AvailableStations }
+        public enum Option { Add = 1, Update, Request, RequestList, Exit }
+        #endregion enum
+
         //the data base isntance
-        static DalObject DataBase = new DalObject();
+        private static DalApi.IDal dal;
+
         #region InputMethods
 
         /// <summary>
@@ -123,7 +133,6 @@ namespace ConsoleUI
 
 
         #endregion PrintOption
-
         #region Switches
         /// <summary>
         /// main function
@@ -131,6 +140,8 @@ namespace ConsoleUI
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            new DalApi.DalConfig();
+            dal = DalApi.DalFactory.GetDal();
             int option;
             do
             {
@@ -171,20 +182,20 @@ namespace ConsoleUI
             switch (option)
             {
 
-                case ((int)Add.Station):
+                case ((int)AddOption.Station):
 
                     AddStation();
                     break;
 
-                case ((int)Add.Drone):
+                case ((int)AddOption.Drone):
                     AddDrone();
                     break;
 
-                case ((int)Add.Customer):
+                case ((int)AddOption.Customer):
                     AddCustomer();
                     break;
 
-                case ((int)Add.Parcel):
+                case ((int)AddOption.Parcel):
                     AddParcel();
                     break;
                 default:
@@ -203,19 +214,19 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case ((int)Update.ConnectParceltoDrone):
+                case ((int)UpdateOption.ConnectParceltoDrone):
                     ConnectParcelToDrone();
                     break;
-                case ((int)Update.PickUpParcel):
+                case ((int)UpdateOption.PickUpParcel):
                     PickUpAParcel();
                     break;
-                case ((int)Update.DeliverParcel):
+                case ((int)UpdateOption.DeliverParcel):
                     DeliverParcel();
                     break;
-                case ((int)Update.SendDroneToCharge):
+                case ((int)UpdateOption.SendDroneToCharge):
                     SendDroneToCharge();
                     break;
-                case ((int)Update.ReleaseDrone):
+                case ((int)UpdateOption.ReleaseDrone):
                     ReleaseDrone();
                     break;
             }
@@ -234,22 +245,22 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case ((int)IDAL.DO.Request.Station):
+                case ((int)RequestOption.Station):
                     Request<Station>();
                     break;
-                case ((int)IDAL.DO.Request.Drone):
+                case ((int)RequestOption.Drone):
                     Request<Drone>();
                     break;
-                case ((int)IDAL.DO.Request.Customer):
+                case ((int)RequestOption.Customer):
                     Request<Customer>();
                     break;
-                case ((int)IDAL.DO.Request.Parcel):
+                case ((int)RequestOption.Parcel):
                     Request<Parcel>();
                     break;
-                case ((int)IDAL.DO.Request.DistanceFromStation):
+                case ((int)RequestOption.DistanceFromStation):
                     GetDistanceFrom<Station>();
                     break;
-                case ((int)IDAL.DO.Request.DistanceFromCustomer):
+                case ((int)RequestOption.DistanceFromCustomer):
                     GetDistanceFrom<Customer>();
                     break;
             }
@@ -269,22 +280,22 @@ namespace ConsoleUI
             Console.Clear();
             switch (option)
             {
-                case ((int)IDAL.DO.RequestList.Stations):
+                case ((int)RequestListOption.Stations):
                     RequestList<Station>();
                     break;
-                case ((int)IDAL.DO.RequestList.Drones):
+                case ((int)RequestListOption.Drones):
                     RequestList<Drone>();
                     break;
-                case ((int)IDAL.DO.RequestList.Customers):
+                case ((int)RequestListOption.Customers):
                     RequestList<Customer>();
                     break;
-                case ((int)IDAL.DO.RequestList.Parcels):
+                case ((int)RequestListOption.Parcels):
                     RequestList<Parcel>();
                     break;
-                case ((int)IDAL.DO.RequestList.UnassignParcles):
+                case ((int)RequestListOption.UnassignParcles):
                     DisplayUnassignedParcels();
                     break;
-                case ((int)IDAL.DO.RequestList.AvailableStations):
+                case ((int)RequestListOption.AvailableStations):
                     DisplayAvailableStations();
                     break;
             }
@@ -296,7 +307,7 @@ namespace ConsoleUI
         static void AddStation()
         {
             Console.WriteLine("Enter Id, StationName, NumberOfAvaliableChargeSlots, Longitude and Latitude");
-            DataBase.Create<Station>(new Station()
+            dal.Create<Station>(new Station()
             {
                 Id = InputInt(),
                 Name = Console.ReadLine(),
@@ -312,7 +323,7 @@ namespace ConsoleUI
         static void AddDrone()
         {
             Console.WriteLine("Enter Id, Drone's model, max weight, battery and drone's status");
-            DataBase.Create<Drone>(new Drone()
+            dal.Create<Drone>(new Drone()
             {
                 Id = InputInt(),
                 Model = Console.ReadLine(),
@@ -323,7 +334,7 @@ namespace ConsoleUI
         static void AddCustomer()
         {
             Console.WriteLine("Enter Id, name, phone number, longitude and latitude ");
-            DataBase.Create<Customer>(new Customer()
+            dal.Create<Customer>(new Customer()
             {
                 Id = InputInt(),
                 Name = Console.ReadLine(),
@@ -339,7 +350,7 @@ namespace ConsoleUI
         static void AddParcel()
         {
             Console.WriteLine("Enter sender id, reciever id, weight, priority, drone id(if not then 0)");
-            DataBase.Create<Parcel>(new Parcel()
+            dal.Create<Parcel>(new Parcel()
             {
                 SenderId = InputInt(),
                 ReceiverId = InputInt(),
@@ -365,7 +376,7 @@ namespace ConsoleUI
         static void ConnectParcelToDrone()
         {
             Console.WriteLine("Enter Parcel ID, Drone Id");
-            DataBase.AssignParcel(InputInt(),InputInt()); //Parcel Id
+            dal.AssignParcel(InputInt(),InputInt()); //Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -374,7 +385,7 @@ namespace ConsoleUI
         static void PickUpAParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DataBase.PickUpParcel(InputInt());//Parcel Id
+            dal.PickUpParcel(InputInt());//Parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -383,7 +394,7 @@ namespace ConsoleUI
         static void DeliverParcel()
         {
             Console.WriteLine("Enter Parcel ID");
-            DataBase.DeliverParcel(InputInt());//parcel Id
+            dal.DeliverParcel(InputInt());//parcel Id
         }
         /// <summary>
         /// The function receives data from the user,
@@ -396,7 +407,7 @@ namespace ConsoleUI
             Console.WriteLine("Enter an ID of an available station:");
             DisplayAvailableStations();
             int StationId = InputInt();
-            DataBase.ChargeDrone(DroneId, StationId);
+            dal.ChargeDrone(DroneId, StationId);
         }
         /// <summary>
         /// The function receives data from the user,
@@ -405,20 +416,20 @@ namespace ConsoleUI
         static void ReleaseDrone()
         {
             Console.WriteLine("Enter Drone ID");
-            DataBase.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
+            dal.ReleaseDrone(InputInt());//getting Drone Id and sending it to the releaseDrone function
         }
         #endregion UpdateMethods
         #region RequestMethods
         static void Request<T>() where T : struct
         {
             Console.WriteLine($"Enter {typeof(T).Name} ID");
-            Console.WriteLine(DataBase.Request<T>(InputInt()));
+            Console.WriteLine(dal.Request<T>(InputInt()));
         }
         static void GetDistanceFrom<T>() where T : struct
         {
             Console.WriteLine("enter longitude, latitude and " + typeof(T).Name + "id");
             Console.WriteLine("The distance is: {0} km",
-                DataBase.GetDistanceFrom<T>(
+                dal.GetDistanceFrom<T>(
                     new Location()
                     {
                         Longitude = InputDouble(),
@@ -430,7 +441,7 @@ namespace ConsoleUI
         #region RequestListMethods
         static void RequestList<T>() where T : struct
         {
-            foreach (T t in DataBase.RequestList<T>())
+            foreach (T t in dal.RequestList<T>())
                 Console.WriteLine(t);
         }
 
@@ -439,7 +450,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayUnassignedParcels()
         {
-            foreach (Parcel p in DataBase.RequestList<Parcel>(x=>x.DroneId==null))
+            foreach (Parcel p in dal.RequestList<Parcel>(x=>x.DroneId==null))
                 Console.WriteLine(p);
         }
 
@@ -448,7 +459,7 @@ namespace ConsoleUI
         /// </summary>
         static void DisplayAvailableStations()
         {
-            foreach (Station s in DataBase.RequestList<Station>(x => x.ChargeSlots != 0))
+            foreach (Station s in dal.RequestList<Station>(x => x.ChargeSlots != 0))
                 Console.WriteLine(s);
         }
     }

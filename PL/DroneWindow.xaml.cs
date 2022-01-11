@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using BlApi;
 namespace PL
 {
     /// <summary>
@@ -19,28 +19,28 @@ namespace PL
     /// </summary>
     public partial class DroneWindow : Window
     {
-        IBL.BO.Drone drone;
-        private IBL.IBL bl;
+        BO.Drone drone;
+        private IBL bl;
         private bool close = false;
-        public DroneWindow(IBL.IBL b)
+        public DroneWindow(IBL b)
         {
             InitializeComponent();
             DroneGrid.Visibility = Visibility.Hidden;
             bl = b;
-            drone = new IBL.BO.Drone();
-            drone.Location = new IBL.BO.Location();
+            drone = new BO.Drone();
+            drone.Location = new BO.Location();
             DataContext = drone;
-            StationSelector.ItemsSource = bl.RequestList<IBL.BO.StationToList>().ToList().FindAll(x => x.Available != 0);
-            WeightSelector.ItemsSource = Enum.GetValues(typeof(IBL.BO.WeightCategories));
+            StationSelector.ItemsSource = bl.RequestList<BO.StationToList>().ToList().FindAll(x => x.Available != 0);
+            WeightSelector.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories));
             //make default weight null?
         }
 
-        public DroneWindow(IBL.IBL b, IBL.BO.DroneToList drone)
+        public DroneWindow(IBL b,BO.DroneToList drone)
         {
             InitializeComponent();
             AddGrid.Visibility = Visibility.Hidden;
             bl = b;
-            this.drone = bl.Request<IBL.BO.Drone>(drone.Id);
+            this.drone = bl.Request<BO.Drone>(drone.Id);
             DataContext = drone;
             Parcel.Text = drone.ParcelId.ToString();
             if (Parcel.Text == string.Empty)
@@ -82,10 +82,10 @@ namespace PL
                 MessageBox.Show(errorMessage);
                 return;
             }
-            drone.Location = bl.Request<IBL.BO.Station>(((IBL.BO.StationToList)StationSelector.SelectedValue).Id).location;
+            drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).location;
             try
             {
-                bl.Create<IBL.BO.Drone>(drone);
+                bl.Create<BO.Drone>(drone);
             }
             catch (Exception ex)
             {
@@ -153,7 +153,7 @@ namespace PL
             if (s)
             {
                 int id = drone.Id;
-                drone = bl.Request<IBL.BO.Drone>(id);
+                drone = bl.Request<BO.Drone>(id);
                 DataContext = drone;
             }
         }
@@ -173,7 +173,7 @@ namespace PL
                     return;
                 }
                 MessageBox.Show("Assigned Parcel to Drone!");
-                Parcel.Text = bl.Request<IBL.BO.Drone>(drone.Id).Parcel.Id.ToString();
+                Parcel.Text = bl.Request<BO.Drone>(drone.Id).Parcel.Id.ToString();
                 s = true;
             }
             if (Delivery.SelectedValue == "Pick Up Parcel")
@@ -208,7 +208,7 @@ namespace PL
             if(s)
             { 
                 int id = drone.Id;
-                drone = bl.Request<IBL.BO.Drone>(id);
+                drone = bl.Request<BO.Drone>(id);
                 DataContext = drone;
             }
         }

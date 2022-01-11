@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using IBL;
+using BlApi;
 
 namespace PL
 {
@@ -21,7 +21,7 @@ namespace PL
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static IBL.IBL bl = new IBL.BO.BL(); //static so all the data in bl will be saved when user closes main window
+        internal readonly IBL bl = BlFactory.GetBl();
         public MainWindow()
         {
             InitializeComponent();

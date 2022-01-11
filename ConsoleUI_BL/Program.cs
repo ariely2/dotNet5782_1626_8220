@@ -1,12 +1,18 @@
 ﻿using System;
-using IBL;
-using IBL.BO;
+using BO;
 namespace ConsoleUI_BL
 {
 
     class Program
     {
-        public static IBL.IBL bl;
+        //enum option for the switches
+        public enum AddOption { Station = 1, Drone, Customer, Parcel }
+        public enum UpdateOption { ConnectParceltoDrone = 1, PickUpParcel, DeliverParcel, SendDroneToCharge, ReleaseDrone,DroneData,StationData,CustomerData }
+        public enum RequestOption { Station = 1, Drone, Customer, Parcel}
+        public enum RequestListOption { Stations = 1, Drones, Customers, Parcels, UnassignParcles, AvailableStations }
+        public enum Option { Add = 1, Update, Request, RequestList, Exit }
+
+        private static BlApi.IBL bl;
         #region InputMethods
         /// <summary>
         /// the function get an int number from user,
@@ -130,7 +136,7 @@ namespace ConsoleUI_BL
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            bl = new BL();
+            bl = BlApi.BlFactory.GetBl();
             int option;
             do
             {
@@ -139,19 +145,19 @@ namespace ConsoleUI_BL
                 Console.Clear();
                 switch (option)
                 {
-                    case ((int)EnumOption.Add):
+                    case ((int)Option.Add):
                         SwitchAddOption();
                         break;
-                    case ((int)EnumOption.Update):
+                    case ((int)Option.Update):
                         SwitchUpdateOption();
                         break;
-                    case ((int)EnumOption.Request):
+                    case ((int)Option.Request):
                         SwitchRequestOption();
                         break;
-                    case ((int)EnumOption.RequestList):
+                    case ((int)Option.RequestList):
                         SwitchRequestListOption();
                         break;
-                    case ((int)EnumOption.Exit):
+                    case ((int)Option.Exit):
                         break;
                     default:
                         Console.WriteLine("Invalid Input, try again\n");
@@ -171,16 +177,16 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)EnumAdd.Station):
+                case ((int)AddOption.Station):
                     AddStation();
                     break;
-                case ((int)EnumAdd.Drone):
+                case ((int)AddOption.Drone):
                     AddDrone();
                     break;
-                case ((int)EnumAdd.Customer):
+                case ((int)AddOption.Customer):
                     AddCustomer();
                     break;
-                case ((int)EnumAdd.Parcel):
+                case ((int)AddOption.Parcel):
                     AddParcel();
                     break;
                 default:
@@ -283,28 +289,28 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)EnumUpdate.ConnectParceltoDrone):
+                case ((int)UpdateOption.ConnectParceltoDrone):
                     DroneAssign();
                     break;
-                case ((int)EnumUpdate.PickUpParcel):
+                case ((int)UpdateOption.PickUpParcel):
                     PickUpParcel();
                     break;
-                case ((int)EnumUpdate.DeliverParcel):
+                case ((int)UpdateOption.DeliverParcel):
                     DeliverParcel();
                     break;
-                case ((int)EnumUpdate.SendDroneToCharge):
+                case ((int)UpdateOption.SendDroneToCharge):
                     ChargeDrone();
                     break;
-                case ((int)EnumUpdate.ReleaseDrone):
+                case ((int)UpdateOption.ReleaseDrone):
                     DroneRelease();
                     break;
-                case ((int)EnumUpdate.DroneData):
+                case ((int)UpdateOption.DroneData):
                     DroneUpdate();
                     break;
-                case ((int)EnumUpdate.StationData):
+                case ((int)UpdateOption.StationData):
                     StationUpdate();
                     break;
-                case ((int)EnumUpdate.CustomerData):
+                case ((int)UpdateOption.CustomerData):
                     CustomerUpdate();
                     break;
             }
@@ -445,16 +451,16 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)EnumRequest.Station):
+                case ((int)RequestOption.Station):
                     Request<Station>();
                     break;
-                case ((int)EnumRequest.Drone):
+                case ((int)RequestOption.Drone):
                     Request<Drone>();
                     break;
-                case ((int)EnumRequest.Customer):
+                case ((int)RequestOption.Customer):
                     Request<Customer>();
                     break;
-                case ((int)EnumRequest.Parcel):
+                case ((int)RequestOption.Parcel):
                     Request<Parcel>();
                     break;
             }
@@ -484,22 +490,22 @@ namespace ConsoleUI_BL
             Console.Clear();
             switch (option)
             {
-                case ((int)EnumRequestList.Stations):
+                case ((int)RequestListOption.Stations):
                     RequestList<StationToList>();
                     break;
-                case ((int)EnumRequestList.Drones):
+                case ((int)RequestListOption.Drones):
                     RequestList<DroneToList>();
                     break;
-                case ((int)EnumRequestList.Customers):
+                case ((int)RequestListOption.Customers):
                     RequestList<CustomerToList>();
                     break;
-                case ((int)EnumRequestList.Parcels):
+                case ((int)RequestListOption.Parcels):
                     RequestList<ParcelToList>();
                     break;
-                case ((int)EnumRequestList.UnassignParcles):
+                case ((int)RequestListOption.UnassignParcles):
                     RequestUnassignedParcels();
                     break;
-                case ((int)EnumRequestList.AvailableStations):
+                case ((int)RequestListOption.AvailableStations):
                     RequestAvailableStations();
                     break;
             }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
-        xmlns:BO="clr-namespace:IBL.BO;assembly=BL" x:Class="PL.DroneWindow"
+        x:Class="PL.DroneWindow"
         mc:Ignorable="d"
         Title="DroneWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Background="DarkSlateGray">
     <Grid>
