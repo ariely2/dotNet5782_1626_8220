@@ -29,17 +29,17 @@ namespace PL
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            int id;
+            int phone;
             string name = Name_c.Text;
             BO.Customer c;
-            if (!int.TryParse(ID_c.Text, out id))
+            if (!int.TryParse(Phone_c.Text, out phone))
             {
-                MessageBox.Show("Error: ID needs to be an int!\nPlease Try Again.");
+                MessageBox.Show("Error: Phone Number must be an int!\nPlease Try Again.");
                 return;
             }
             try
             {
-                c = bl.Request<BO.Customer>(id);
+                c = bl.Request<BO.Customer>(phone);
             }
             catch (Exception ex)
             {
