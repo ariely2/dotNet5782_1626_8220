@@ -92,9 +92,9 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (station.Equals(default(BO.Station))) //???
+            if (!station.Equals(default(BO.Station))) //if we're in station display window
             {
-                station = bl.Request<BO.Station>(station.Id);
+                station = bl.Request<BO.Station>(station.Id); //getting updated version of station
                 DronesListView.ItemsSource = station.Charging; //getting list of drones to display
                 DataContext = station;
             }

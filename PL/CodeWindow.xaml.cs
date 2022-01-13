@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Window for the user to enter the secret code, in order to open the list window
     /// </summary>
     public partial class CodeWindow : Window
     {
@@ -33,7 +33,7 @@ namespace PL
             else
             {
                 var w = new LoginWindow();
-                string s = w.secret;
+                string s = w.secret; //getting code
                 if (Code.Text == s)
                 {
                     correct = true;
@@ -41,7 +41,7 @@ namespace PL
                 }
                 else
                 {
-                    tries--;
+                    tries--; //updating number of tries left
                     MessageBox.Show("Wrong Code Entered: " + tries + " tries left.");
                     if (tries == 0)
                         this.Close();

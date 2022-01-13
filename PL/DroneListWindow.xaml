@@ -110,7 +110,7 @@
                 </ListView>
                 <Grid x:Name ="DownGrid_s" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
                     <Button Content="Add Station" Click ="AddStation" FontSize="35" Margin="535,0,0,-3" Width="280"/>
-                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,535,0" Width="280" />
+                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,534,0" />
                     <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
                 </Grid>
             </Grid>
@@ -143,7 +143,7 @@
                 </ListView>
                 <Grid x:Name ="DownGrid_c" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
                     <Button Content="Add Customer" Click ="AddCustomer" FontSize="35" Margin="535,0,0,-3" Width="280"/>
-                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,535,0" Width="280" />
+                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,534,0" />
                     <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
                 </Grid>
             </Grid>
@@ -202,7 +202,7 @@
                 </ListView>
                 <Grid x:Name ="DownGrid_p" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
                     <Button Content="Add Parcel" Click ="AddParcel" FontSize="35" Margin="535,0,0,-3" Width="280"/>
-                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,535,0" Width="280" />
+                    <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,534,0" />
                     <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
                 </Grid>
             </Grid>

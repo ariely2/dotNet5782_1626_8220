@@ -7,7 +7,7 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
         xmlns:BO="clr-namespace:BO;assembly=BL" x:Class="PL.CustomerWindow"
         mc:Ignorable="d"
-        Title="CustomerWindow" SizeToContent="WidthAndHeight" Background="DarkSlateGray">
+        Title="CustomerWindow" SizeToContent="WidthAndHeight" Background="DarkSlateGray" Activated="Window_Activated">
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

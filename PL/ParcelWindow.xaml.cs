@@ -26,7 +26,7 @@ namespace PL
         public ParcelWindow(IBL b, BO.Parcel p)
         {
             InitializeComponent();
-            AddGrid.Visibility = Visibility.Hidden;
+            AddGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             parcel = p;
             DataContext = parcel;
@@ -34,28 +34,32 @@ namespace PL
         public ParcelWindow(IBL b)
         {
             InitializeComponent();
-            ParcelGrid.Visibility = Visibility.Hidden;
+            ParcelGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             parcel = new BO.Parcel();
-            parcel.Sender = new BO.CustomerParcel();
-            parcel.Receiver = new BO.CustomerParcel();
+            parcel.Sender = new BO.CustomerParcel(); //initializing sender
+            parcel.Receiver = new BO.CustomerParcel(); //initializing receiver
             DataContext = parcel;
-            Weight.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories));
+            Weight.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories)); //getting options for weight and priority
             Priority.ItemsSource = Enum.GetValues(typeof(BO.Priorities));
         }
         private void Erase(object sender, RoutedEventArgs e)
         {
-            if (parcel.Scheduled == null)
+            if (parcel.Scheduled == null) // if the parcel wasn't assigned yet to a drone
             {
                 bl.DeleteParcel(parcel.Id);
                 MessageBox.Show("Deleted Parcel!");
             }
+            else
+                MessageBox.Show("Can't delete parcel because it's already assigned to a drone.");
         }
 
         private void Open_Drone(object sender, RoutedEventArgs e)
         {
-            if (parcel.Scheduled != null && parcel.Delivered == null)
+            if (parcel.Scheduled != null && parcel.Delivered == null) //if the parcel was assigned to a drone but not delivered
                 new DroneWindow(bl, bl.Request<BO.Drone>(parcel.Drone.Id)).Show();
+            else
+                MessageBox.Show("Parcel isn't assigned to a drone yet.");
         }
 
         private void Open_Sender(object sender, RoutedEventArgs e)
@@ -72,7 +76,7 @@ namespace PL
         {
             bool error = false;
             string errorMessage = "A new parcel could not be created for the following reasons:\n";
-            if (Validation.GetErrors(Sender).Any())
+            if (Validation.GetErrors(Sender).Any()) //adding errors to error message
             {
                 error = true;
                 errorMessage += "Sender ID needs to be an int!\n";
@@ -82,16 +86,16 @@ namespace PL
                 error = true;
                 errorMessage += "Receiver ID needs to be an int!\n";
             }
-            if (Weight.SelectedValue == null)
-            {
-                error = true;
-                errorMessage += "A Weight must be selected!\n";
-            }
-            if (Priority.SelectedItem == null)//maybe selected value?
-            {
-                error = true;
-                errorMessage += "A Priority must be Selected!\n";
-            }
+            //if (Weight.SelectedValue == null)
+            //{
+            //    error = true;
+            //    errorMessage += "A Weight must be selected!\n";
+            //}
+            //if (Priority.SelectedItem == null)//maybe selected value?
+            //{
+            //    error = true;
+            //    errorMessage += "A Priority must be Selected!\n";
+            //}
             errorMessage += "\nPlease Try Again.";
             if (error)
             {

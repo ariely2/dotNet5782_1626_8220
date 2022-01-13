@@ -27,7 +27,7 @@ namespace PL
         {
             bl = b;
             InitializeComponent();
-            StatusSelector.Items.Add("All"); //adding all status options. do we need this line?
+            StatusSelector.Items.Add("All"); //adding all status and weight options for drone list. do we need this line?
             var statuses  = Enum.GetValues(typeof(BO.DroneStatuses));
             foreach (var a in statuses)
                 StatusSelector.Items.Add(a);
@@ -35,7 +35,7 @@ namespace PL
             var weights = Enum.GetValues(typeof(BO.WeightCategories));
             foreach (var a in weights)
                 WeightSelector.Items.Add(a);
-            Priority_p.Items.Add("All");
+            Priority_p.Items.Add("All"); //adding priority, weight and status options for parcel list
             Status_p.Items.Add("All");
             Weight_p.Items.Add("All");
             var priorities = Enum.GetValues(typeof(BO.Priorities));
@@ -65,7 +65,7 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (Tabs.SelectedIndex == 0)
+            if (Tabs.SelectedIndex == 0) //updating the current tab if the window came back to focus
                 Drone_Filter();
             else if (Tabs.SelectedIndex == 1)
                 Filter_Stations();
@@ -77,7 +77,7 @@ namespace PL
 
         private void Tab_Changed(object sender, SelectionChangedEventArgs e)
         {
-            if (e.Source is TabControl)
+            if (e.Source is TabControl) //updating selected tab when switching from another tab
             {
                 if (Tabs.SelectedIndex == 0)
                     Drone_Filter();
@@ -93,10 +93,6 @@ namespace PL
         private void AddDrone(object sender, RoutedEventArgs e)
         {
             new DroneWindow(bl).Show();
-            //DroneWindow d = new DroneWindow(bl);
-            //d.Show();
-            //while (!this.IsActive) ;
-            //DronesListView.Items.Refresh();
         }
         private void Drone_Filter(object sender = null, SelectionChangedEventArgs e = null)//remove/grey out options that don't exist? //move selection to here with null
         {
@@ -112,7 +108,7 @@ namespace PL
         }
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(DronesListView.SelectedItem != null)
+            if(DronesListView.SelectedItem != null) //if a drone was selected
                 new DroneWindow(bl, bl.Request<BO.Drone>(((BO.DroneToList)DronesListView.SelectedItem).Id)).Show();
         }
 
@@ -121,22 +117,22 @@ namespace PL
             DronesListView.Items.GroupDescriptions.Clear();
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(DronesListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Status");
-            view.GroupDescriptions.Add(groupDescription);
+            view.GroupDescriptions.Add(groupDescription); //adding a groupdescription to group drones according to status
         }
         #endregion Drone
         #region Station
         private void SortStationList()
         {
-            if (Sort_Stations.IsChecked == true)
+            if (Sort_Stations.IsChecked == true) //sorting stations by number of available slots
             {
                 CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(StationListView.ItemsSource);
                 view.SortDescriptions.Add(new SortDescription("Available", ListSortDirection.Descending));
             }
         }
 
-        private void StationDoubleClick(object sender, MouseButtonEventArgs e) //make regions
+        private void StationDoubleClick(object sender, MouseButtonEventArgs e) 
         {
-            if (StationListView.SelectedItem != null)
+            if (StationListView.SelectedItem != null) //if a station was selected
                 new StationWindow(bl, (BO.StationToList)StationListView.SelectedItem).Show();
         }
 
@@ -144,19 +140,19 @@ namespace PL
         private void Filter_Stations(object sender = null, RoutedEventArgs e = null)
         {
             var a = bl.RequestList<BO.StationToList>().ToList();
-            if (Only_Available.IsChecked == true)
+            if (Only_Available.IsChecked == true) //if only stations with available slots should be displayed
             {
                 a.Clear();
-                foreach (var s in StationListView.Items)
+                foreach (var s in StationListView.Items) //adding to a list every station with available slots
                 {
                     if (((BO.StationToList)s).Available != 0)
                         a.Add((BO.StationToList)s);
                 }
             }
-            StationListView.ItemsSource = a;
+            StationListView.ItemsSource = a; //updating the item source
             SortStationList();
         }
-        private void All_Stations(object sender, RoutedEventArgs e)
+        private void All_Stations(object sender, RoutedEventArgs e) //when the station filter is deactivated
         {
             StationListView.ItemsSource = bl.RequestList<BO.StationToList>(); //getting list of stations to display
             SortStationList();
@@ -170,7 +166,7 @@ namespace PL
         #region Customer
         private void CustomerDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (CustomerListView.SelectedItem != null)
+            if (CustomerListView.SelectedItem != null) //if a customer was selected
                 new CustomerWindow(bl, bl.Request<BO.Customer>(((BO.CustomerToList)CustomerListView.SelectedItem).Id)).Show();
         }
         private void AddCustomer(object sender, RoutedEventArgs e)
@@ -181,7 +177,7 @@ namespace PL
         #region Parcel
         private void ParcelDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ParcelListView.SelectedItem != null)
+            if (ParcelListView.SelectedItem != null) //if a parcel was selected
                 new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.ParcelToList)ParcelListView.SelectedItem).Id)).Show();
         }
 
@@ -195,7 +191,7 @@ namespace PL
             ParcelListView.Items.GroupDescriptions.Clear();
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ParcelListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("SenderName");
-            view.GroupDescriptions.Add(groupDescription);
+            view.GroupDescriptions.Add(groupDescription); //adding a groupdescription to group parcels according to sender
         }
 
         private void Group_Receiver(object sender, RoutedEventArgs e)
@@ -203,7 +199,7 @@ namespace PL
             ParcelListView.Items.GroupDescriptions.Clear();
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ParcelListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("ReceiverName");
-            view.GroupDescriptions.Add(groupDescription);
+            view.GroupDescriptions.Add(groupDescription); //adding a groupdescription to group parcels according to receiver
         }
         #endregion Parcel
 

@@ -25,7 +25,7 @@ namespace PL
         public CustomerWindow(IBL b, BO.Customer c)
         {
             InitializeComponent();
-            AddGrid.Visibility = Visibility.Hidden;
+            AddGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             customer = c;
             DataContext = customer;
@@ -35,7 +35,7 @@ namespace PL
         public CustomerWindow(IBL b)
         {
             InitializeComponent();
-            CustomerGrid.Visibility = Visibility.Hidden;
+            CustomerGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             customer = new BO.Customer();
             DataContext = customer;
@@ -45,7 +45,7 @@ namespace PL
         {
             bool error = false;
             string errorMessage = "A new customer could not be created for the following reasons:\n";
-            if (Validation.GetErrors(ID).Any())
+            if (Validation.GetErrors(ID).Any()) //adding errors to error message
             {
                 error = true;
                 errorMessage += "ID needs to be an int!\n";
@@ -86,7 +86,7 @@ namespace PL
         }
         private void FromDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.CustomerParcel)FromListView.SelectedItem).Id)).Show();
+            new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.ParcelAtCustomer)FromListView.SelectedItem).Id)).Show();
         }
 
         private void ToDoubleClick(object sender, MouseButtonEventArgs e)
@@ -97,6 +97,13 @@ namespace PL
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
+            FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
+            ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
         }
     }
 }

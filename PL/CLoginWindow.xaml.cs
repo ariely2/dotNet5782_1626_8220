@@ -32,7 +32,7 @@ namespace PL
             int phone;
             string name = Name_c.Text;
             BO.Customer c;
-            if (!int.TryParse(Phone_c.Text, out phone))
+            if (!int.TryParse(Phone_c.Text, out phone)) //if entered phone number isn't an int
             {
                 MessageBox.Show("Error: Phone Number must be an int!\nPlease Try Again.");
                 return;
@@ -46,7 +46,7 @@ namespace PL
                 MessageBox.Show("Failed to login for the following reason: \n" + ex.Message + "Please try again\n");
                 return;
             }
-            if (c.Name.Equals(name))
+            if (c.Name.Equals(name)) //if a name with the matching phone number was entered, the customer can login.
             {
                 new CustomerUIWindow(bl, c).Show();
                 this.Close();
