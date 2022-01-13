@@ -134,14 +134,18 @@ namespace Dal
                 //random picked( true or false)
                 bool picked = (random.Next(2) == 0);
                 //random customer index
-                int randomCustomer = random.Next(Customers.Count());
-
+                int randomSender = random.Next(Customers.Count());
+                int randomReceiver;
+                do
+                {
+                    randomReceiver = random.Next(Customers.Count());
+                } while (randomReceiver == randomSender);
 
                 Parcels.Add(new Parcel()
                 {
                     Id = Config.IdOfParcel++,//Id equals to IdOfParcle
-                    SenderId = Customers[randomCustomer].Id,//Random Id from customers list 
-                    ReceiverId = Customers[(randomCustomer + 1) % Customers.Count()].Id,//Random Id from customers list, cant be equal to sendId
+                    SenderId = Customers[randomSender].Id,//Random Id from customers list 
+                    ReceiverId = Customers[randomReceiver].Id,//Random Id from customers list, cant be equal to sendId
                     Weight = ParcelMaxWeight,
                     DroneId = (j != 5 ? Drones[j].Id : null),
                     Priority = EnumExtension.RandomEnumValue<Priorities>(),//Random priority

@@ -166,7 +166,7 @@ namespace PL
             if(Delivery.SelectedValue == "Open Parcel Window")
             {
                 if (drone.Parcel != null)
-                    new ParcelWindow(drone.Parcel).Show();
+                    new ParcelWindow(bl, bl.Request<BO.Parcel>(drone.Parcel.Id)).Show();
                 else
                     MessageBox.Show("There's no parcel assigned to the drone");
             }

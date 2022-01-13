@@ -7,10 +7,17 @@
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
         xmlns:BO="clr-namespace:BO;assembly=BL" x:Class="PL.CustomerWindow"
         mc:Ignorable="d"
-        Title="CustomerWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Background="DarkSlateGray">
+        Title="CustomerWindow" SizeToContent="WidthAndHeight" Background="DarkSlateGray">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFD9E4B9"/>
+                <GradientStop Color="#FFA8DADC" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid x:Name="AddGrid" Margin="0,42,0,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
@@ -23,19 +30,20 @@
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Drone ID:" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
+            <Label Content="Customer ID:" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15"/>
             <TextBox Name="ID" Margin="70,15,70,2" Text="{Binding Id}" Grid.ColumnSpan="2" Grid.Column="1"/>
-            <Label Content="Drone Model:" Grid.Row="1" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
-            <TextBox Name="Model" Margin="70,15,70,2" Grid.Column="1" Text ="{Binding Model}" Grid.ColumnSpan="2" Grid.Row="1"/>
-            <Label Content="Max Weight:" Grid.Row="2" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
-            <ComboBox x:Name="WeightSelector" Grid.Column="1" Margin="70,15,70,2" SelectedItem="{Binding MaxWeight}" Grid.ColumnSpan="2" Grid.Row="2" Text="Select"/>
-            <Label Content="Initial Station:" Grid.Row="3" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
-            <ComboBox x:Name="StationSelector" Grid.Column="1" Margin="70,15,70,2" DisplayMemberPath="Name" SelectedValue="Id" Grid.Row="3" Grid.ColumnSpan="2"/>
-            <Button Content="Cancel" HorizontalAlignment="Left" Margin="140,4,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Cancel_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-            <Button Content="Add" HorizontalAlignment="Left" Margin="140,6,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Add_Click" Grid.Column="2" Grid.ColumnSpan="2" />
-            <Label Content="Enter Drone details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="25,-46,25,0" Background="#4F2F4F" Foreground="MintCream"/>
+            <Label Content="Name:" Grid.Row="1" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15"/>
+            <TextBox Name="Name" Margin="70,15,70,2" Grid.Column="1" Text ="{Binding Name}" Grid.ColumnSpan="2" Grid.Row="1"/>
+            <Label Content="Phone:" Grid.Row="2" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" />
+            <TextBox x:Name="Phone" Grid.Column="1" Margin="70,15,70,2" Text="{Binding Phone}" Grid.ColumnSpan="2" Grid.Row="2"/>
+            <Label Content="Latitude:" Grid.Row="3" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15"/>
+            <TextBox x:Name="Latitude" Grid.Column="1" Margin="70,15,70,2" Text="{Binding location.Latitude}" Grid.Row="3" Grid.ColumnSpan="2"/>
+            <Label Content="Longitude:" Grid.Row="4" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,0" Grid.RowSpan="2"/>
+            <TextBox x:Name="Longitude" Grid.Column="1" Margin="70,15,70,2" Text="{Binding location.Longitude}" Grid.Row="4" Grid.ColumnSpan="2"/>
+            <Button Content="Cancel" HorizontalAlignment="Left" Margin="140,40,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Cancel_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+            <Button Content="Add" HorizontalAlignment="Left" Margin="140,40,0,0" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Add_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2" />
+            <Label Content="Enter Customer details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="10,-37,2,0" Background="#FFB9D9E4"/>
         </Grid>
-
         <Grid x:Name="CustomerGrid" Margin="0,42,0,0" Width="400">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -46,8 +54,7 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="10"/>
-
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -55,46 +62,38 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Drone details" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="45,-42,17,0" Height="40" Background="#4F2F4F" Foreground="MintCream"/>
-            <Label Content="ID:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Foreground="MistyRose"/>
-            <TextBox Name="ID_d" Margin="6,7,4,5" Text="{Binding Id}" Grid.Column="1" IsReadOnly="True"/>
-            <Label Content="Model:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1" Foreground="MistyRose"/>
-            <TextBox Name="Model_d" Margin="6,7,4,5" Text="{Binding Model}" Grid.Column="1" Grid.Row="1"/>
-            <Label Content="Max Weight:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2" Foreground="MistyRose"/>
-            <TextBox Name="MaxWeight" Margin="6,7,4,5" Text="{Binding MaxWeight}" Grid.Column="1" Grid.Row="2" IsReadOnly="True"/>
-            <Label Content="Battery:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="3" Foreground="MistyRose"/>
-            <TextBox Name="Battery" Margin="6,7,4,5" Text="{Binding Battery}" Grid.Column="1" Grid.Row="3" IsReadOnly="True"/>
-            <Label Content="Status:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="4" Foreground="MistyRose"/>
-            <TextBox Name="Status" Margin="6,7,4,5" Text="{Binding Status}" Grid.Column="1" Grid.Row="4" IsReadOnly="True"/>
-            <Label Content="Parcel:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" Foreground="MistyRose"/>
-            <TextBox Name="Parcel" Margin="6,7,4,5"  Grid.Column="1" Grid.Row="5" IsReadOnly="True"/>
-            <Label Content="Latitude:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="6" Foreground="MistyRose"/>
-            <TextBox Name="Latitude" Margin="6,7,4,5" Text="{Binding Location.Latitude}" Grid.Column="1" Grid.Row="6" IsReadOnly="True"/>
-            <Label Content="Longitude:" FontSize="13" Margin="18,1,94,9" Grid.ColumnSpan="2" Grid.Row="7" Grid.RowSpan="2" Foreground="MistyRose"/>
-            <TextBox Name="Longitude" Margin="6,7,4,5" Text="{Binding Location.Longitude}" Grid.Column="1" Grid.Row="7" IsReadOnly="True"/>
-            <Line Grid.Column="2" VerticalAlignment="Top" StrokeThickness="3" Margin="19,5,77,0"
-                 X1="0" Y1="220" Height="226" Grid.RowSpan="8" RenderTransformOrigin="0.5,0.5" StrokeEndLineCap="Round" StrokeStartLineCap="Round">
-                <Line.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleY="-1"/>
-                    </TransformGroup>
-                </Line.RenderTransform>
-                <Line.Stroke>
-                    <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
-                        <GradientStop Color="Black"/>
-                    </LinearGradientBrush>
-                </Line.Stroke>
-            </Line>
-            <Label Content="Options" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="64,-42,47,0" Height="40" Grid.Column="2"  Background="#4F2F4F" Foreground="MintCream"/>
-            <Button Content="Update Model" Grid.Column="2" HorizontalAlignment="Left" Margin="60,22,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="96" Height="23" Click="Update"/>
-            <!--<ComboBox x:Name="Charging" Grid.ColumnSpan="2" Grid.Column="2" HorizontalAlignment="Left" Margin="42,15,0,0" Grid.Row="2" VerticalAlignment="Top" Width="132" Height="28" Grid.RowSpan="2" SelectedIndex="0" HorizontalContentAlignment="Center" SelectionChanged="Charge_Update" DropDownClosed="Charging_DropDownClosed">
-                <ComboBoxItem Visibility="Collapsed" >Charging Options</ComboBoxItem>
-            </ComboBox>
-            <ComboBox x:Name="Delivery" Grid.ColumnSpan="2" Grid.Column="2" HorizontalAlignment="Left" Margin="42,14,0,0" Grid.Row="4" VerticalAlignment="Top" Width="132" Grid.RowSpan="2" SelectedIndex="0" Height="28" HorizontalContentAlignment="Center" SelectionChanged="Delivery_Update" DropDownClosed="Delivery_DropDownClosed">
-                <ComboBoxItem Visibility="Collapsed">Parcel Options</ComboBoxItem>
-            </ComboBox>-->
-            <Button Content="Close" FontSize="15" Grid.Column="2" HorizontalAlignment="Left" Margin="62,15,0,0" Grid.Row="6" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="92" Grid.RowSpan="2" Height="27" Click="Close_Click"/>
+            <Label Content="Customer details" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="12,-38,16,0" Height="40" Background="#B9D9E4" Grid.Column="1"/>
+            <Label Content="ID:" FontSize="13" Margin="6,1,6,29" Grid.RowSpan="2"/>
+            <TextBox Margin="94,6,16,6" Text="{Binding Id}" IsReadOnly="True" Grid.ColumnSpan="2"/>
+            <Label Content="Name:" FontSize="13" Margin="6,0,6,0" Grid.Row="1" />
+            <TextBox Name="Name_c" Margin="94,6,16,6" Text="{Binding Name}" Grid.Row="1" Grid.ColumnSpan="2"/>
+            <Label Content="Latitude:" FontSize="13" Margin="0,0,12,0" Grid.Column="2"/>
+            <TextBox Margin="0,6,10,6" Text="{Binding location.Latitude}" Grid.Column="3" IsReadOnly="True"/>
+            <Label Content="Longitude:" FontSize="13" Margin="0,0,12,0" Grid.Row="1" Grid.Column="2"/>
+            <TextBox Margin="0,6,10,6" Text="{Binding location.Longitude}" Grid.Column="3" Grid.Row="1" IsReadOnly="True"/>
+            <ListView x:Name="FromListView" MouseDoubleClick="FromDoubleClick" Margin="8,1,8,6" Grid.ColumnSpan="4" FontSize="12" Foreground="#1d3557" Grid.RowSpan="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="3">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" Width="80" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Weight" Width="70" DisplayMemberBinding="{Binding Weight}" />
+                        <GridViewColumn Header="Priority" Width="80" DisplayMemberBinding="{Binding Priority}" />
+                        <GridViewColumn Header="Status" Width="70" DisplayMemberBinding="{Binding Status}" />
+                        <GridViewColumn Header="Target" Width="80" DisplayMemberBinding="{Binding Customer.Id}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <ListView x:Name="ToListView" MouseDoubleClick="ToDoubleClick" Margin="8,29,8,8" Grid.ColumnSpan="4" FontSize="12" Foreground="#1d3557" Grid.RowSpan="4" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="5">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" Width="80" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Weight" Width="70" DisplayMemberBinding="{Binding Weight}" />
+                        <GridViewColumn Header="Priority" Width="80" DisplayMemberBinding="{Binding Priority}" />
+                        <GridViewColumn Header="Status" Width="70" DisplayMemberBinding="{Binding Status}" />
+                        <GridViewColumn Header="Source" Width="80" DisplayMemberBinding="{Binding Customer.Id}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button Content="Update Name" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Width="96" Height="22" Click="Update" Grid.Row="2" Grid.Column="1"/>
         </Grid>
     </Grid>
-
 </Window>

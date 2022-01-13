@@ -38,12 +38,12 @@ namespace PL
 
         private void Customer_log(object sender, RoutedEventArgs e)
         {
-
+            new CLoginWindow(bl).Show();
         }
 
         private void Customer_sign(object sender, RoutedEventArgs e)
         {
-
+            new CustomerWindow(bl).Show();
         }
     }
 }

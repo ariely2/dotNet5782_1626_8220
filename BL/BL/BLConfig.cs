@@ -81,7 +81,7 @@ namespace BL
                     }
                     else // if the drone's status is "Available"
                     {
-                        var p = dal.Receivers();
+                        var p = dal.Receivers(); //it's rarely empty and there's an exception
                         int i = r.Next(0, p.Length);
                         var receiver = Request<Customer>(p[i]); // getting a random receiver
                         Current.Location = GetCustomerLocation(receiver.Id);

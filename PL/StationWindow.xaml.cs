@@ -36,7 +36,6 @@ namespace PL
             AddGrid.Visibility = Visibility.Hidden;
             bl = b;
             station = bl.Request<BO.Station>(s.Id);
-            station.location = new BO.Location();
             DataContext = station;
             DronesListView.ItemsSource = station.Charging; //getting list of drones to display
         }
@@ -46,11 +45,6 @@ namespace PL
             bool error = false;
             string errorMessage = "A new station could not be created for the following reasons:\n";
             if (Validation.GetErrors(ID).Any())
-            {
-                error = true;
-                errorMessage += "ID needs to be an int!\n";
-            }
-            if (Validation.GetErrors(Name).Any())
             {
                 error = true;
                 errorMessage += "ID needs to be an int!\n";

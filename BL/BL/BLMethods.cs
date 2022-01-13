@@ -592,6 +592,10 @@ namespace BL
                 Phone = phone == null ? c.Phone : phone
             }); //creating updated customer
         }
+        public void DeleteParcel(int id)
+        {
+            dal.Delete<DO.Parcel>(id);
+        }
         #endregion Update
 
         #region InternalMethod

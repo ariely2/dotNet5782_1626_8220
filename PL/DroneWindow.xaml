@@ -9,6 +9,12 @@
         mc:Ignorable="d"
         Title="DroneWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Background="DarkSlateGray">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFD9E4B9"/>
+                <GradientStop Color="#FFA8DADC" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid x:Name="AddGrid" Margin="0,42,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
@@ -23,17 +29,17 @@
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Drone ID:" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
+            <Label Content="Drone ID:" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" />
             <TextBox Name="ID" Margin="70,15,70,2" Text="{Binding Id}" Grid.ColumnSpan="2" Grid.Column="1"/>
-            <Label Content="Drone Model:" Grid.Row="1" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
+            <Label Content="Drone Model:" Grid.Row="1" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" />
             <TextBox Name="Model" Margin="70,15,70,2" Grid.Column="1" Text ="{Binding Model}" Grid.ColumnSpan="2" Grid.Row="1"/>
-            <Label Content="Max Weight:" Grid.Row="2" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
+            <Label Content="Max Weight:" Grid.Row="2" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" />
             <ComboBox x:Name="WeightSelector" Grid.Column="1" Margin="70,15,70,2" SelectedItem="{Binding MaxWeight}" Grid.ColumnSpan="2" Grid.Row="2" Text="Select"/>
-            <Label Content="Initial Station:" Grid.Row="3" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15" Foreground="MistyRose"/>
+            <Label Content="Initial Station:" Grid.Row="3" FontSize="18" Grid.ColumnSpan="2" Margin="93,15,57,-15"/>
             <ComboBox x:Name="StationSelector" Grid.Column="1" Margin="70,15,70,2" DisplayMemberPath="Name" SelectedValue="Id" Grid.Row="3" Grid.ColumnSpan="2"/>
             <Button Content="Cancel" HorizontalAlignment="Left" Margin="140,4,0,0" Grid.Row="2" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Cancel_Click" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
             <Button Content="Add" HorizontalAlignment="Left" Margin="140,6,0,0" Grid.Row="1" VerticalAlignment="Top" Height="34" Width="150" FontSize="20" Click="Add_Click" Grid.Column="2" Grid.ColumnSpan="2" />
-            <Label Content="Enter Drone details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="25,-46,25,0" Background="#4F2F4F" Foreground="MintCream"/>
+            <Label Content="Enter Drone details" VerticalAlignment="Top" FontSize="28" Grid.ColumnSpan="2" Grid.Column="1" Margin="25,-46,25,0" Background="#FFB9D9E4" />
         </Grid>
 
         <Grid x:Name="DroneGrid" Margin="0,42,0,0" Width="400">
@@ -55,22 +61,22 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Drone details" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="45,-42,17,0" Height="40" Background="#4F2F4F" Foreground="MintCream"/>
-            <Label Content="ID:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Foreground="MistyRose"/>
+            <Label Content="Drone details" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="45,-42,17,0" Height="40" Background="#FFB9D9E4"/>
+            <Label Content="ID:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
             <TextBox Name="ID_d" Margin="6,7,4,5" Text="{Binding Id}" Grid.Column="1" IsReadOnly="True"/>
-            <Label Content="Model:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1" Foreground="MistyRose"/>
+            <Label Content="Model:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1"/>
             <TextBox Name="Model_d" Margin="6,7,4,5" Text="{Binding Model}" Grid.Column="1" Grid.Row="1"/>
-            <Label Content="Max Weight:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2" Foreground="MistyRose"/>
+            <Label Content="Max Weight:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2"/>
             <TextBox Name="MaxWeight" Margin="6,7,4,5" Text="{Binding MaxWeight}" Grid.Column="1" Grid.Row="2" IsReadOnly="True"/>
-            <Label Content="Battery:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="3" Foreground="MistyRose"/>
+            <Label Content="Battery:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="3"/>
             <TextBox Name="Battery" Margin="6,7,4,5" Text="{Binding Battery}" Grid.Column="1" Grid.Row="3" IsReadOnly="True"/>
-            <Label Content="Status:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="4" Foreground="MistyRose"/>
+            <Label Content="Status:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="4" />
             <TextBox Name="Status" Margin="6,7,4,5" Text="{Binding Status}" Grid.Column="1" Grid.Row="4" IsReadOnly="True"/>
-            <Label Content="Parcel:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" Foreground="MistyRose"/>
+            <Label Content="Parcel:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="5" />
             <TextBox Name="Parcel" Margin="6,7,4,5"  Grid.Column="1" Grid.Row="5" IsReadOnly="True"/>
-            <Label Content="Latitude:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="6" Foreground="MistyRose"/>
+            <Label Content="Latitude:" FontSize="13" Margin="18,1,94,29" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="6"/>
             <TextBox Name="Latitude" Margin="6,7,4,5" Text="{Binding Location.Latitude}" Grid.Column="1" Grid.Row="6" IsReadOnly="True"/>
-            <Label Content="Longitude:" FontSize="13" Margin="18,1,94,9" Grid.ColumnSpan="2" Grid.Row="7" Grid.RowSpan="2" Foreground="MistyRose"/>
+            <Label Content="Longitude:" FontSize="13" Margin="18,1,94,9" Grid.ColumnSpan="2" Grid.Row="7" Grid.RowSpan="2"/>
             <TextBox Name="Longitude" Margin="6,7,4,5" Text="{Binding Location.Longitude}" Grid.Column="1" Grid.Row="7" IsReadOnly="True"/>
             <Line Grid.Column="2" VerticalAlignment="Top" StrokeThickness="3" Margin="19,5,77,0"
                  X1="0" Y1="220" Height="226" Grid.RowSpan="8" RenderTransformOrigin="0.5,0.5" StrokeEndLineCap="Round" StrokeStartLineCap="Round">
@@ -85,7 +91,7 @@
                     </LinearGradientBrush>
                 </Line.Stroke>
             </Line>
-            <Label Content="Options" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="64,-42,47,0" Height="40" Grid.Column="2"  Background="#4F2F4F" Foreground="MintCream"/>
+            <Label Content="Options" VerticalAlignment="Top" FontSize="22" Grid.ColumnSpan="2" Margin="64,-42,47,0" Height="40" Grid.Column="2"  Background="#FFB9D9E4"/>
             <Button Content="Update Model" Grid.Column="2" HorizontalAlignment="Left" Margin="60,22,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="96" Height="23" Click="Update"/>
             <ComboBox x:Name="Charging" Grid.ColumnSpan="2" Grid.Column="2" HorizontalAlignment="Left" Margin="42,15,0,0" Grid.Row="2" VerticalAlignment="Top" Width="132" Height="28" Grid.RowSpan="2" SelectedIndex="0" HorizontalContentAlignment="Center" SelectionChanged="Charge_Update" DropDownClosed="Charging_DropDownClosed">
                 <ComboBoxItem Visibility="Collapsed" >Charging Options</ComboBoxItem>
@@ -96,5 +102,4 @@
             <Button Content="Close" FontSize="15" Grid.Column="2" HorizontalAlignment="Left" Margin="62,15,0,0" Grid.Row="6" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="92" Grid.RowSpan="2" Height="27" Click="Close_Click"/>
         </Grid>
     </Grid>
-
 </Window>
