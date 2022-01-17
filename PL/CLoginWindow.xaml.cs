@@ -31,26 +31,21 @@ namespace PL
         {
             int phone;
             string name = Name_c.Text;
-            BO.Customer c;
+            //BO.Customer c;
             if (!int.TryParse(Phone_c.Text, out phone)) //if entered phone number isn't an int
             {
                 MessageBox.Show("Error: Phone Number must be an int!\nPlease Try Again.");
                 return;
             }
-            try
+            var c = bl.RequestList<BO.CustomerToList>().ToList();
+            var d = c.Find(x => x.Name.Equals(name) && x.Phone.Equals(Phone_c.Text));
+            if (d != default(BO.CustomerToList)) //if a name with the matching phone number of a real customer was entered, the customer can login.
             {
-                c = bl.Request<BO.Customer>(phone);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to login for the following reason: \n" + ex.Message + "Please try again\n");
-                return;
-            }
-            if (c.Name.Equals(name)) //if a name with the matching phone number was entered, the customer can login.
-            {
-                new CustomerUIWindow(bl, c).Show();
+                new CustomerUIWindow(bl, bl.Request<BO.Customer>(d.Id)).Show();
                 this.Close();
             }
+            else
+                MessageBox.Show("A registered customer with the entered phone and name doesn't exist");
         }
     }
 }

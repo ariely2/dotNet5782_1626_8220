@@ -86,12 +86,14 @@ namespace PL
         }
         private void FromDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.ParcelAtCustomer)FromListView.SelectedItem).Id)).Show();
+            if (FromListView.SelectedItem != null)
+                new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.ParcelAtCustomer)FromListView.SelectedItem).Id)).Show();
         }
 
         private void ToDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.CustomerParcel)ToListView.SelectedItem).Id)).Show();
+            if(ToListView.SelectedItem != null)
+                new ParcelWindow(bl, bl.Request<BO.Parcel>(((BO.CustomerParcel)ToListView.SelectedItem).Id)).Show();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

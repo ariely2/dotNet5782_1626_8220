@@ -27,6 +27,67 @@ namespace PL
             InitializeComponent();
             bl = b;
             customer = c;
+            Title.Content = customer.Name + "'s Deliveries"; //creating title based on customer's name
+            DataContext = customer;
+            FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
+            ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
+        }
+
+        private void FromDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (FromListView.SelectedItem == null) //if a parcel was not selected
+                return;
+            string message = "Do you want this parcel to get picked up?";
+            string title = "Pick Up";
+            MessageBoxButton buttons = MessageBoxButton.YesNo;// a window with yes/no options
+            var p = bl.Request<BO.Parcel>(((BO.ParcelAtCustomer)FromListView.SelectedItem).Id);
+            if (MessageBox.Show(message, title, buttons) == MessageBoxResult.Yes) //if "yes" was pressed
+            {
+                try
+                {
+                    bl.CustomerPickUp(p.Id);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to Pick Up Parcel for the following reason: \n" + ex.Message);
+                    return;
+                }
+                MessageBox.Show("Picked Up Parcel!");
+            }
+        }
+
+        private void ToDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ToListView.SelectedItem == null)
+                return;
+            string message = "Do you want this parcel to be delivered to you?";
+            string title = "Deliver";
+            MessageBoxButton buttons = MessageBoxButton.YesNo;
+            var p = bl.Request<BO.Parcel>(((BO.ParcelAtCustomer)ToListView.SelectedItem).Id);
+            if (MessageBox.Show(message, title, buttons) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    bl.CustomerDeliver(p.Id);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to Deliver Parcel for the following reason: \n" + ex.Message);
+                    return;
+                }
+                MessageBox.Show("Delivered Parcel!");
+            }
+        }
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
+            FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
+            ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
+        }
+
+        private void AddParcel(object sender, RoutedEventArgs e)
+        {
+            new ParcelWindow(bl); //opening window to add parcel
         }
     }
 }

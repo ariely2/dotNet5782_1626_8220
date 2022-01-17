@@ -27,5 +27,8 @@ namespace BlApi
         public void UpdateDrone(int id, string model = null);
         public void UpdateCustomer(int id, string name = null, string phone = null);
         public void DeleteParcel(int id);
+        public void CustomerDeliver(int id);
+        public void CustomerPickUp(int id);
+
     }
 }

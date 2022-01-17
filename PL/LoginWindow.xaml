@@ -5,12 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="500" Width="500">
+        Title="LoginWindow" Height="400" Width="550">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFDAE5B9"/>
+            <GradientStop Color="#FFA8DADC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
     <Grid>
-        <Label Content="Login To DelivAir" Margin="89,22,88,0" VerticalAlignment="Top" FontSize="42" Background="Aquamarine"/>
+        <Label Content="Login To DelivAir" Margin="105,0,104,0" VerticalAlignment="Top" FontSize="42" Background="#FFB9D9E4"/>
         <Button Content="Login as Employee" Margin="159,140,158,0" VerticalAlignment="Top" Height="40" FontSize="18" Click="Employee_log"/>
-        <Button Content="Login as Customer" Margin="159,0,158,0" VerticalAlignment="Center" FontSize="18" Height="40" Click="Customer_log"/>
+        <Button Content="Login as Customer" Margin="159,218,158,0" VerticalAlignment="Top" FontSize="18" Height="40" Click="Customer_log"/>
         <Button Content="Register as Customer" Margin="159,313,158,0" VerticalAlignment="Top" FontSize="18" Height="40" Click="Customer_sign"/>
-
     </Grid>
 </Window>

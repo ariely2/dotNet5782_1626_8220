@@ -27,7 +27,7 @@ namespace BL
                     case Station s:
 
                         //if station already exists in the exact location
-                        if (dal.RequestList<DO.Station>(x=> x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
+                        if (dal.RequestList<DO.Station>(x => x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
                             throw new NotPossibleException("A Station already exists in the entered location\n");
 
                         //create station in dal
@@ -65,7 +65,7 @@ namespace BL
 
                         //get the station with the exact location like the drone
                         Station station = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).FirstOrDefault(s => s.location.Equals(d.Location));
-                        
+
                         //check if the drone location is the same as exist station
                         //drone must be created with status of maintenance in an exist station
                         if (station.Equals(default(Station)))
@@ -88,7 +88,7 @@ namespace BL
                         Drones.Add(new DroneToList()
                         {
                             Id = d.Id,
-                            Battery = (double)r.Next(2000, 4000)/100, //double between 20 to 40 with 2 digits after point
+                            Battery = (double)r.Next(2000, 4000) / 100, //double between 20 to 40 with 2 digits after point
                             Location = d.Location,
                             MaxWeight = d.MaxWeight,
                             Model = d.Model,
@@ -167,7 +167,7 @@ namespace BL
                     case nameof(Station):
                         //get a DO.station with this id, convert it to a BL.BO.station
                         DO.Station s = dal.Request<DO.Station>(id);
-                        
+
                         ans = (T)Convert.ChangeType(new Station()
                         {
                             AvailableSlots = s.ChargeSlots,
@@ -277,7 +277,7 @@ namespace BL
                         {
                             Id = pi.Id,
                             //if the parcel wasn't assigned yet to a drone
-                            Drone = a == null?null:new DroneParcel() { Id = a.Id, Battery = a.Battery, Location = a.Location },
+                            Drone = a == null ? null : new DroneParcel() { Id = a.Id, Battery = a.Battery, Location = a.Location },
                             Priority = (Priorities)pi.Priority,
                             Weight = (WeightCategories)pi.Weight,
                             Receiver = new CustomerParcel() { Id = pi.ReceiverId, Name = dal.Request<DO.Customer>(pi.ReceiverId).Name },
@@ -300,7 +300,7 @@ namespace BL
             {
                 throw new NotExistException(ex.Message, ex);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex);
             }
@@ -324,11 +324,11 @@ namespace BL
                         Name = s.Name,
                         Available = s.ChargeSlots,
                         Occupied = Drones.FindAll(d => d.Status == DroneStatuses.Maintenance && d.Location.Equals(GetStationLocation(s.Id))).Count()
-                    }).Where(ex==null?x=>true:Expression.Lambda<Func<StationToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
+                    }).Where(ex == null ? x => true : Expression.Lambda<Func<StationToList, bool>>(Expression.Convert(ex.Body, typeof(bool)), ex.Parameters).Compile().Invoke).AsEnumerable();
 
                 case nameof(CustomerToList):
                     IEnumerable<Parcel> parcels = RequestList<ParcelToList>().Select(p => Request<Parcel>(p.Id)).AsEnumerable();
-                   
+
                     return (IEnumerable<T>)dal.RequestList<DO.Customer>().Select(c => new CustomerToList()
                     {
                         Id = c.Id,
@@ -393,7 +393,7 @@ namespace BL
                          select p;
             foreach (Parcel best in allParcels)
             {
-                
+
                 Location sender = GetCustomerLocation(best.Sender.Id);
                 Location receiver = GetCustomerLocation(best.Receiver.Id);
                 double distance =
@@ -451,7 +451,7 @@ namespace BL
 
             //if drone isn't assigned to a parcel
             if (d.Parcel == null)
-                throw new DroneIsntAssignedException("Drone isn't assigned to a parcle\n");
+                throw new DroneIsntAssignedException("Drone isn't assigned to a parcel\n");
 
             //drone already picked up the parcel
             if (d.Parcel.Status == EnumParcelDeliver.Delivery)
@@ -486,9 +486,9 @@ namespace BL
 
             d.Status = DroneStatuses.Available;//update drone status
             d.Battery += info[4] * t;//updating drone's battery
-           // d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+                                     // d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
             if (d.Battery > 100) //if battery became bigger than 100, lower it to 100
-                d.Battery = 100; 
+                d.Battery = 100;
             dal.ReleaseDrone(d.Id);//update data in dal
         }
 
@@ -501,7 +501,7 @@ namespace BL
         {
             DroneToList d = Drones.Find(x => x.Id == id);
 
-            if (d==null)
+            if (d == null)
                 throw new NotExistException("drone doesn't exist\n");
 
             if (d.Status != DroneStatuses.Available) //the drone isn't available
@@ -595,6 +595,20 @@ namespace BL
         public void DeleteParcel(int id)
         {
             dal.Delete<DO.Parcel>(id);
+        }
+        public void CustomerDeliver(int id)
+        {
+            var p = Request<Parcel>(id);
+            if(p.Drone == null)
+                throw new DroneIsntAssignedException("A Drone isn't assigned to the parcel\n");
+            Deliver(p.Drone.Id);
+        }
+        public void CustomerPickUp(int id)
+        {
+            var p = Request<Parcel>(id);
+            if (p.Drone == null)
+                throw new DroneIsntAssignedException("A Drone isn't assigned to the parcel\n");
+            PickUp(p.Drone.Id);
         }
         #endregion Update
 
