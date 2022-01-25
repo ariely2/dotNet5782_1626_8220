@@ -5,6 +5,10 @@
     <RootNamespace>Dal</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>../bin</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DalFacade\DalFacade.csproj" />
   </ItemGroup>
