@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for InputWindow.xaml
+    /// Window for getting number of hours a drone was charging
     /// </summary>
     public partial class InputWindow : Window
     {
@@ -28,7 +28,7 @@ namespace PL
         public string GetHours()
         {
             return Hours.Text; 
-        }//check if entered number or double, return a double
+        }
 
         private bool Check_Text()
         {
@@ -38,9 +38,9 @@ namespace PL
                 MessageBox.Show("Please Enter Number of Hours!");
                 return false;
             }
-            if (double.TryParse(Hours.Text, out check))
+            if (double.TryParse(Hours.Text, out check)) //if a number was entered
             {
-                if(check<0)
+                if(check<0) 
                 {
                     MessageBox.Show("Number of Hours can't be negative!\n Please Try again.");
                     return false;
@@ -57,7 +57,7 @@ namespace PL
 
         private void Release(object sender, RoutedEventArgs e)
         {
-            if (Check_Text())
+            if (Check_Text()) //if a valid input was entered
             {
                 release = true;
                 this.Close();

@@ -24,19 +24,18 @@ namespace PL
         public StationWindow(IBL b)
         {
             InitializeComponent();
-            StationGrid.Visibility = Visibility.Hidden;
+            StationGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             station = new BO.Station();
-            station.location = new BO.Location();
+            station.location = new BO.Location(); //initializing location so it won't be null
             DataContext = station;
         }
         public StationWindow(IBL b, BO.StationToList s)
         {
             InitializeComponent();
-            AddGrid.Visibility = Visibility.Hidden;
+            AddGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
-            station = bl.Request<BO.Station>(s.Id);
-            station.location = new BO.Location();
+            station = bl.Request<BO.Station>(s.Id); 
             DataContext = station;
             DronesListView.ItemsSource = station.Charging; //getting list of drones to display
         }
@@ -45,12 +44,7 @@ namespace PL
         {
             bool error = false;
             string errorMessage = "A new station could not be created for the following reasons:\n";
-            if (Validation.GetErrors(ID).Any())
-            {
-                error = true;
-                errorMessage += "ID needs to be an int!\n";
-            }
-            if (Validation.GetErrors(Name).Any())
+            if (Validation.GetErrors(ID).Any()) //adding errors to error message
             {
                 error = true;
                 errorMessage += "ID needs to be an int!\n";
@@ -66,7 +60,7 @@ namespace PL
                 errorMessage += "Longitude needs to be a number!\n";
             }
             errorMessage += "\nPlease Try Again.";
-            if (error)
+            if (error) //if there was an error, show error message
             {
                 MessageBox.Show(errorMessage);
                 return;
@@ -84,9 +78,9 @@ namespace PL
             this.Close();
         }
 
-        private void DroneDoubleClick(object sender, MouseButtonEventArgs e) //refresh because drone might leave
+        private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (DronesListView.SelectedItem != null)
+            if (DronesListView.SelectedItem != null) //if a drone was selected
                 new DroneWindow(bl, bl.Request<BO.Drone>(((BO.DroneCharge)DronesListView.SelectedItem).Id)).Show();
         }
 
@@ -98,9 +92,9 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (station.Equals(default(BO.Station)))
+            if (!station.Equals(default(BO.Station))) //if we're in station display window
             {
-                station = bl.Request<BO.Station>(station.Id);
+                station = bl.Request<BO.Station>(station.Id); //getting updated version of station
                 DronesListView.ItemsSource = station.Charging; //getting list of drones to display
                 DataContext = station;
             }

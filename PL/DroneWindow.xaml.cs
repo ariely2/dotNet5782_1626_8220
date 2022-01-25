@@ -25,12 +25,12 @@ namespace PL
         public DroneWindow(IBL b)
         {
             InitializeComponent();
-            DroneGrid.Visibility = Visibility.Hidden;
+            DroneGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             drone = new BO.Drone();
-            drone.Location = new BO.Location(); //so DataBinding will work
+            drone.Location = new BO.Location(); //do we need this line?
             DataContext = drone;
-            StationSelector.ItemsSource = bl.RequestList<BO.StationToList>().ToList().FindAll(x => x.Available != 0);
+            StationSelector.ItemsSource = bl.RequestList<BO.StationToList>().ToList().FindAll(x => x.Available != 0); //getting all stations with available slots
             WeightSelector.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories));
             //make default weight null?
         }
@@ -38,7 +38,7 @@ namespace PL
         public DroneWindow(IBL b, BO.Drone d)
         {
             InitializeComponent();
-            AddGrid.Visibility = Visibility.Hidden;
+            AddGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             this.drone = d;
             DataContext = d;
@@ -58,7 +58,7 @@ namespace PL
         {
             bool error = false;
             string errorMessage = "A new drone could not be created for the following reasons:\n";
-            if (Validation.GetErrors(ID).Any())
+            if (Validation.GetErrors(ID).Any()) //adding errors to error message
             {
                 error = true;
                 errorMessage += "ID needs to be an int!\n";
@@ -84,7 +84,7 @@ namespace PL
                 MessageBox.Show(errorMessage);
                 return;
             }
-            drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).location;
+            drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).location; //getting initial station's location
             try
             {
                 bl.Create<BO.Drone>(drone);
@@ -136,7 +136,7 @@ namespace PL
             {
                 var w = new InputWindow();
                 double hours = 0;
-                if (w.ShowDialog() == false && w.release)
+                if (w.ShowDialog() == false && w.release) //if a valid number of hours was entered
                     hours = w.time;
                 else
                     return;
@@ -152,7 +152,7 @@ namespace PL
                 MessageBox.Show("Released Drone from Charge!");
                 s = true;
             }
-            if (s)
+            if (s) //if the drone's data was changed within the window, get updated drone
             {
                 int id = drone.Id;
                 drone = bl.Request<BO.Drone>(id);
@@ -165,8 +165,8 @@ namespace PL
             bool s = false;
             if(Delivery.SelectedValue == "Open Parcel Window")
             {
-                if (drone.Parcel != null)
-                    new ParcelWindow(drone.Parcel).Show();
+                if (drone.Parcel != null) //if the drone is assigned to a parcel
+                    new ParcelWindow(bl, bl.Request<BO.Parcel>(drone.Parcel.Id)).Show();
                 else
                     MessageBox.Show("There's no parcel assigned to the drone");
             }
@@ -214,7 +214,7 @@ namespace PL
                 Parcel.Text = "N/A";
                 s = true;
             }
-            if(s)
+            if(s) //if the drone's data was changed within the window, get updated drone
             { 
                 int id = drone.Id;
                 drone = bl.Request<BO.Drone>(id);
@@ -228,7 +228,7 @@ namespace PL
             this.Close();
         }
 
-        private void Delivery_DropDownClosed(object sender, EventArgs e)
+        private void Delivery_DropDownClosed(object sender, EventArgs e) //when combobox dropdown is closed, change the displayed selected item 
         {
             Delivery.SelectedItem = Delivery.Items.GetItemAt(0);
         }

@@ -30,7 +30,7 @@ namespace PL
         private void Employee_log(object sender, RoutedEventArgs e)
         {
             var w = new CodeWindow();
-            if (w.ShowDialog() == false && w.correct)
+            if (w.ShowDialog() == false && w.correct) //if the correct code was entered, open list window
                 new DroneListWindow(bl).Show();
             else
                 MessageBox.Show("The Correct Code was not Entered");
@@ -38,12 +38,12 @@ namespace PL
 
         private void Customer_log(object sender, RoutedEventArgs e)
         {
-
+            new CLoginWindow(bl).Show();
         }
 
         private void Customer_sign(object sender, RoutedEventArgs e)
         {
-
+            new CustomerWindow(bl).Show();
         }
     }
 }
