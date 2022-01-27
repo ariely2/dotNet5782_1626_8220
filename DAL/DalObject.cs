@@ -45,12 +45,6 @@ namespace Dal
                         //id already exist
                         if (DataSource.Stations.Exists(x => x.Id == s.Id))
                             throw new AlreadyExistException("Station's id already exist\n");
-                        //invalid latitude
-                        if (s.Location.Latitude < -90 || s.Location.Latitude > 90)
-                            throw new Exception("Invalid Latitude. Must be between -90 and 90\n");
-                        //inalid longitude
-                        if (s.Location.Longitude < -180 || s.Location.Latitude > 180)
-                            throw new Exception("Invalid Latitude. Must be between -180 and 180\n");
                         //station with negative charge slots
                         if (s.ChargeSlots < 0)
                             throw new NotPossibleException("A Station can't have a negative number of available slots\n");
