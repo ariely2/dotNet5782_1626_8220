@@ -370,12 +370,11 @@ namespace ConsoleUI_BL
         }
         static void DroneRelease()
         {
-            Console.WriteLine("Enter Id and hours of charging");
+            Console.WriteLine("Enter Id");
             try
             {
                 int id = InputInt();
-                double hours = InputDouble();
-                bl.ReleaseDrone(id, hours);
+                bl.ReleaseDrone(id);
             }
             catch (Exception ex)
             {

@@ -17,6 +17,7 @@ namespace DO
         //Station id
         public int StationId { get; set; }
 
+        public DateTime Start { get; set; }
         /// <summary>
         /// Override the function ToString in class Object
         /// </summary>
