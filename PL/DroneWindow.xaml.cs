@@ -280,29 +280,19 @@ namespace PL
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-          //  bl.Simulator(drone.Id, Worker_Progress, );
-            for (int i = 1; i ==1;)
-            {
-                if (worker.CancellationPending == true)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                else
-                {
-                    // Perform a time consuming operation and report progress.
-                    System.Threading.Thread.Sleep(1000);
-                    //worker.ReportProgress(i * 100 / length);
-                }
-            }
+            bl.Simulator(drone.Id, ()=> worker.ReportProgress(1), ()=> worker.CancellationPending);
         }
         private void Worker_Progress(object sender, ProgressChangedEventArgs e)
         {
+            int id = drone.Id;
+            drone = bl.Request<BO.Drone>(id);
+            DataContext = drone;
+            Parcel_Details();
         }
 
         private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
+            
         }
-
     }
 }

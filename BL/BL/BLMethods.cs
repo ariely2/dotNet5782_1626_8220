@@ -398,7 +398,7 @@ namespace BL
             if (d.Status != DroneStatuses.Available)
                 throw new DroneIsntAvailableException("drone isn't available\n");
 
-            IEnumerable<Parcel> allParcels = RequestList<ParcelToList>(x => x.Status == ParcelStatuses.Created && (int)x.Weight > (int)d.MaxWeight).Select(p => Request<Parcel>(p.Id)); //getting list of all parcels
+            IEnumerable<Parcel> allParcels = RequestList<ParcelToList>(x => x.Status == ParcelStatuses.Created && (int)x.Weight <= (int)d.MaxWeight).Select(p => Request<Parcel>(p.Id)); //getting list of all parcels
 
             allParcels = from p in allParcels
                          orderby p.Priority descending, p.Weight descending, Location.distance(d.Location, GetCustomerLocation(p.Sender.Id))
@@ -451,9 +451,8 @@ namespace BL
             //change data in list drones in bl, and dal
             lock (dal)
             {
-                dal.DeliverParcel(d.Parcel.Id);//called function in dal
                 a.Battery -= MinBattery(Location.distance(d.Location, d.Parcel.Destination), d.Id);//update drone's battery
-                //a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity); //rounding the battery so it won't look ugly
+                dal.DeliverParcel(d.Parcel.Id);//called function in dal
                 a.ParcelId = null;//update drone's parcel to null, because the drone isn't assigned to any parcel right now.
                 a.Location = d.Parcel.Destination;//update drone's location to receiver location
                 a.Status = DroneStatuses.Available;//change drone status to available
@@ -479,11 +478,10 @@ namespace BL
 
             lock (dal)
             {
-                dal.PickUpParcel(d.Parcel.Id);//update data in dals
                 DroneToList a = Drones.Find(x => x.Id == id);//get drone from bl
                 Location sender = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
                 a.Battery -= MinBattery(Location.distance(d.Location, sender), d.Id);//update drone's battery
-                //a.Battery = Math.Round(a.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+                dal.PickUpParcel(d.Parcel.Id);//update data in dals
                 a.Location = sender;//update drone's location
             }
         }
@@ -508,8 +506,8 @@ namespace BL
             {
                 d.Status = DroneStatuses.Available;//update drone status
                 var c = dal.Request<DO.DroneCharge>(d.Id);
-                double hours = (DateTime.Now - c.Start).TotalHours;
-                d.Battery += info[4] * hours;//updating drone's battery
+                double minutes = (DateTime.Now - c.Start).TotalMinutes;
+                d.Battery += info[4] * minutes;//updating drone's battery
                                          // d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
                 if (d.Battery > 100) //if battery became bigger than 100, lower it to 100
                     d.Battery = 100;
@@ -532,30 +530,21 @@ namespace BL
 
             if (d.Status != DroneStatuses.Available) //the drone isn't available
                 throw new DroneIsntAvailableException("Can't send the drone to charge\n");
-            List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
-            stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations that aren't available
-            stations.OrderBy(x => Location.distance(d.Location, x.location)); //ordering stations by distance
-            bool found = false;
-            while (!found && stations.Count != 0) //while there are stations left in list and no station was found
-            {
-                double distance = Location.distance(d.Location, stations.Last().location);
-                if (MinBattery(distance, d.Id) <= d.Battery) //if drone has enough battery to get to station
-                {
-                    lock (dal)
-                    {
-                        found = true;
-                        d.Battery -= MinBattery(distance, d.Id);
-                        //d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
-                        d.Location = stations.Last().location;
-                        d.Status = DroneStatuses.Maintenance;
-                        dal.ChargeDrone(d.Id, stations.Last().Id); //is this it?
-                    }
-                }
-                else
-                    stations.RemoveAt(stations.Count - 1); //if the drone doesn't have enough battery to get to station, remove station from list 
-            }
-            if (!found) //the function didn't find a station with available slots
+            var s = ClosestAvailableStation(d.Location);
+            if (s == default(Station)) //the function didn't find a station with available slots
                 throw new NotFoundException("Not found a station with available slots\n");
+            double distance = Location.distance(d.Location, s.location);
+            if (MinBattery(distance, d.Id) <= d.Battery) //if drone has enough battery to get to station
+            {
+                lock (dal)
+                {
+                    d.Battery -= MinBattery(distance, d.Id);
+                    //d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
+                    d.Location = s.location;
+                    d.Status = DroneStatuses.Maintenance;
+                    dal.ChargeDrone(d.Id, s.Id); //is this it?
+                }
+            }
         }
 
         /// <summary>
@@ -683,13 +672,10 @@ namespace BL
             else //if a parcel is assigned to drone
             {
                 Parcel p = Request<Parcel>((int)d.ParcelId);
-                if (p.Delivered == null) //if parcel wasn't delivered yet (distance is the distance to pick up parcel)
+                if (p.PickedUp == null) //if parcel wasn't picked up yet (distance is the distance to pick up parcel)
                     return info[0] * distance;
                 else // distance is distance to deliver parcel
-                {
-                    double a = info[((int)p.Weight) + 1] * distance;
                     return info[((int)p.Weight) + 1] * distance; //return battery corresponding to parcel's weight and distance
-                }
             }
         }
         /// <summary>
@@ -710,6 +696,15 @@ namespace BL
         {
             var s = Request<Station>(id);
             return s.location;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public Station ClosestAvailableStation(Location d)
+        {
+            List<Station> stations = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).ToList(); //getting list of all stations
+            stations.RemoveAll(x => x.AvailableSlots == 0); //removing stations that aren't available
+            stations.OrderBy(x => Location.distance(d, x.location)); //ordering stations by distance
+            return stations.FirstOrDefault();
         }
         #endregion InternalMethod
 

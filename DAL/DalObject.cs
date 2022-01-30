@@ -339,7 +339,6 @@ namespace Dal
                     break;
                 default:
                     throw new NotSupportException("Not support" + typeof(T).Name + "struct\n");
-
             }
         }
         #endregion Delete

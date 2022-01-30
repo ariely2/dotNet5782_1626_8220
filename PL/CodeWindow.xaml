@@ -7,7 +7,13 @@
         mc:Ignorable="d"
         Title="CodeWindow" Height="200" Width="300">
     <Grid>
-        <Label Content="Please Enter Secret Code" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Background="DarkSlateGray" Foreground="MintCream"/>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFDAE5B9"/>
+                <GradientStop Color="#FFA8DADC" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Label Content="Please Enter Secret Code" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Background="#B9D9E4"/>
         <TextBox x:Name ="Code" HorizontalAlignment="Center" Margin="0,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="166" Height="31"/>
         <Button Content="Enter" HorizontalAlignment="Center" Margin="0,121,0,0" VerticalAlignment="Top" Height="25" Width="90" Click="Enter_Click"/>
     </Grid>

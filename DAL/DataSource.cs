@@ -32,9 +32,7 @@ namespace Dal
             internal static double LightUse = 2; //a drone carrying light weight uses 2% battery per kilometer
             internal static double MediumUse = 3; //a drone carrying medium weight uses 2.5% battery per kilometer
             internal static double HeavyUse = 4; //a drone carrying heavy weight uses 3% battery per kilometer
-            internal static double ChargeRate = 15; //a drone charges 25% per hour
-
-
+            internal static double ChargeRate = 100; //a drone charges 100% per minute, change later?
         }
         /// <summary>
         /// the function Initial the database.
