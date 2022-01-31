@@ -9,6 +9,7 @@ namespace DalApi
     /// </summary>
     public interface IDal
     {
+        void Update<T>(int id, T t) where T : struct;
         void Create<T>(T t) where T : struct;
         public T Request<T>(int id) where T : struct;
         double[] GetBatteryUsageInfo();

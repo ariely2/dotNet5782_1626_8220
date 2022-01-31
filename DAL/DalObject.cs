@@ -301,6 +301,14 @@ namespace Dal
             DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
             Delete<DroneCharge>(droneId);
         }
+        public void Update<T>(int id, T t) where T:struct
+        {
+            Delete<T>(id);
+            if (typeof(T).Name == "Parcel")
+                DataSource.Parcels.Add((Parcel)Convert.ChangeType(t, typeof(Parcel)));
+            else
+                Create<T>(t);
+        }
         #endregion Update
         #region Delete
         /// <summary>

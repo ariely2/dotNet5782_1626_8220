@@ -101,6 +101,7 @@ namespace PL
             this.Close();
         }
 
+        //unhandled bug, cannot add customer
         private void Window_Activated(object sender, EventArgs e)
         {
             customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
