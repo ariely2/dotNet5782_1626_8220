@@ -298,7 +298,7 @@ namespace BL
             }
             catch (DO.NotExistException ex)//bug: exception unhandled
             {
-                throw new NotExistException(ex.Message, ex);
+                //throw new NotExistException(ex.Message, ex);
             }
             catch (Exception ex)
             {

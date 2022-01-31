@@ -24,7 +24,7 @@ namespace Dal
             {
                 root.Save(dir + filePath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new DO.XMLFileLoadCreateException(filePath, $"fial to create xml file: {filePath}", ex);
             }
@@ -37,21 +37,22 @@ namespace Dal
                     return XElement.Load(dir + filePath);
                 else
                 {
-                    XElement root = new XElement(dir + filePath);
+                    XElement root = new XElement(filePath.Split('.')[0]);
                     root.Save(dir + filePath);
                     return root;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new DO.XMLFileLoadCreateException(filePath, $"fail to load xml file: {filePath}", ex);
             }
-            
+
         }
-        
+
         #endregion SaveLoadWithXElement
+
         #region SaveLoadWithXMLSerializer
-        public static void SaveListToXMLSerializer<T>(List<T> list,string filePath)
+        public static void SaveListToXMLSerializer<T>(List<T> list, string filePath)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace Dal
                 x.Serialize(file, list);
                 file.Close();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new DO.XMLFileLoadCreateException(filePath, $"fail to create xml file: {filePath}", ex);
             }
@@ -78,14 +79,16 @@ namespace Dal
                     file.Close();
                     return list;
                 }
-                else
-                    return new List<T>();
+                else {
+                    SaveListToXMLSerializer<T>(new List<T>(), filePath);
+                    return LoadListFromXMLSerializer<T>(filePath);
+                } 
             }
             catch (Exception ex)
             {
                 throw new DO.XMLFileLoadCreateException(filePath, $"fail to load xml file: {filePath}", ex);
             }
         }
-            #endregion SaveLoadWithXMLSerializer
-        }
+        #endregion SaveLoadWithXMLSerializer
     }
+}

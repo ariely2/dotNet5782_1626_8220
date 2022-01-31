@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfStation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Station>
+    <Id>12345</Id>
+    <Name>adf</Name>
+    <Location>Latitude:  1° 0' 0.000"N
+Longitude: 1° 0' 0.000"E</Location>
+    <ChargeSlots>3</ChargeSlots>
+  </Station>
+</ArrayOfStation>

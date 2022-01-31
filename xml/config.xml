@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configData>
   <parcelID>10000000</parcelID>
-  <battery>
+  <Battery>
     <availalbeUse>1</availalbeUse>
     <lightUse>2</lightUse>
     <mediumUse>3</mediumUse>
     <heavyUse>4</heavyUse>
     <chargeRate>15</chargeRate>
-  </battery>
+  </Battery>
 </configData>
