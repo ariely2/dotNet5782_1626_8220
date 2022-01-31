@@ -21,7 +21,6 @@ namespace BO
         /// battery of the drone
         /// </summary>
         public double Battery { get; set; }
-
         /// <summary>
         /// override the fucntion ToString
         /// </summary>

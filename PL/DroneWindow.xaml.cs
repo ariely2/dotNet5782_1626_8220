@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Text;
+//using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+//using System.Windows.Data;
+//using System.Windows.Documents;
+//using System.Windows.Input;
+//using System.Windows.Media;
+//using System.Windows.Media.Imaging;
+//using System.Windows.Shapes;
+using System.ComponentModel;
 using BlApi;
 namespace PL
 {
@@ -21,6 +22,7 @@ namespace PL
     {
         BO.Drone drone;
         private IBL bl;
+        BackgroundWorker worker;
         private bool close = false;
         public DroneWindow(IBL b)
         {
@@ -42,10 +44,7 @@ namespace PL
             bl = b;
             this.drone = d;
             DataContext = d;
-            if(drone.Parcel != null)
-                Parcel.Text = drone.Parcel.Id.ToString();
-            if (Parcel.Text == string.Empty)
-                Parcel.Text = "N/A";
+            Parcel_Details();
             Charging.Items.Add("Send To Charge");
             Charging.Items.Add("Release From Charge");
             Delivery.Items.Add("Open Parcel Window");
@@ -134,15 +133,9 @@ namespace PL
             }
             if (Charging.SelectedValue == "Release From Charge")
             {
-                var w = new InputWindow();
-                double hours = 0;
-                if (w.ShowDialog() == false && w.release) //if a valid number of hours was entered
-                    hours = w.time;
-                else
-                    return;
                 try
                 {
-                    bl.ReleaseDrone(drone.Id, hours);
+                    bl.ReleaseDrone(drone.Id);
                 }
                 catch (Exception ex)
                 {
@@ -157,6 +150,23 @@ namespace PL
                 int id = drone.Id;
                 drone = bl.Request<BO.Drone>(id);
                 DataContext = drone;
+            }
+        }
+        private void Parcel_Details()
+        {
+            if (drone.Parcel != null)
+            {
+                Parcel.Text = drone.Parcel.Id.ToString();
+                Priority.Text = drone.Parcel.Priority.ToString();
+                Weight.Text = drone.Parcel.Weight.ToString();
+                Distance.Text = Math.Round(drone.Parcel.Distance, 3).ToString();
+            }
+            else
+            {
+                Parcel.Text = "N/A";
+                Priority.Text = "N/A";
+                Weight.Text = "N/A";
+                Distance.Text = "N/A";
             }
         }
 
@@ -182,7 +192,6 @@ namespace PL
                     return;
                 }
                 MessageBox.Show("Assigned Parcel to Drone!");
-                Parcel.Text = bl.Request<BO.Drone>(drone.Id).Parcel.Id.ToString();
                 s = true;
             }
             if (Delivery.SelectedValue == "Pick Up Parcel")
@@ -211,7 +220,6 @@ namespace PL
                     return;
                 }
                 MessageBox.Show("Delivered Parcel!");
-                Parcel.Text = "N/A";
                 s = true;
             }
             if(s) //if the drone's data was changed within the window, get updated drone
@@ -219,6 +227,7 @@ namespace PL
                 int id = drone.Id;
                 drone = bl.Request<BO.Drone>(id);
                 DataContext = drone;
+                Parcel_Details();
             }
         }
 
@@ -236,6 +245,54 @@ namespace PL
         private void Charging_DropDownClosed(object sender, EventArgs e)
         {
             Charging.SelectedItem = Charging.Items.GetItemAt(0);
+        }
+
+        private void Auto_Click(object sender, RoutedEventArgs e)
+        {
+            if (Simulator.Visibility == Visibility.Visible)
+            {
+                worker = new BackgroundWorker();
+                worker.DoWork += Worker_DoWork;
+                worker.ProgressChanged += Worker_Progress;
+                worker.RunWorkerCompleted += Worker_Completed;
+                worker.WorkerReportsProgress = true;
+                worker.WorkerSupportsCancellation = true;
+                Close.Visibility = Visibility.Hidden;
+                Update_m.Visibility = Visibility.Hidden;
+                Charging.Visibility = Visibility.Hidden;
+                Delivery.Visibility = Visibility.Hidden;
+                Simulator.Visibility = Visibility.Hidden;
+                Normal.Visibility = Visibility.Visible;
+                worker.RunWorkerAsync(); //maybe create simulator?
+            }
+            else
+            {
+                worker.CancelAsync();
+                Close.Visibility = Visibility.Visible;
+                Update_m.Visibility = Visibility.Visible;
+                Charging.Visibility = Visibility.Visible;
+                Delivery.Visibility = Visibility.Visible;
+                Simulator.Visibility = Visibility.Visible;
+                Normal.Visibility = Visibility.Hidden;
+            }
+        }
+
+
+        private void Worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            bl.Simulator(drone.Id, ()=> worker.ReportProgress(1), ()=> worker.CancellationPending);
+        }
+        private void Worker_Progress(object sender, ProgressChangedEventArgs e)
+        {
+            int id = drone.Id;
+            drone = bl.Request<BO.Drone>(id);
+            DataContext = drone;
+            Parcel_Details();
+        }
+
+        private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            
         }
     }
 }

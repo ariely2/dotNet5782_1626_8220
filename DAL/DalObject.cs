@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using DalApi;
 using DO;
 namespace Dal
@@ -31,6 +32,7 @@ namespace Dal
         /// </summary>
         /// <typeparam name="T">type of object</typeparam>
         /// <param name="t">the object</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Create<T>(T t) where T : struct
         {
 
@@ -107,6 +109,7 @@ namespace Dal
         /// <typeparam name="T">type of the requested object is T</typeparam>
         /// <param name="id">id of the object</param>
         /// <returns>return the object</returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public T Request<T>(int id) where T : struct
         {
             T ans;
@@ -147,6 +150,7 @@ namespace Dal
         /// </summary>
         /// <typeparam name="T">type of the requested list</typeparam>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public IEnumerable<T> RequestList<T>(Expression<Func<T, bool>> ex = null) where T : struct
         {
             switch (typeof(T).Name)
@@ -172,6 +176,7 @@ namespace Dal
         /// <param name="location">the specific location</param>
         /// <param name="id">id of the object</param>
         /// <returns>reutrn the distance between the object and the location</returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public double GetDistanceFrom<T>(Location location, int id) where T : struct
         {
             //in case of exception, request function would send it
@@ -194,6 +199,7 @@ namespace Dal
         /// the function return a list of battery usage info
         /// </summary>
         /// <returns>array of double about battery usage info</returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public double[] GetBatteryUsageInfo()
         {
             double[] info =
@@ -204,6 +210,8 @@ namespace Dal
                     DataSource.Config.ChargeRate };
             return info;
         }
+        //need to move it to bl
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public int[] Receivers()
         {
             IEnumerable<Parcel> d = RequestList<Parcel>(x => x.Delivered != null); //all delivered parcels
@@ -236,6 +244,7 @@ namespace Dal
         /// throw exception if the parcel isn't exist or if we didn't assign a drone to the parcel
         /// </summary>
         /// <param name="parcelId">id of the parcel</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void PickUpParcel(int parcelId)
         {
             //if parcel isn't exist, request function would send an exception
@@ -249,6 +258,7 @@ namespace Dal
         /// if the parcel isn't exists or if the drone didn't pick up the parcel, or assign to the parcel then throw an exception, 
         /// </summary>
         /// <param name="parcelId">id of the parcel</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void DeliverParcel(int parcelId)
         {
             //if parcel isn't exist, request function would send an exception
@@ -263,13 +273,14 @@ namespace Dal
         /// </summary>
         /// <param name="droneId">id of the drone</param>
         /// <param name="stationId">id of the station</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void ChargeDrone(int droneId, int stationId)
         {
             //if station or drone isn't exist, request function would send an exception
             Station s = Request<Station>(stationId);
             Drone d = Request<Drone>(droneId);
             s.ChargeSlots--;
-            DataSource.DroneCharges.Add(new DroneCharge() { DroneId = d.Id, StationId = s.Id });
+            DataSource.DroneCharges.Add(new DroneCharge() { DroneId = d.Id, StationId = s.Id, Start = DateTime.Now});
             DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
         }
 
@@ -278,6 +289,7 @@ namespace Dal
         /// The function releases the drone from the station where it is currently charged
         /// </summary>
         /// <param name="droneId">id of drone to release</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void ReleaseDrone(int droneId)
         {
             //if the drone isn't exist, request function would send an exception  
@@ -297,6 +309,7 @@ namespace Dal
         /// </summary>
         /// <typeparam name="T">type of the object (station, customer, drone, parcel)</typeparam>
         /// <param name="id">id of the object</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Delete<T>(int id) where T : struct
         {
             //if there is an exception of id isn't exist, request function would send it
@@ -325,10 +338,8 @@ namespace Dal
                     break;
                 default:
                     throw new NotSupportException("Not support" + typeof(T).Name + "struct\n");
-
             }
         }
-
         #endregion Delete
     }
 }

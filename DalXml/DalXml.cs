@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using DalApi;
 using DO;
@@ -30,7 +31,7 @@ namespace Dal
             XMLTools.LoadListFromXMLSerializer<Parcel>( pathes["Parcel"]);
             XMLTools.LoadListFromXMLSerializer<Customer>(pathes["Customer"]);
         }
-
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void AssignParcel(int ParcelId, int DroneId)
         {
             Parcel p = Request<Parcel>(ParcelId);
@@ -41,6 +42,7 @@ namespace Dal
             Update<Parcel>(ParcelId, p);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void ChargeDrone(int DroneId, int StationId)
         {
             Station s = Request<Station>(StationId);
@@ -50,6 +52,7 @@ namespace Dal
             Update<Station>(StationId, s);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Create<T>(T t) where T : struct
         {
             XElement xml = XMLTools.LoadListFromXElement(pathes[typeof(T).Name]);
@@ -78,6 +81,7 @@ namespace Dal
             XMLTools.SaveListToXElement(xml, pathes[typeof(T).Name]);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Delete<T>(int id) where T : struct
         {
             var xml = XMLTools.LoadListFromXMLSerializer<T>(pathes[typeof(T).Name]);
@@ -85,6 +89,7 @@ namespace Dal
             XMLTools.SaveListToXMLSerializer<T>(xml,pathes[typeof(T).Name]);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void DeliverParcel(int ParcelId)
         {
             Parcel p = Request<Parcel>(ParcelId);
@@ -92,6 +97,7 @@ namespace Dal
             Update<Parcel>(ParcelId, p);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public double[] GetBatteryUsageInfo()
         {
             var xml = XMLTools.LoadListFromXElement("config.xml");
@@ -103,12 +109,14 @@ namespace Dal
             return info;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public double GetDistanceFrom<T>(Location location, int id) where T : struct
         {
             T t = Request<T>(id);
             return Location.distance((Location)t.GetType().GetProperty("Location").GetValue(t),location);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void PickUpParcel(int ParcelId)
         {
             Parcel p = Request<Parcel>(ParcelId);
@@ -116,6 +124,7 @@ namespace Dal
             Update<Parcel>(ParcelId, p);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public int[] Receivers()
         {
             IEnumerable<Parcel> d = RequestList<Parcel>(x => x.Delivered != null); //all delivered parcels
@@ -123,6 +132,8 @@ namespace Dal
             int[] t = d.Select(x => x.ReceiverId).ToArray(); //getting receiver ids
             return t.Distinct().ToArray(); //return array without duplicates
         }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void ReleaseDrone(int DroneId)
         {
             //if the drone isn't exist, request function would send an exception  
@@ -146,7 +157,7 @@ namespace Dal
             xml.Add(s);
             XMLTools.SaveListToXElement(xml, pathes[typeof(T).Name]);
 
-        }
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public T Request<T>(int id) where T : struct
         {
             List<T> xml = XMLTools.LoadListFromXMLSerializer<T>(pathes[typeof(T).Name]);
@@ -165,6 +176,7 @@ namespace Dal
             throw new NotSupportException("Not support this struct\n");
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public IEnumerable<T> RequestList<T>(Expression<Func<T, bool>> ex = null) where T : struct
         {
             return XMLTools.LoadListFromXMLSerializer<T>(pathes[typeof(T).Name]).FindAll(ex == null ? x => true : ex.Compile().Invoke).AsEnumerable<T>();

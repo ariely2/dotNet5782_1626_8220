@@ -87,7 +87,7 @@ namespace PL
 
         private void AddParcel(object sender, RoutedEventArgs e)
         {
-            new ParcelWindow(bl); //opening window to add parcel
+            new ParcelWindow(bl).Show(); //opening window to add parcel
         }
     }
 }
