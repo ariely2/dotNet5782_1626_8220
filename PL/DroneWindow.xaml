@@ -107,7 +107,7 @@
             </ComboBox>
             <Button x:Name="Close" Content="Close" FontSize="15" Grid.Column="3" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="7" VerticalAlignment="Top" Width="92" Height="27" Click="Close_Click"/>
             <Button x:Name="Simulator" Content="Automatic" FontSize="15" Grid.Column="3" HorizontalAlignment="Left" Margin="22,11,0,0" Grid.Row="5" VerticalAlignment="Top" Width="92" Height="27" Click="Auto_Click" Grid.RowSpan="2"/>
-            <Button x:Name="Normal" Content="Manual" FontSize="22" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Width="136" Height="40" Click="Auto_Click" Visibility="Hidden" Margin="0,4,0,0" Grid.RowSpan="2"/>
+            <Button x:Name="Normal" Content="Manual" FontSize="22" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Top" Width="136" Height="40" Click="Manual_Click" Visibility="Hidden" Margin="0,4,0,0" Grid.RowSpan="2"/>
         </Grid>
     </Grid>
 </Window>

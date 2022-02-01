@@ -119,5 +119,14 @@ namespace PL
         {
             this.Close();
         }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            if(!parcel.Equals(default(BO.Parcel)))
+            {
+                parcel = bl.Request<BO.Parcel>(parcel.Id); //getting updated version of station
+                DataContext = parcel;
+            }
+        }
     }
 }

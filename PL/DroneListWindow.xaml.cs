@@ -74,7 +74,6 @@ namespace PL
             else if (Tabs.SelectedIndex == 3)
                 Parcel_Filter();
         }
-
         private void Tab_Changed(object sender, SelectionChangedEventArgs e)
         {
             if (e.Source is TabControl) //updating selected tab when switching from another tab
@@ -108,7 +107,7 @@ namespace PL
         }
         private void DroneDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(DronesListView.SelectedItem != null) //if a drone was selected
+            if (DronesListView.SelectedItem != null) //if a drone was selected
                 new DroneWindow(bl, bl.Request<BO.Drone>(((BO.DroneToList)DronesListView.SelectedItem).Id)).Show();
         }
 
