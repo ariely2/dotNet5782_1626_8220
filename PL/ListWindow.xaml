@@ -1,12 +1,11 @@
-﻿<Window
+﻿<Window x:Class="PL.ListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
-        xmlns:System="clr-namespace:System;assembly=System.Runtime"  x:Class="PL.DroneListWindow"
         mc:Ignorable="d"
-        Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="590">
+        Title="ListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="590">
     <TabControl x:Name="Tabs" Grid.ColumnSpan="3" SelectionChanged="Tab_Changed">
         <TabItem Header="Drone List"  FontSize="31">
             <Grid x:Name="DroneGrid" Height="520" Width="815">
@@ -27,7 +26,6 @@
                         <ColumnDefinition Width="227*"/>
                         <ColumnDefinition Width="588*"/>
                     </Grid.ColumnDefinitions>
-                    <!--<Label Content="Filter Drone list:" FontSize="30" Margin="113,17,384,61" VerticalContentAlignment="Center" Foreground="MistyRose" RenderTransformOrigin="0.59,0.47"/>-->
                     <Label Content="Status" Foreground="#1d3557" Margin="218,17,185,61" FontSize="26" HorizontalContentAlignment="Center" Grid.Column="1"/>
                     <ComboBox x:Name="StatusSelector" SelectionChanged ="Drone_Filter" Margin="218,70,185,0" FontSize="18" Width="185" Grid.Column="1"/>
                     <Label Content="Max Weight" Margin="403,17,0,52" Foreground="#1d3557" FontSize="26" HorizontalContentAlignment="Center" Grid.Column="1"/>
@@ -157,7 +155,7 @@
                             <GradientStop Color="#FFD9E4B9" Offset="1"/>
                         </LinearGradientBrush>
                     </Grid.Background>
-                    <Button Content="Group by Sender" Margin="10,10,536,58" Click="Group_Sender"/>
+                    <Button x:Name="sender_g" Content="Group by Sender" Margin="10,10,536,58" Click="Group_Sender"/>
                     <Button Content="Group by Receiver" Margin="10,63,536,10" Click="Group_Receiver"/>
                     <Label Content="Priority" Margin="290,22,350,48" FontSize="26" HorizontalContentAlignment="Center"/>
                     <ComboBox x:Name="Priority_p" SelectionChanged ="Parcel_Filter" Margin="290,69,350,1" FontSize="18" Width="175"/>
@@ -203,10 +201,22 @@
                 <Grid x:Name ="DownGrid_p" Margin="0,455,0,-5" Background="DarkSlateGray" Width="auto" Grid.ColumnSpan="3">
                     <Button Content="Add Parcel" Click ="AddParcel" FontSize="35" Margin="535,0,0,-3" Width="280"/>
                     <Button Content="Close" Click ="Close" FontSize="35" Margin="0,0,534,0" />
-                    <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
+                    <Label VerticalAlignment="Center" FontFamily="Bauhaus 93" HorizontalContentAlignment="Center" FontSize="42" Background="#a8dadc" Height="70" Margin="281,0,280,0"/>
+                    <Image Stretch="Uniform" Margin="323,0,322,0">
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup Opacity="0.6">
+                                        <!-- This image is set to fill a 75 by 75 rectangular area. -->
+                                        <ImageDrawing Rect="0,0,75,75" ImageSource="C:\Users\ariel\source\repos\ariely2\dotNet5782_1626_8220\Pictures\Drone2.jpg"/>
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                    <Label Content="DelivAir" VerticalAlignment="Center" FontFamily="Bauhaus 93" Foreground="#e63946" HorizontalContentAlignment="Center" FontSize="42" Height="70" Margin="281,0,280,0"/>
                 </Grid>
             </Grid>
-
         </TabItem>
     </TabControl>
 </Window>

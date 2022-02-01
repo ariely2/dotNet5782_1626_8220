@@ -86,16 +86,6 @@ namespace PL
                 error = true;
                 errorMessage += "Receiver ID needs to be an int!\n";
             }
-            //if (Weight.SelectedValue == null)
-            //{
-            //    error = true;
-            //    errorMessage += "A Weight must be selected!\n";
-            //}
-            //if (Priority.SelectedItem == null)//maybe selected value?
-            //{
-            //    error = true;
-            //    errorMessage += "A Priority must be Selected!\n";
-            //}
             errorMessage += "\nPlease Try Again.";
             if (error)
             {
@@ -122,7 +112,7 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if(!parcel.Equals(default(BO.Parcel)))
+            if (AddGrid.Visibility == Visibility.Hidden)
             {
                 parcel = bl.Request<BO.Parcel>(parcel.Id); //getting updated version of station
                 DataContext = parcel;

@@ -31,7 +31,7 @@ namespace PL
         {
             var w = new CodeWindow();
             if (w.ShowDialog() == false && w.correct) //if the correct code was entered, open list window
-                new DroneListWindow(bl).Show();
+                new ListWindow(bl).Show();
             else
                 MessageBox.Show("The Correct Code was not Entered");
         }
