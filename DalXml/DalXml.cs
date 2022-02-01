@@ -55,6 +55,9 @@ namespace Dal
                     //station with negative charge slots
                     if (s.ChargeSlots < 0)
                         throw new NotPossibleException("A Station can't have a negative number of available slots\n");
+                    //check location
+                    if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
+                        throw new OutOfBoundsException("Station location out of bounds\n");
                     //add station
                     Stations.Add(s);
 
@@ -85,6 +88,9 @@ namespace Dal
                     if (Customers.Exists(x => x.Id == c.Id))
                         throw new AlreadyExistException("Customer's id already exists\n");
 
+                    //check location
+                    if (c.Location.Longitude > 80 || c.Location.Longitude < -180 || c.Location.Latitude < -90 || c.Location.Latitude > 90)
+                        throw new OutOfBoundsException("Station location out of bounds\n");
                     //add customer
                     Customers.Add(c);
                     XMLTools.SaveListToXMLSerializer<Customer>(Customers, pathes["Customer"]);

@@ -48,9 +48,9 @@ namespace Dal
                         //station with negative charge slots
                         if (s.ChargeSlots < 0)
                             throw new NotPossibleException("A Station can't have a negative number of available slots\n");
-
-                    if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
-                        throw new OutOfBoundsException("Station location out of bounds\n");
+                        //check location
+                    //if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
+                     //   throw new OutOfBoundsException($"Station location out of bounds. location is between: latitude:{Location.\n");
                         //add station
                         DataSource.Stations.Add(s);
                         break;

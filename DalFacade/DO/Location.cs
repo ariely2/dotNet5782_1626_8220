@@ -15,6 +15,8 @@ namespace DO
 		/// <summary>
 		/// longitude coordinate
 		/// </summary>
+		//public readonly double LongitudeLB = 35;
+
 		public double Longitude { set; get; }
 
 		/// <summary>
