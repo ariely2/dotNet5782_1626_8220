@@ -27,7 +27,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{1D4FF03D-D7F2-4955-9A2B-E9AEF128EDC3}"
 	ProjectSection(SolutionItems) = preProject
 		xml\config.xml = xml\config.xml
+		xml\Customers.xml = xml\Customers.xml
 		xml\dal-config.xml = xml\dal-config.xml
+		xml\DroneCharges.xml = xml\DroneCharges.xml
+		xml\Drones.xml = xml\Drones.xml
+		xml\Parcels.xml = xml\Parcels.xml
+		xml\Stations.xml = xml\Stations.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pictures", "Pictures", "{B8759970-5DB7-4C96-8943-FAC51C4703C6}"
+	ProjectSection(SolutionItems) = preProject
+		Pictures\Drone.jpg = Pictures\Drone.jpg
 	EndProjectSection
 EndProject
 Global

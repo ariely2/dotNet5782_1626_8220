@@ -226,18 +226,17 @@ namespace Dal
         /// the function connect parcel to a drone
         /// throw exceptions if the drone or the parcel aren't exist
         /// </summary>
-        /// <param name="parcelId">parcel's id</param>
-        /// <param name="droneId">drone's id</param>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void AssignParcel(int parcelId, int droneId)
+        /// <param name="ParcelId">parcel's id</param>
+        /// <param name="DroneId">drone's id</param>
+        public void AssignParcel(int ParcelId, int DroneId)
         {
             //if the drone or parcel isn't exist, request function would send an exception
-            Parcel p = Request<Parcel>(parcelId);
-            Drone d = Request<Drone>(droneId);
+            Parcel p = Request<Parcel>(ParcelId);
+            Drone d = Request<Drone>(DroneId);
             //update properties of the parcel
             p.Scheduled = DateTime.Now;
             p.DroneId = d.Id;
-            DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == parcelId)] = p;
+            DataSource.Parcels[DataSource.Parcels.FindIndex(p => p.Id == ParcelId)] = p;
         }
 
         /// <summary>
@@ -301,6 +300,14 @@ namespace Dal
             s.ChargeSlots++;
             DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
             Delete<DroneCharge>(droneId);
+        }
+        public void Update<T>(int id, T t) where T:struct
+        {
+            Delete<T>(id);
+            if (typeof(T).Name == "Parcel")
+                DataSource.Parcels.Add((Parcel)Convert.ChangeType(t, typeof(Parcel)));
+            else
+                Create<T>(t);
         }
         #endregion Update
         #region Delete

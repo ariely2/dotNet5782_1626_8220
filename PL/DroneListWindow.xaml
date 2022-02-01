@@ -46,7 +46,7 @@
                     </ListView.Background>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Model" Width="80" DisplayMemberBinding="{Binding Model}"/>
+                            <GridViewColumn Header="Model" Width="80" DisplayMemberBinding="{Binding Model}" />
                             <GridViewColumn Header="ID" Width="80" DisplayMemberBinding="{Binding Id}" />
                             <GridViewColumn Header="Max Weight" Width="115" DisplayMemberBinding="{Binding MaxWeight}" />
                             <GridViewColumn Header="Status" Width="150" DisplayMemberBinding="{Binding Status}" />

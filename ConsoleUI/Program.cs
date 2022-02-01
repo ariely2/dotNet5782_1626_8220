@@ -313,8 +313,9 @@ namespace ConsoleUI
                 ChargeSlots = InputInt(),
                 Location = new Location()
                 {
-                    Latitude = InputDouble(),
-                    Longitude = InputDouble()
+                    
+                    Longitude = InputDouble(),
+                    Latitude = InputDouble()
                 }
             });
         }

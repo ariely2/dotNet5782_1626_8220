@@ -303,7 +303,7 @@ namespace BL
             {
                 throw new NotSupportException(ex.Message, ex);
             }
-            catch (DO.NotExistException ex)//bug: exception unhandled
+            catch (DO.NotExistException ex)
             {
                 throw new NotExistException(ex.Message, ex);
             }
