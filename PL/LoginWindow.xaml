@@ -32,7 +32,7 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Content="Login To DelivAir" HorizontalContentAlignment="Center" FontSize="42" Background="#FFB9D9E4"/>
-        <Image Grid.Row="0" Grid.Column="1" Source="C:\Users\alon\source\repos\ariely2\dotNet5782_1626_8220\Pictures\Drone.jpg"/>
+        <Image Grid.Row="0" Grid.Column="1" Source="C:\Users\ariel\source\repos\ariely2\dotNet5782_1626_8220\Pictures\Drone.jpg"/>
         <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Login as Employee" Click="Employee_log" Style="{StaticResource ButtonStyle}">
             <Button.Resources>
                 <Style TargetType="Border">
