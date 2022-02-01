@@ -12,10 +12,47 @@
             <GradientStop Color="#FFA8DADC" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
+    <Window.Resources>
+        <Style x:Key = "ButtonStyle" TargetType = "Button">
+            <Setter Property = "FontSize" Value = "18" />
+            <Setter Property = "Margin" Value = "150,20,150,20" />
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="#f2cc8f"/>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Label Content="Login To DelivAir" Margin="105,0,104,0" VerticalAlignment="Top" FontSize="42" Background="#FFB9D9E4"/>
-        <Button Content="Login as Employee" Margin="159,140,158,0" VerticalAlignment="Top" Height="40" FontSize="18" Click="Employee_log"/>
-        <Button Content="Login as Customer" Margin="159,218,158,0" VerticalAlignment="Top" FontSize="18" Height="40" Click="Customer_log"/>
-        <Button Content="Register as Customer" Margin="159,313,158,0" VerticalAlignment="Top" FontSize="18" Height="40" Click="Customer_sign"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Content="Login To DelivAir" HorizontalContentAlignment="Center" FontSize="42" Background="#FFB9D9E4"/>
+        <Image Grid.Row="0" Grid.Column="1" Source="C:\Users\alon\source\repos\ariely2\dotNet5782_1626_8220\Pictures\Drone.jpg" />
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Login as Employee" Click="Employee_log" Style="{StaticResource ButtonStyle}">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="20"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button Grid.Row ="2" Grid.ColumnSpan="2" Content="Login as Customer" Click="Customer_log" Style="{StaticResource ButtonStyle}">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="20"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Register as Customer"  Click="Customer_sign" Style="{StaticResource ButtonStyle}">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="20"/>
+                </Style>
+            </Button.Resources>
+        </Button>
     </Grid>
 </Window>

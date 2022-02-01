@@ -118,6 +118,20 @@ namespace Dal
                     Parcels.Add(p);
                     XMLTools.SaveListToXMLSerializer<Parcel>(Parcels, pathes["Parcel"]);
                     break;
+                case DroneCharge dc:
+                    var DroneCharges = XMLTools.LoadListFromXMLSerializer<DroneCharge>(pathes["DroneCharge"]);
+
+                    if (DroneCharges.Exists(x => x.DroneId == dc.DroneId))
+                        throw new NotPossibleException($"Drone with id: {dc.DroneId} already charging\n");
+
+                    DroneCharges.Add(dc);
+                    var station = Request<Station>(dc.StationId);
+                    if (station.ChargeSlots == 0)
+                        throw new NotPossibleException($"Station with id: {station.Id} is full\n");
+                    station.ChargeSlots--;
+                    Update<Station>(dc.StationId, station);
+                    XMLTools.SaveListToXMLSerializer<DroneCharge>(DroneCharges, pathes["DroneCharge"]);
+                    break;
                 default: //unknown struct
                     throw new NotSupportException("Not support " + typeof(T).Name + "\n");
             }

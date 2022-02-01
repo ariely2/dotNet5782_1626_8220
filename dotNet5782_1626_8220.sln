@@ -35,6 +35,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{1D4FF03D-D7F
 		xml\Stations.xml = xml\Stations.xml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pictures", "Pictures", "{B8759970-5DB7-4C96-8943-FAC51C4703C6}"
+	ProjectSection(SolutionItems) = preProject
+		Pictures\Drone.jpg = Pictures\Drone.jpg
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

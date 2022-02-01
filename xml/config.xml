@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configData>
-  <parcelId>10000000</parcelId>
+  <ParcelId>10000000</ParcelId>
   <Battery>
     <AvailableUse>1</AvailableUse>
     <LightUse>2</LightUse>

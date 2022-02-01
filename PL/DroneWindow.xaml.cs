@@ -83,6 +83,7 @@ namespace PL
                 MessageBox.Show(errorMessage);
                 return;
             }
+
             drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).location; //getting initial station's location
             try
             {

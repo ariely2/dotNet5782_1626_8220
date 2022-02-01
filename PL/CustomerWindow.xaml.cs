@@ -37,7 +37,7 @@ namespace PL
             InitializeComponent();
             CustomerGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
-            customer = new BO.Customer();
+            customer = new BO.Customer() { location = new BO.Location() };
             DataContext = customer;
         }
 
@@ -104,9 +104,16 @@ namespace PL
         //unhandled bug, cannot add customer
         private void Window_Activated(object sender, EventArgs e)
         {
-            customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
-            FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
-            ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
+            try
+            {
+                customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
+                FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
+                ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }
