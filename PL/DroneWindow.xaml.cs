@@ -22,7 +22,7 @@ namespace PL
     {
         BO.Drone drone;
         private IBL bl;
-        BackgroundWorker worker;
+        internal BackgroundWorker worker;
         private bool close = false;
         public DroneWindow(IBL b)
         {
@@ -249,34 +249,19 @@ namespace PL
 
         private void Auto_Click(object sender, RoutedEventArgs e)
         {
-            if (Simulator.Visibility == Visibility.Visible)
-            {
-                worker = new BackgroundWorker();
-                worker.DoWork += Worker_DoWork;
-                worker.ProgressChanged += Worker_Progress;
-                worker.RunWorkerCompleted += Worker_Completed;
-                worker.WorkerReportsProgress = true;
-                worker.WorkerSupportsCancellation = true;
-                Close.Visibility = Visibility.Hidden;
-                Update_m.Visibility = Visibility.Hidden;
-                Charging.Visibility = Visibility.Hidden;
-                Delivery.Visibility = Visibility.Hidden;
-                Simulator.Visibility = Visibility.Hidden;
-                Normal.Visibility = Visibility.Visible;
-                worker.RunWorkerAsync(); //maybe create simulator?
-            }
-            else
-            {
-                worker.CancelAsync();
-                Close.Visibility = Visibility.Visible;
-                Update_m.Visibility = Visibility.Visible;
-                Charging.Visibility = Visibility.Visible;
-                Delivery.Visibility = Visibility.Visible;
-                Simulator.Visibility = Visibility.Visible;
-                Normal.Visibility = Visibility.Hidden;
-            }
+            worker = new BackgroundWorker();
+            worker.DoWork += Worker_DoWork;
+            worker.ProgressChanged += Worker_Progress;
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+            Close.Visibility = Visibility.Hidden;
+            Update_m.Visibility = Visibility.Hidden;
+            Charging.Visibility = Visibility.Hidden;
+            Delivery.Visibility = Visibility.Hidden;
+            Simulator.Visibility = Visibility.Hidden;
+            Normal.Visibility = Visibility.Visible;
+            worker.RunWorkerAsync(); //maybe create simulator?
         }
-
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -290,9 +275,15 @@ namespace PL
             Parcel_Details();
         }
 
-        private void Worker_Completed(object sender, RunWorkerCompletedEventArgs e)
+        private void Manual_Click(object sender, RoutedEventArgs e)
         {
-            
+            worker.CancelAsync();
+            Close.Visibility = Visibility.Visible;
+            Update_m.Visibility = Visibility.Visible;
+            Charging.Visibility = Visibility.Visible;
+            Delivery.Visibility = Visibility.Visible;
+            Simulator.Visibility = Visibility.Visible;
+            Normal.Visibility = Visibility.Hidden;
         }
     }
 }
