@@ -48,6 +48,9 @@ namespace Dal
                         //station with negative charge slots
                         if (s.ChargeSlots < 0)
                             throw new NotPossibleException("A Station can't have a negative number of available slots\n");
+
+                    if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
+                        throw new OutOfBoundsException("Station location out of bounds\n");
                         //add station
                         DataSource.Stations.Add(s);
                         break;
@@ -67,7 +70,8 @@ namespace Dal
                     //id out of bounds
                     if (!c.Check())
                         throw new OutOfBoundsException("Customer's id out of bounds\n");
-
+                    if (c.Location.Longitude > 80 || c.Location.Longitude < -180 || c.Location.Latitude < -90 || c.Location.Latitude > 90)
+                        throw new OutOfBoundsException("Customer location out of bounds\n");
                     //id already exist
                     if (DataSource.Customers.Exists(x => x.Id == c.Id))
                         throw new AlreadyExistException("Customer's id already exists\n");
@@ -86,7 +90,7 @@ namespace Dal
                     //target isn't exist
                     if (!DataSource.Customers.Exists(c => c.Id == p.ReceiverId))
                         throw new NotExistException("Target's id ins't exist\n");
-
+                    
                     //drone isn't exist, and its id isn't 0
                     if (p.DroneId != null && !DataSource.Drones.Exists(d => d.Id == p.DroneId))
                         throw new NotExistException("Drone's id isn't exist\n");
@@ -94,6 +98,13 @@ namespace Dal
                     //add parcel
                     p.Id = DataSource.Config.IdOfParcel++;
                     DataSource.Parcels.Add(p);
+                    break;
+                case DroneCharge dc:
+                    Request<Drone>(dc.DroneId);
+                    var station = Request<Station>(dc.StationId);
+                    station.ChargeSlots--;
+                    DataSource.DroneCharges.Add(dc);
+                    Update<Station>(station.Id, station);
                     break;
                 default: //unknown struct
                     throw new NotSupportException("Not support " + typeof(T).Name + "\n");
@@ -279,9 +290,8 @@ namespace Dal
             //if station or drone isn't exist, request function would send an exception
             Station s = Request<Station>(stationId);
             Drone d = Request<Drone>(droneId);
-            s.ChargeSlots--;
-            DataSource.DroneCharges.Add(new DroneCharge() { DroneId = d.Id, StationId = s.Id, Start = DateTime.Now});
-            DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
+
+            Create<DroneCharge>(new DroneCharge() { DroneId = droneId, StationId = stationId, Start = DateTime.Now });
         }
 
 
@@ -291,16 +301,19 @@ namespace Dal
         /// <param name="droneId">id of drone to release</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void ReleaseDrone(int droneId)
-        {
-            //if the drone isn't exist, request function would send an exception  
-            Drone d = Request<Drone>(droneId);
+        { 
             //assume that the drone is currently charging, bl responsible for checking that
             DroneCharge c = Request<DroneCharge>(droneId);
-            Station s = Request<Station>(c.StationId);
-            s.ChargeSlots++;
-            DataSource.Stations[DataSource.Stations.FindIndex(x => x.Id == s.Id)] = s;
             Delete<DroneCharge>(droneId);
         }
+
+        /// <summary>
+        /// update an object in xml files
+        /// </summary>
+        /// <typeparam name="T">type of the object. can be: Customer, Drone, DroneCharge, Parcel, Station</typeparam>
+        /// <param name="id">id of the object</param>
+        /// <param name="t">the new object</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Update<T>(int id, T t) where T:struct
         {
             Delete<T>(id);

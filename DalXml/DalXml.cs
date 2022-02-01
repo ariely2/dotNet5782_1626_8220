@@ -120,16 +120,10 @@ namespace Dal
                     break;
                 case DroneCharge dc:
                     var DroneCharges = XMLTools.LoadListFromXMLSerializer<DroneCharge>(pathes["DroneCharge"]);
-
-                    if (DroneCharges.Exists(x => x.DroneId == dc.DroneId))
-                        throw new NotPossibleException($"Drone with id: {dc.DroneId} already charging\n");
-
+                    Request<Drone>(dc.DroneId);
+                    var station = Request<Station>(dc.StationId);station.ChargeSlots--;
                     DroneCharges.Add(dc);
-                    var station = Request<Station>(dc.StationId);
-                    if (station.ChargeSlots == 0)
-                        throw new NotPossibleException($"Station with id: {station.Id} is full\n");
-                    station.ChargeSlots--;
-                    Update<Station>(dc.StationId, station);
+                    Update<Station>(station.Id, station);
                     XMLTools.SaveListToXMLSerializer<DroneCharge>(DroneCharges, pathes["DroneCharge"]);
                     break;
                 default: //unknown struct
@@ -319,9 +313,8 @@ namespace Dal
             //if station or drone isn't exist, request function would send an exception
             Station s = Request<Station>(stationId);
             Drone d = Request<Drone>(droneId);
-            s.ChargeSlots--;
+
             Create<DroneCharge>(new DroneCharge() { DroneId = d.Id, StationId = s.Id, Start = DateTime.Now });
-            Update<Station>(stationId, s);
         }
 
 
@@ -332,14 +325,8 @@ namespace Dal
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void ReleaseDrone(int droneId)
         {
-            //if the drone isn't exist, request function would send an exception  
-            Drone d = Request<Drone>(droneId);
             //assume that the drone is currently charging, bl responsible for checking that
             DroneCharge c = Request<DroneCharge>(droneId);
-            Station s = Request<Station>(c.StationId);
-            s.ChargeSlots++;
-            Update<Station>(s.Id, s);
-
             Delete<DroneCharge>(droneId);
         }
         /// <summary>
@@ -348,6 +335,7 @@ namespace Dal
         /// <typeparam name="T">type of the object. can be: Customer, Drone, DroneCharge, Parcel, Station</typeparam>
         /// <param name="id">id of the object</param>
         /// <param name="t">the new object</param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Update<T>(int id, T t) where T : struct
         {
             Delete<T>(id);
@@ -397,6 +385,10 @@ namespace Dal
                 case nameof(DroneCharge):
                     //find the charge according to drone id
                     DroneCharge dc = Request<DroneCharge>(id);
+                    //there is extra place for another drone
+                    var station = Request<Station>(dc.StationId);station.ChargeSlots++;
+                    Update<Station>(station.Id, station);
+
                     var DroneCharges = XMLTools.LoadListFromXMLSerializer<DroneCharge>(pathes["DroneCharge"]);
                     DroneCharges.Remove(dc);
                     XMLTools.SaveListToXMLSerializer<DroneCharge>(DroneCharges, pathes["DroneCharge"]);
