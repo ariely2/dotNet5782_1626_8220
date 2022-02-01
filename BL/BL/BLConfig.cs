@@ -21,7 +21,6 @@ namespace BL
 
         internal List<DroneToList> Drones;
 
-        //static?
         public double AvailableUse; 
         public double LightUse; 
         public double MediumUse; 
@@ -58,16 +57,17 @@ namespace BL
                         Customer sender = Request<Customer>(p.Sender.Id); // the parcel's sender
                         Customer receiver = Request<Customer>(p.Receiver.Id);//thet parcel's receiver
 
-                        double distance = Location.distance(sender.location, receiver.location); //distance from sender to receiver
-                        distance += Location.distance(receiver.location, ClosestStation(receiver.location)); // + distance from receiver to closest station
+                        double distance = Location.distance(receiver.location, ClosestStation(receiver.location)); // distance from receiver to closest station
                         if (p.PickedUp == null) //if the parcel isn't picked up yet
                         {
-                            Current.Location = ClosestStation(GetCustomerLocation(sender.Id)); //change drone's location to sender's location
+                            Current.Location = ClosestStation(sender.location); //change drone's location to sender's location
                             distance += Location.distance(Current.Location, sender.location); // + distance from initial location to sender
                         }
                         else
-                            Current.Location = GetCustomerLocation(sender.Id);
-                        double b = MinBattery(distance, Current.Id);
+                            Current.Location = sender.location;
+                        double b = info[0] * distance;
+                        distance = Location.distance(sender.location, receiver.location); //distance from sender to receiver
+                        b += info[((int)p.Weight) + 1] * distance;
                         Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
                     }
                     else
@@ -89,7 +89,7 @@ namespace BL
                             Current.Location = GetCustomerLocation(receiver.Id);
                             double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
                             Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
-                        }
+                        }//blconfig, pickup, deliver, minbattery, ?
                     }
                 }
             }

@@ -408,11 +408,9 @@ namespace BL
 
                 Location sender = GetCustomerLocation(best.Sender.Id);
                 Location receiver = GetCustomerLocation(best.Receiver.Id);
-                double distance =
-                      Location.distance(d.Location, sender)
-                    + Location.distance(sender, receiver)
-                    + Location.distance(receiver, ClosestStation(receiver));
-                double min = info[((int)best.Weight) + 1] * distance; //getting minimum battery required
+                double min = info[0]* Location.distance(d.Location, sender)
+                    + info[((int)best.Weight) + 1] * Location.distance(sender, receiver)
+                    + info[0]*Location.distance(receiver, ClosestStation(receiver)); //getting minimum battery required
                 if (min <= d.Battery) //checking if drone has enough battery
                 {
                     lock (dal)
