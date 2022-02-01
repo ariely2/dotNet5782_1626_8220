@@ -29,23 +29,25 @@ namespace PL
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            int phone;
-            string name = Name_c.Text;
+            int id;
             //BO.Customer c;
-            if (!int.TryParse(Phone_c.Text, out phone)) //if entered phone number isn't an int
+            if (!int.TryParse(Id_c.Text, out id)) //if entered phone number isn't an int
             {
-                MessageBox.Show("Error: Phone Number must be an int!\nPlease Try Again.");
+                MessageBox.Show("Error: Id must be an int!\nPlease Try Again.");
                 return;
             }
-            var c = bl.RequestList<BO.CustomerToList>().ToList();
-            var d = c.Find(x => x.Name.Equals(name) && x.Phone.Equals(Phone_c.Text));
-            if (d != default(BO.CustomerToList)) //if a name with the matching phone number of a real customer was entered, the customer can login.
+            BO.Customer c;
+            try
             {
-                new CustomerUIWindow(bl, bl.Request<BO.Customer>(d.Id)).Show();
-                this.Close();
+                c = bl.Request<BO.Customer>(id);
+                new CustomerUIWindow(bl, c).Show();
             }
-            else
-                MessageBox.Show("A registered customer with the entered phone and name doesn't exist");
+            catch (BO.NotExistException ex)
+            {
+                MessageBox.Show($"Error: A registered customer with the entered id ({Id_c}) doesn't exist\n");
+            }
+
+            this.Close();
         }
     }
 }

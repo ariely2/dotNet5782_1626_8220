@@ -56,8 +56,8 @@ namespace Dal
                     if (s.ChargeSlots < 0)
                         throw new NotPossibleException("A Station can't have a negative number of available slots\n");
                     //check location
-                    if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
-                        throw new OutOfBoundsException("Station location out of bounds\n");
+                    if (s.Location.Longitude > Location.LongitudeUB || s.Location.Longitude < Location.LongitudeLB || s.Location.Latitude < Location.LatitudeLB || s.Location.Latitude > Location.LatitudeUB)
+                        throw new OutOfBoundsException($"Station location out of bounds. location is between: latitude: {Location.LatitudeLB} - {Location.LatitudeUB}\nlongitude:{Location.LongitudeLB} -{Location.LongitudeUB}\n");
                     //add station
                     Stations.Add(s);
 
@@ -89,8 +89,8 @@ namespace Dal
                         throw new AlreadyExistException("Customer's id already exists\n");
 
                     //check location
-                    if (c.Location.Longitude > 80 || c.Location.Longitude < -180 || c.Location.Latitude < -90 || c.Location.Latitude > 90)
-                        throw new OutOfBoundsException("Station location out of bounds\n");
+                    if (c.Location.Longitude > Location.LongitudeUB || c.Location.Longitude < Location.LongitudeLB || c.Location.Latitude < Location.LatitudeLB || c.Location.Latitude > Location.LatitudeUB)
+                        throw new OutOfBoundsException($"Customer's location out of bounds. location is between: latitude: {Location.LatitudeLB} - {Location.LatitudeUB}\nlongitude:{Location.LongitudeLB} -{Location.LongitudeUB}\n");
                     //add customer
                     Customers.Add(c);
                     XMLTools.SaveListToXMLSerializer<Customer>(Customers, pathes["Customer"]);

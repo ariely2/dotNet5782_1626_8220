@@ -9,20 +9,13 @@ namespace Dal
 {
     internal static class DataSource
     {
-        internal static List<Customer> Customers = new List<Customer>(100);
-        internal static List<Parcel> Parcels = new List<Parcel>(1000);
-        internal static List<Drone> Drones = new List<Drone>(10);
-        internal static List<Station> Stations = new List<Station>(5);
+        internal static List<Customer> Customers = new List<Customer>();
+        internal static List<Parcel> Parcels = new List<Parcel>();
+        internal static List<Drone> Drones = new List<Drone>();
+        internal static List<Station> Stations = new List<Station>();
         internal static List<DroneCharge> DroneCharges = new List<DroneCharge>();
         internal class Config
         {
-            //boundries of the area
-            //longitude between 35 to 35.1
-            //latitude between 37 to 37.1
-            internal static double lowerLongitude = 35;
-            internal static double upperLongitude = 35.1;
-            internal static double lowerLatitude = 37;
-            internal static double upperLatitude = 37.1;
 
             //id of parcel - number with 8 digits
             internal static int IdOfParcel { set; get; } = 10000000;
@@ -59,18 +52,18 @@ namespace Dal
                 Customers.Add(new Customer()
                 {
                     Id = id,//calculate before
-                    Name = CNames[i],//Name from the array
+                    Name = CNames[i%10],//Name from the array
                     Phone = phone,//calculate before
                     Location = new Location()
                     {
-                        Longitude = ((double)random.Next(0, 1000) / 10000) + Config.lowerLongitude,//Random Longitude between 35 - 35.1
-                        Latitude = ((double)random.Next(0, 1000) / 10000) + Config.lowerLatitude//Random latitude between 37 - 37.1
+                        Longitude = random.NextDouble()* (Location.LongitudeUB - Location.LongitudeLB) + Location.LongitudeLB,//Random Longitude between 35 - 35.1
+                        Latitude = random.NextDouble()*(Location.LatitudeUB - Location.LatitudeLB)+ Location.LatitudeLB//Random latitude between 35 - 35.1
                     }
                 });
             }
 
             //initialize 3 stations
-            string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon", "TelAviv" };
+            string[] SNames = new string[] { "Florentin", "Mamilla", "Hulon"};
             for (int i = 0; i < 3; i++)
             {
                 //check that there is no 2 station with the same id
@@ -86,8 +79,8 @@ namespace Dal
                     Name = SNames[i],//Name from Name array.
                     Location = new Location()
                     {
-                        Longitude = ((double)random.Next(0, 1000) / 10000) + Config.lowerLongitude,//Random Longitude between 35 - 35.1
-                        Latitude = ((double)random.Next(0, 1000) / 10000) + Config.lowerLatitude//Random Latitude between 37 - 37.1
+                        Longitude = random.NextDouble() * (Location.LongitudeUB - Location.LongitudeLB) + Location.LongitudeLB,//Random Longitude between 35 - 35.1
+                        Latitude = random.NextDouble() * (Location.LatitudeUB - Location.LatitudeLB) + Location.LatitudeLB//Random latitude between 35 - 35.1
                     },
                     ChargeSlots = random.Next(2, 4)//Random number of available slots between 2 and 3
                 });

@@ -12,9 +12,9 @@ namespace Dal
 {
     internal sealed class DalObject : IDal
     {
-        //lazy instantiaion
+        //lazy instantiation
         //the creation of the object happened only in the first use
-        static readonly Lazy<IDal> instance = new Lazy<IDal>(() => new DalObject());
+        internal static readonly Lazy<IDal> instance = new Lazy<IDal>(() => new DalObject(),System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
         public static IDal Instance { get => instance.Value; }
         /// <summary>
         /// constructor
@@ -45,12 +45,10 @@ namespace Dal
                         //id already exist
                         if (DataSource.Stations.Exists(x => x.Id == s.Id))
                             throw new AlreadyExistException("Station's id already exist\n");
-                        //station with negative charge slots
-                        if (s.ChargeSlots < 0)
-                            throw new NotPossibleException("A Station can't have a negative number of available slots\n");
+                       
                         //check location
-                    //if (s.Location.Longitude > 80 || s.Location.Longitude < -180 || s.Location.Latitude < -90 || s.Location.Latitude > 90)
-                     //   throw new OutOfBoundsException($"Station location out of bounds. location is between: latitude:{Location.\n");
+                    if (s.Location.Longitude > Location.LongitudeUB || s.Location.Longitude < Location.LongitudeLB || s.Location.Latitude < Location.LatitudeLB || s.Location.Latitude > Location.LatitudeUB)
+                        throw new OutOfBoundsException($"Station location out of bounds. location is between: latitude: {Location.LatitudeLB} - {Location.LatitudeUB}\nlongitude:{Location.LongitudeLB} -{Location.LongitudeUB}\n");
                         //add station
                         DataSource.Stations.Add(s);
                         break;
@@ -70,8 +68,8 @@ namespace Dal
                     //id out of bounds
                     if (!c.Check())
                         throw new OutOfBoundsException("Customer's id out of bounds\n");
-                    if (c.Location.Longitude > 80 || c.Location.Longitude < -180 || c.Location.Latitude < -90 || c.Location.Latitude > 90)
-                        throw new OutOfBoundsException("Customer location out of bounds\n");
+                    if (c.Location.Longitude > Location.LongitudeUB || c.Location.Longitude < Location.LongitudeLB || c.Location.Latitude < Location.LatitudeLB || c.Location.Latitude > Location.LatitudeUB)
+                        throw new OutOfBoundsException($"Customer's location out of bounds. location is between: latitude: {Location.LatitudeLB} - {Location.LatitudeUB}\nlongitude:{Location.LongitudeLB} -{Location.LongitudeUB}\n");
                     //id already exist
                     if (DataSource.Customers.Exists(x => x.Id == c.Id))
                         throw new AlreadyExistException("Customer's id already exists\n");
@@ -90,7 +88,7 @@ namespace Dal
                     //target isn't exist
                     if (!DataSource.Customers.Exists(c => c.Id == p.ReceiverId))
                         throw new NotExistException("Target's id ins't exist\n");
-                    
+
                     //drone isn't exist, and its id isn't 0
                     if (p.DroneId != null && !DataSource.Drones.Exists(d => d.Id == p.DroneId))
                         throw new NotExistException("Drone's id isn't exist\n");
@@ -100,6 +98,7 @@ namespace Dal
                     DataSource.Parcels.Add(p);
                     break;
                 case DroneCharge dc:
+
                     Request<Drone>(dc.DroneId);
                     var station = Request<Station>(dc.StationId);
                     station.ChargeSlots--;

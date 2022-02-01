@@ -15,7 +15,7 @@ namespace BL
     {
         //lazy instantiaion
         //the creation of the object happened only in the first use
-        static readonly Lazy<IBL> instance = new Lazy<IBL>(() => new BL());
+        static readonly Lazy<IBL> instance = new Lazy<IBL>(() => new BL(),System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
         public static IBL Instance { get => instance.Value;}
         internal IDal dal = DalApi.DalFactory.GetDal();
 
@@ -68,6 +68,7 @@ namespace BL
                         else
                             Current.Location = GetCustomerLocation(sender.Id);
                         double b = MinBattery(distance, Current.Id);
+
                         Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
                     }
                     else
