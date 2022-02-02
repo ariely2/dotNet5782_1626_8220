@@ -84,11 +84,20 @@ namespace BL
                         else // if the drone's status is "Available"
                         {
                             var p = dal.Receivers(); //it's rarely empty and there's an exception
-                            int i = r.Next(0, p.Length);
-                            var receiver = Request<Customer>(p[i]); // getting a random receiver
-                            Current.Location = GetCustomerLocation(receiver.Id);
-                            double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
-                            Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
+                            if (p.Length == 0)
+                            {
+                                var stations = dal.RequestList<DO.Station>();
+                                Current.Location = GetStationLocation(stations.ElementAt(r.Next(0, stations.Count())).Id);
+                                Current.Battery = r.NextDouble() * 100;
+                            }
+                            else
+                            {
+                                int i = r.Next(0, p.Length);
+                                var receiver = Request<Customer>(p[i]); // getting a random receiver
+                                Current.Location = GetCustomerLocation(receiver.Id);
+                                double b = MinBattery(Location.distance(Current.Location, ClosestStation(Current.Location)), Current.Id);
+                                Current.Battery = (double)r.Next(100 * (int)b, 10000) / 100; //random battery between minimum battery needed to 100
+                            }
                         }//blconfig, pickup, deliver, minbattery, ?
                     }
                 }

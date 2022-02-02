@@ -13,6 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using BlApi;
+using Mapsui.Utilities;
+using Mapsui.Layers;
+using Mapsui.UI.Wpf;
+using Mapsui.Providers;
+using Mapsui.Styles;
 
 namespace PL
 {
@@ -27,6 +32,8 @@ namespace PL
         {
             bl = b;
             InitializeComponent();
+            InitializeMap();
+            
             StatusSelector.Items.Add("All"); //adding all status and weight options for drone list. do we need this line?
             var statuses = Enum.GetValues(typeof(BO.DroneStatuses));
             foreach (var a in statuses)
@@ -52,6 +59,10 @@ namespace PL
             CustomerListView.ItemsSource = bl.RequestList<BO.CustomerToList>(); //getting list of customers to display
             ParcelListView.ItemsSource = bl.RequestList<BO.ParcelToList>(); //getting list of parcels to display
         }
+        
+
+
+
         private void Close(object sender, RoutedEventArgs e)
         {
             close = true;
@@ -65,6 +76,7 @@ namespace PL
 
         private void Window_Activated(object sender, EventArgs e)
         {
+
             if (Tabs.SelectedIndex == 0) //updating the current tab if the window came back to focus
                 Drone_Filter();
             else if (Tabs.SelectedIndex == 1)
@@ -73,6 +85,8 @@ namespace PL
                 CustomerListView.ItemsSource = bl.RequestList<BO.CustomerToList>();
             else if (Tabs.SelectedIndex == 3)
                 Parcel_Filter();
+            else if (Tabs.SelectedIndex == 4)
+                InitializeMap();
         }
         private void Tab_Changed(object sender, SelectionChangedEventArgs e)
         {
@@ -86,6 +100,8 @@ namespace PL
                     CustomerListView.ItemsSource = bl.RequestList<BO.CustomerToList>();
                 else if (Tabs.SelectedIndex == 3)
                     Parcel_Filter();
+                else if (Tabs.SelectedIndex == 4)
+                    InitializeMap();
             }
         }
         #region Drone
@@ -216,5 +232,106 @@ namespace PL
             ParcelListView.ItemsSource = d;
         }
         #endregion Parcel
+        #region Map
+
+        private const double Radius = 6378137;
+        private const double E = 0.0000000848191908426;
+        private const double D2R = Math.PI / 180;
+        private const double PiDiv4 = Math.PI / 4;
+
+        internal static Mapsui.Geometries.Point FromLonLat(double lon, double lat) //converts from Lon,Lat to X,Y (Maps Ui uses X,Y and doesnt use Lon,Lat)
+        {
+            var lonRadians = D2R * lon;
+            var latRadians = D2R * lat;
+
+            var x = Radius * lonRadians;
+            var y = Radius * Math.Log(Math.Tan(PiDiv4 + latRadians * 0.5) / Math.Pow(Math.Tan(PiDiv4 + Math.Asin(E * Math.Sin(latRadians)) / 2), E));
+
+            return new Mapsui.Geometries.Point(x, y);
+        }
+        private void InitializeMap()
+        {
+
+            MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+            MapControl.Map.BackColor = Mapsui.Styles.Color.FromArgb(255, 171, 210, 223);
+
+            var bbox = new Mapsui.Geometries.BoundingBox(FromLonLat(37, 37.1), FromLonLat(37, 37.1));
+            MapControl.Navigator.NavigateTo(bbox, ScaleMethod.Fit);
+            MapControl.Navigator.ZoomTo(40, 0);
+            MapControl.Refresh();
+
+            foreach (var layer in MapControl.Map.Layers.Skip(1))
+            {
+                MapControl.Map.Layers.Remove(layer);
+            }
+
+            IEnumerable<int> idUser = from user in bl.RequestList<BO.CustomerToList>() select user.Id;
+            IEnumerable<int> idStation = from stat in bl.RequestList<BO.StationToList>() select stat.Id;
+            IEnumerable<int> idDrone = from drn in bl.RequestList<BO.DroneToList>() select drn.Id;
+
+            IEnumerable<BO.Location> DronePoints = from drone in bl.RequestList<BO.DroneToList>() select drone.Location;
+            IEnumerable<BO.Location> StationPoints = from station in bl.RequestList<BO.StationToList>() let d = bl.Request<BO.Station>(station.Id) select d.location;
+            IEnumerable<BO.Location> CustomerPoints = from customer in bl.RequestList<BO.CustomerToList>() let d = bl.Request<BO.Customer>(customer.Id) select d.location;
+
+
+
+            var ly = new Mapsui.Layers.WritableLayer { Style = null };
+            for (int i = 0; i < StationPoints.Count(); i++)
+            {
+                ly.Add(CreateFeature(StationPoints.Skip(i).First().Longitude, StationPoints.Skip(i).First().Latitude, idStation.Skip(i).First()));
+            }
+            MapControl.Map.Layers.Add(ly);
+
+            ly = new Mapsui.Layers.WritableLayer { Style = null };
+            for (int i = 0; i < CustomerPoints.Count(); i++)
+            {
+                ly.Add(CreateFeature(CustomerPoints.Skip(i).First().Longitude, CustomerPoints.Skip(i).First().Latitude, idUser.Skip(i).First()));
+            }
+            MapControl.Map.Layers.Add(ly);
+            double a = 0.00001;
+            for (int i = 0; i < DronePoints.Count(); i++)
+            {
+                ly.Add(CreateFeature(DronePoints.Skip(i).First().Longitude + 0.00001, DronePoints.Skip(i).First().Latitude + a, idDrone.Skip(i).First()));
+                a += 0.000005;
+            }
+            MapControl.Map.Layers.Add(ly);
+
+            ly = new Mapsui.Layers.WritableLayer { Style = null };
+            MapControl.Refresh();
+
+        }
+        private static IFeature CreateFeature(double Longitude, double Lattitude, int Id)
+        {
+            Random rng = new Random();
+            Mapsui.Geometries.Point pt;
+            Mapsui.Providers.Feature feature;
+            Mapsui.Styles.LabelStyle x;
+            Mapsui.Styles.Color BGColor;
+            pt = FromLonLat(Longitude, Lattitude);
+
+            feature = new Mapsui.Providers.Feature { Geometry = pt };
+
+
+
+            if (Id.ToString().Length == 9)//customer
+                BGColor = Mapsui.Styles.Color.Blue;
+            else if (Id.ToString().Length == 5)//drone
+                BGColor = Mapsui.Styles.Color.Green;
+            else//station
+                BGColor = Mapsui.Styles.Color.Red;
+            x = new Mapsui.Styles.LabelStyle()
+            {
+                Text = Id.ToString(),
+                ForeColor = BGColor,
+                Halo = new Mapsui.Styles.Pen(Mapsui.Styles.Color.Black, 1),
+                HorizontalAlignment = LabelStyle.HorizontalAlignmentEnum.Left,
+                MaxWidth = 10
+
+            };
+
+            feature.Styles.Add(x);
+            return feature;
+        }
+        #endregion Map
     }
 }

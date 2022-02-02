@@ -15,16 +15,16 @@ namespace DO
 		/// <summary>
 		/// longitude coordinate
 		/// </summary>
-		public static readonly double LongitudeLB = 35.0;
-		public static readonly double LongitudeUB = 35.1;
+		public static readonly double LongitudeLB = 37.0;
+		public static readonly double LongitudeUB = 37.1;
 		public double Longitude { set; get; }
 
 		/// <summary>
 		/// latitude coordinate
 		/// </summary>
 
-		public static readonly double LatitudeLB = 35.0;
-		public static readonly double LatitudeUB = 35.1;
+		public static readonly double LatitudeLB = 37.0;
+		public static readonly double LatitudeUB = 37.1;
 		public double Latitude { set; get; }
 
 		/// <summary>
