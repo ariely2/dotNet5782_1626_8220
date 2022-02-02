@@ -17,11 +17,18 @@ namespace PL
 {
     /// <summary>
     /// Interaction logic for CustomerWindow.xaml
+    /// in this window, we have personal info about a specific customer, we can also update the customer name from this window
     /// </summary>
     public partial class CustomerWindow : Window
     {
         BO.Customer customer;
         private IBL bl;
+
+        /// <summary>
+        /// constructor with a specific customer
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="c"></param>
         public CustomerWindow(IBL b, BO.Customer c)
         {
             InitializeComponent();
@@ -29,15 +36,20 @@ namespace PL
             bl = b;
             customer = c;
             DataContext = customer;
-            FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
-            ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
+            FromListView.ItemsSource = customer.From; //getting list of parcels to display
+            ToListView.ItemsSource = customer.To; //getting list of parcels to display
         }
+
+        /// <summary>
+        /// constructor without a specific customer
+        /// </summary>
+        /// <param name="b"></param>
         public CustomerWindow(IBL b)
         {
             InitializeComponent();
             CustomerGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
-            customer = new BO.Customer() { location = new BO.Location() };
+            customer = new BO.Customer() { Location = new BO.Location() };
             DataContext = customer;
         }
 

@@ -204,7 +204,7 @@ namespace ConsoleUI_BL
                     Id = InputInt(),
                     Name = Console.ReadLine(),
                     AvailableSlots = InputInt(),
-                    location = new Location()
+                    Location = new Location()
                     {
                         Latitude = InputDouble(),
                         Longitude = InputDouble()
@@ -227,7 +227,7 @@ namespace ConsoleUI_BL
                     Id = InputInt(),
                     Model = Console.ReadLine(), //check if a string is entered? also in customer and station name and phone
                     MaxWeight = EnumExtension.InputEnum<WeightCategories>(),
-                    Location = bl.Request<Station>(InputInt()).location
+                    Location = bl.Request<Station>(InputInt()).Location
                 });
             }
             catch (Exception ex)
@@ -246,7 +246,7 @@ namespace ConsoleUI_BL
                     Id = InputInt(),
                     Name = Console.ReadLine(),
                     Phone = Console.ReadLine(),
-                    location = new Location()
+                    Location = new Location()
                     {
                         Latitude = InputDouble(),
                         Longitude = InputDouble()

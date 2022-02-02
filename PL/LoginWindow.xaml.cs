@@ -16,11 +16,9 @@ namespace PL
 {
     /// <summary>
     /// login window for DelivAir.
-    /// SECRET CODE: 1121
     /// </summary>
     public partial class LoginWindow : Window
     {
-        public string secret = "1121";
         private static IBL bl = BlApi.BlFactory.GetBl();
         public LoginWindow()
         {

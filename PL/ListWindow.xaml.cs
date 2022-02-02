@@ -32,6 +32,7 @@ namespace PL
         {
             bl = b;
             InitializeComponent();
+            //initialize the map
             InitializeMap();
             
             StatusSelector.Items.Add("All"); //adding all status and weight options for drone list. do we need this line?
@@ -234,12 +235,19 @@ namespace PL
         #endregion Parcel
         #region Map
 
+        //constant to calculate point on mapsui
         private const double Radius = 6378137;
         private const double E = 0.0000000848191908426;
         private const double D2R = Math.PI / 180;
         private const double PiDiv4 = Math.PI / 4;
 
-        internal static Mapsui.Geometries.Point FromLonLat(double lon, double lat) //converts from Lon,Lat to X,Y (Maps Ui uses X,Y and doesnt use Lon,Lat)
+        /// <summary>
+        /// cast longitude and latitude to points
+        /// </summary>
+        /// <param name="lon">longitude of the point</param>
+        /// <param name="lat">latitude of the point</param>
+        /// <returns>return point of mapsui</returns>
+        internal static Mapsui.Geometries.Point FromLonLat(double lon, double lat) //converts from Lon,Lat to X,Y
         {
             var lonRadians = D2R * lon;
             var latRadians = D2R * lat;
@@ -249,60 +257,77 @@ namespace PL
 
             return new Mapsui.Geometries.Point(x, y);
         }
+
+        /// <summary>
+        /// initialize map with stations, drones and cutomers
+        /// </summary>
         private void InitializeMap()
         {
-
+            //initialize map sui
             MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
             MapControl.Map.BackColor = Mapsui.Styles.Color.FromArgb(255, 171, 210, 223);
 
+            //set default location of the area
             var bbox = new Mapsui.Geometries.BoundingBox(FromLonLat(37, 37.1), FromLonLat(37, 37.1));
             MapControl.Navigator.NavigateTo(bbox, ScaleMethod.Fit);
             MapControl.Navigator.ZoomTo(40, 0);
             MapControl.Refresh();
 
+            //clear the map
             foreach (var layer in MapControl.Map.Layers.Skip(1))
             {
                 MapControl.Map.Layers.Remove(layer);
             }
+            //get id of customers, stations and drones
+            IEnumerable<int> customersId = from customer in bl.RequestList<BO.CustomerToList>() select customer.Id;
+            IEnumerable<int> stationsId = from station in bl.RequestList<BO.StationToList>() select station.Id;
+            IEnumerable<int> dronesId = from drone in bl.RequestList<BO.DroneToList>() select drone.Id;
 
-            IEnumerable<int> idUser = from user in bl.RequestList<BO.CustomerToList>() select user.Id;
-            IEnumerable<int> idStation = from stat in bl.RequestList<BO.StationToList>() select stat.Id;
-            IEnumerable<int> idDrone = from drn in bl.RequestList<BO.DroneToList>() select drn.Id;
-
+            //get points of drones, stations and customers
             IEnumerable<BO.Location> DronePoints = from drone in bl.RequestList<BO.DroneToList>() select drone.Location;
-            IEnumerable<BO.Location> StationPoints = from station in bl.RequestList<BO.StationToList>() let d = bl.Request<BO.Station>(station.Id) select d.location;
-            IEnumerable<BO.Location> CustomerPoints = from customer in bl.RequestList<BO.CustomerToList>() let d = bl.Request<BO.Customer>(customer.Id) select d.location;
+            IEnumerable<BO.Location> StationPoints = from station in bl.RequestList<BO.StationToList>() let d = bl.Request<BO.Station>(station.Id) select d.Location;
+            IEnumerable<BO.Location> CustomerPoints = from customer in bl.RequestList<BO.CustomerToList>() let d = bl.Request<BO.Customer>(customer.Id) select d.Location;
 
 
-
+            //set new layer
             var ly = new Mapsui.Layers.WritableLayer { Style = null };
+            //add point of the station to the layer
             for (int i = 0; i < StationPoints.Count(); i++)
             {
-                ly.Add(CreateFeature(StationPoints.Skip(i).First().Longitude, StationPoints.Skip(i).First().Latitude, idStation.Skip(i).First()));
+                ly.Add(CreateFeature(StationPoints.Skip(i).First().Longitude, StationPoints.Skip(i).First().Latitude, stationsId.Skip(i).First()));
             }
+            //add the layer to the map
             MapControl.Map.Layers.Add(ly);
 
             ly = new Mapsui.Layers.WritableLayer { Style = null };
             for (int i = 0; i < CustomerPoints.Count(); i++)
             {
-                ly.Add(CreateFeature(CustomerPoints.Skip(i).First().Longitude, CustomerPoints.Skip(i).First().Latitude, idUser.Skip(i).First()));
+                ly.Add(CreateFeature(CustomerPoints.Skip(i).First().Longitude, CustomerPoints.Skip(i).First().Latitude, customersId.Skip(i).First()));
             }
             MapControl.Map.Layers.Add(ly);
+            //small value to avoid drone id hidden by other id( station, customer)
             double a = 0.00001;
             for (int i = 0; i < DronePoints.Count(); i++)
             {
-                ly.Add(CreateFeature(DronePoints.Skip(i).First().Longitude + 0.00001, DronePoints.Skip(i).First().Latitude + a, idDrone.Skip(i).First()));
+                ly.Add(CreateFeature(DronePoints.Skip(i).First().Longitude + 0.00001, DronePoints.Skip(i).First().Latitude + a, dronesId.Skip(i).First()));
                 a += 0.000005;
             }
             MapControl.Map.Layers.Add(ly);
 
             ly = new Mapsui.Layers.WritableLayer { Style = null };
+            //refresh the map
             MapControl.Refresh();
 
         }
+        /// <summary>
+        /// create feature to the point
+        /// </summary>
+        /// <param name="Longitude">longitude of the point</param>
+        /// <param name="Lattitude"> latitude of the point</param>
+        /// <param name="Id">id of the object ( staiton, drone, custoemr)</param>
+        /// <returns>feature of the point</returns>
         private static IFeature CreateFeature(double Longitude, double Lattitude, int Id)
         {
-            Random rng = new Random();
             Mapsui.Geometries.Point pt;
             Mapsui.Providers.Feature feature;
             Mapsui.Styles.LabelStyle x;
@@ -310,14 +335,11 @@ namespace PL
             pt = FromLonLat(Longitude, Lattitude);
 
             feature = new Mapsui.Providers.Feature { Geometry = pt };
-
-
-
-            if (Id.ToString().Length == 9)//customer
+            if (Id.ToString().Length == 9)//customer - blue color
                 BGColor = Mapsui.Styles.Color.Blue;
-            else if (Id.ToString().Length == 5)//drone
+            else if (Id.ToString().Length == 5)//drone - green color
                 BGColor = Mapsui.Styles.Color.Green;
-            else//station
+            else//station - red color
                 BGColor = Mapsui.Styles.Color.Red;
             x = new Mapsui.Styles.LabelStyle()
             {

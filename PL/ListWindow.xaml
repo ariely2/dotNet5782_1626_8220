@@ -209,7 +209,7 @@
                                 <DrawingImage.Drawing>
                                     <DrawingGroup Opacity="0.6">
                                         <!-- This image is set to fill a 75 by 75 rectangular area. -->
-                                        <ImageDrawing Rect="0,0,75,75" ImageSource="C:\Users\ariel\source\repos\ariely2\dotNet5782_1626_8220\Pictures\Drone2.jpg"/>
+                                        <ImageDrawing Rect="0,0,75,75" ImageSource="\Pictures\Drone2.jpg"/>
                                     </DrawingGroup>
                                 </DrawingImage.Drawing>
                             </DrawingImage>
