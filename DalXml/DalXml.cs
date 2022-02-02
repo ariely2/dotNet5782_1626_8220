@@ -252,7 +252,7 @@ namespace Dal
         }
         //need to move it to bl
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public int[] Receivers()
+        public IEnumerable<int> Receivers()
         {
             IEnumerable<Parcel> d = RequestList<Parcel>(x => x.Delivered != null); //all delivered parcels
             //d.RemoveAll(x => Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers

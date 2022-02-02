@@ -27,7 +27,7 @@ namespace PL
             StationGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
             station = new BO.Station();
-            station.location = new BO.Location(); //initializing location so it won't be null
+            station.Location = new BO.Location(); //initializing location so it won't be null
             DataContext = station;
         }
         public StationWindow(IBL b, BO.StationToList s)

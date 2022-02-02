@@ -20,7 +20,7 @@ namespace DalApi
         void DeliverParcel(int ParcelId);
         void PickUpParcel(int ParcelId);
         void ReleaseDrone(int DroneId);
-        int[] Receivers();
+        IEnumerable<int> Receivers();
         public void Delete<T>(int id) where T : struct;
 
     }

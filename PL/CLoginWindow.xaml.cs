@@ -21,12 +21,23 @@ namespace PL
     public partial class CLoginWindow : Window
     {
         private IBL bl;
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="b">the bl layer</param>
         public CLoginWindow(IBL b)
         {
             InitializeComponent();
             bl = b;
         }
 
+        /// <summary>
+        /// this function check if the customer enter valid id.
+        //  if the id isn't exist, the function show a message box.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Login_Click(object sender, RoutedEventArgs e)
         {
             int id;
@@ -42,9 +53,9 @@ namespace PL
                 c = bl.Request<BO.Customer>(id);
                 new CustomerUIWindow(bl, c).Show();
             }
-            catch (BO.NotExistException ex)
+            catch (BO.NotExistException ex)//throw an exception that the customer isn't exist
             {
-                MessageBox.Show($"Error: A registered customer with the entered id ({Id_c}) doesn't exist\n");
+                MessageBox.Show($"Error: A registered customer with the entered id: ({Id_c.Text}), doesn't exist\n");
             }
 
             this.Close();

@@ -222,12 +222,12 @@ namespace Dal
         }
         //need to move it to bl
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public int[] Receivers()
+        public IEnumerable<int> Receivers()
         {
             IEnumerable<Parcel> d = RequestList<Parcel>(x => x.Delivered != null); //all delivered parcels
             //d.RemoveAll(x => DataSource.Customers.Exists(c => c.Id == x.TargetId)); //remove receivers who aren't customers
-            int[] t = d.Select(x => x.ReceiverId).ToArray(); //getting receiver ids
-            return t.Distinct().ToArray(); //return array without duplicates
+            var t = d.Select(x => x.ReceiverId); //getting receiver ids
+            return t.Distinct(); //return array without duplicates
         }
 
         #endregion Request
