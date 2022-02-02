@@ -65,7 +65,7 @@ namespace PL
                 MessageBox.Show(errorMessage);
                 return;
             }
-            
+            station.location = new BO.Location { Latitude = double.Parse(StationLatitude.Text), Longitude = double.Parse(StationLongitude.Text) };
             try
             {
                 bl.Create<BO.Station>(station);
