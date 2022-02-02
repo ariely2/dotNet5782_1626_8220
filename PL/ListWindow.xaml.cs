@@ -332,6 +332,37 @@ namespace PL
             feature.Styles.Add(x);
             return feature;
         }
-        #endregion Map
+
+        private void Filter_Map(object sender, RoutedEventArgs e)
+        {
+            var b = sender as System.Windows.Controls.Primitives.ToggleButton;
+            if (b.IsChecked == true)
+            {
+                if (b.Content.Equals("Station"))
+                {
+                    MapControl.Map.Layers[2].Enabled = false;
+                    MapControl.Map.Layers[3].Enabled = false;
+                }
+                else if (b.Content.Equals("Customer"))
+                {
+                    MapControl.Map.Layers[1].;
+                    MapControl.Map.Layers[3].Opacity = 0;
+                }
+                else
+                {
+                    MapControl.Map.Layers[1].Enabled = false;
+                    MapControl.Map.Layers[2].Enabled = false;
+                }
+                // Code for Checked state
+            }
+            else
+            {
+                // Code for Un-Checked state
+                MapControl.Map.Layers[1].Enabled = true;
+                MapControl.Map.Layers[2].Enabled = true;
+                MapControl.Map.Layers[3].Enabled = true;
+            }
+            #endregion Map
+        }
     }
 }
