@@ -65,6 +65,7 @@ namespace PL
                 MessageBox.Show(errorMessage);
                 return;
             }
+            
             try
             {
                 bl.Create<BO.Station>(station);
