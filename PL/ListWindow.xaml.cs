@@ -17,18 +17,18 @@ using BlApi;
 namespace PL
 {
     /// <summary>
-    /// Interaction logic for DroneListWindow.xaml
+    /// Interaction logic for ListWindow.xaml
     /// </summary>
-    public partial class DroneListWindow : Window
+    public partial class ListWindow : Window
     {
         private IBL bl;
         private bool close = false;
-        public DroneListWindow(IBL b) //initializing all the tabs, lists, and controls
+        public ListWindow(IBL b) //initializing all the tabs, lists, and controls
         {
             bl = b;
             InitializeComponent();
             StatusSelector.Items.Add("All"); //adding all status and weight options for drone list. do we need this line?
-            var statuses  = Enum.GetValues(typeof(BO.DroneStatuses));
+            var statuses = Enum.GetValues(typeof(BO.DroneStatuses));
             foreach (var a in statuses)
                 StatusSelector.Items.Add(a);
             WeightSelector.Items.Add("All");//do we need this line?
@@ -129,7 +129,7 @@ namespace PL
             }
         }
 
-        private void StationDoubleClick(object sender, MouseButtonEventArgs e) 
+        private void StationDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (StationListView.SelectedItem != null) //if a station was selected
                 new StationWindow(bl, (BO.StationToList)StationListView.SelectedItem).Show();
@@ -200,7 +200,6 @@ namespace PL
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("ReceiverName");
             view.GroupDescriptions.Add(groupDescription); //adding a groupdescription to group parcels according to receiver
         }
-        #endregion Parcel
 
         private void Parcel_Filter(object sender = null, SelectionChangedEventArgs e = null)
         {
@@ -216,5 +215,6 @@ namespace PL
             d.RemoveAll(x => (c != null && c.GetType().IsEnum) ? x.Weight != (BO.WeightCategories)c : false);
             ParcelListView.ItemsSource = d;
         }
+        #endregion Parcel
     }
 }

@@ -18,7 +18,20 @@
             <Setter Property = "Margin" Value = "150,20,150,20" />
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Background" Value="#f2cc8f"/>
-
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Cornsilk"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid>

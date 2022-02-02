@@ -86,23 +86,16 @@ namespace PL
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
-            bl.UpdateStation(station.Id, Name_s.Text); //can this ever return an exception?
+            bl.UpdateStation(station.Id, Name_s.Text);
             MessageBox.Show("Updated Station Name!");
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            if (!station.Equals(new BO.Station() {location = new BO.Location() })) //if we're in station display window
+            if (AddGrid.Visibility == Visibility.Hidden) //if we're in station display window
             {
-                try
-                {
-                    station = bl.Request<BO.Station>(station.Id); //getting updated version of station
-                    DronesListView.ItemsSource = station.Charging; //getting list of drones to display
-                }
-                catch(Exception ex)
-                {
-
-                }
+                station = bl.Request<BO.Station>(station.Id); //getting updated version of station
+                DronesListView.ItemsSource = station.Charging; //getting list of drones to display
                 DataContext = station;
             }
         }

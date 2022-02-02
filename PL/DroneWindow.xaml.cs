@@ -34,7 +34,6 @@ namespace PL
             DataContext = drone;
             StationSelector.ItemsSource = bl.RequestList<BO.StationToList>().ToList().FindAll(x => x.Available != 0); //getting all stations with available slots
             WeightSelector.ItemsSource = Enum.GetValues(typeof(BO.WeightCategories));
-            //make default weight null?
         }
 
         public DroneWindow(IBL b, BO.Drone d)

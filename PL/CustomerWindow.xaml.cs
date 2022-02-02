@@ -101,18 +101,13 @@ namespace PL
             this.Close();
         }
 
-        //unhandled bug, cannot add customer
         private void Window_Activated(object sender, EventArgs e)
         {
-            try
+            if(AddGrid.Visibility == Visibility.Hidden)
             {
                 customer = bl.Request<BO.Customer>(customer.Id); //getting updated customer
                 FromListView.ItemsSource = customer.From.ToList(); //getting list of parcels to display
                 ToListView.ItemsSource = customer.To.ToList(); //getting list of parcels to display
-            }
-            catch(Exception ex)
-            {
-
             }
         }
     }
