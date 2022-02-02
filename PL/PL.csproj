@@ -5,11 +5,17 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon></ApplicationIcon>
+    <Configurations>Debug;Release;x86</Configurations>
+    <StartupObject>PL.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>../bin</OutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mapsui.Wpf" Version="3.0.2" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />

@@ -1,11 +1,10 @@
 ﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PL"
-        xmlns:System="clr-namespace:System;assembly=System.Runtime"  x:Class="PL.DroneListWindow"
-        mc:Ignorable="d"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mapsui="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf" x:Class="PL.DroneListWindow"
+      mc:Ignorable="d" 
         Title="DroneListWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing" Activated="Window_Activated" Height="590">
     <TabControl x:Name="Tabs" Grid.ColumnSpan="3" SelectionChanged="Tab_Changed">
         <TabItem Header="Drone List"  FontSize="31">
@@ -207,6 +206,17 @@
                 </Grid>
             </Grid>
 
+        </TabItem>
+        <TabItem Header="Map" FontSize="31">
+            <Grid>
+                <mapsui:MapControl x:Name="MapControl">
+                    <mapsui:MapControl.ColumnDefinitions>
+                        <ColumnDefinition Width="93*"/>
+                        <ColumnDefinition Width="637*"/>
+                    </mapsui:MapControl.ColumnDefinitions>
+
+                </mapsui:MapControl>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
