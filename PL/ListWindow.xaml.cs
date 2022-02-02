@@ -345,8 +345,8 @@ namespace PL
                 }
                 else if (b.Content.Equals("Customer"))
                 {
-                    MapControl.Map.Layers[1].;
-                    MapControl.Map.Layers[3].Opacity = 0;
+                    MapControl.Map.Layers[1].Enabled = false;
+                    MapControl.Map.Layers[3].Enabled = false;
                 }
                 else
                 {
