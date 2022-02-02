@@ -30,7 +30,7 @@ namespace BO
         /// <summary>
         /// location of the customer
         /// </summary>
-        public Location Location { set; get; }
+        public Location location { set; get; }
 
         /// <summary>
         /// list of parcels that sent to the customer

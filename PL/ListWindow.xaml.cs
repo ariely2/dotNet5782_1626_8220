@@ -285,8 +285,8 @@ namespace PL
 
             //get points of drones, stations and customers
             IEnumerable<BO.Location> DronePoints = from drone in bl.RequestList<BO.DroneToList>() select drone.Location;
-            IEnumerable<BO.Location> StationPoints = from station in bl.RequestList<BO.StationToList>() let d = bl.Request<BO.Station>(station.Id) select d.Location;
-            IEnumerable<BO.Location> CustomerPoints = from customer in bl.RequestList<BO.CustomerToList>() let d = bl.Request<BO.Customer>(customer.Id) select d.Location;
+            IEnumerable<BO.Location> StationPoints = from station in bl.RequestList<BO.StationToList>() let d = bl.Request<BO.Station>(station.Id) select d.location;
+            IEnumerable<BO.Location> CustomerPoints = from customer in bl.RequestList<BO.CustomerToList>() let d = bl.Request<BO.Customer>(customer.Id) select d.location;
 
 
             //set new layer
@@ -367,8 +367,8 @@ namespace PL
                 }
                 else if (b.Content.Equals("Customer"))
                 {
-                    MapControl.Map.Layers[1].;
-                    MapControl.Map.Layers[3].Opacity = 0;
+                    MapControl.Map.Layers[1].Enabled = false;
+                    MapControl.Map.Layers[3].Enabled = false;
                 }
                 else
                 {

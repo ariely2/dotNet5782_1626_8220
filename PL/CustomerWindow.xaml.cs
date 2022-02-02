@@ -49,7 +49,7 @@ namespace PL
             InitializeComponent();
             CustomerGrid.Visibility = Visibility.Hidden; //hiding other grid
             bl = b;
-            customer = new BO.Customer() { Location = new BO.Location() };
+            customer = new BO.Customer() { location = new BO.Location() };
             DataContext = customer;
         }
 

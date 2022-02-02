@@ -59,7 +59,7 @@ namespace BL
                                     else
                                     {
                                         if (distance == 0)
-                                            distance = Location.distance(d.Location, s.Location);
+                                            distance = Location.distance(d.Location, s.location);
                                         if (distance <= speed) //if we can get to the station now
                                         {
                                             d.Battery = battery; //getting the battery the drone had when it started flying to the station

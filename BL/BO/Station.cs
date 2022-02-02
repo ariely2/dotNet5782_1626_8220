@@ -24,7 +24,7 @@ namespace BO
         /// <summary>
         /// location of the station
         /// </summary>
-        public Location Location { set; get; }
+        public Location location { set; get; }
 
         /// <summary>
         /// available slots in the station (in initialization it's the number of charge slots in the station)

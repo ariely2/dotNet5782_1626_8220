@@ -83,7 +83,7 @@ namespace PL
                 return;
             }
 
-            drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).Location; //getting initial station's location
+            drone.Location = bl.Request<BO.Station>(((BO.StationToList)StationSelector.SelectedValue).Id).location; //getting initial station's location
             try
             {
                 bl.Create<BO.Drone>(drone);

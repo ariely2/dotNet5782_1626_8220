@@ -31,7 +31,7 @@ namespace BL
                         case Station s:
 
                             //if station already exists in the exact location
-                            if (dal.RequestList<DO.Station>(x => x.Location.Latitude == s.Location.Latitude && x.Location.Longitude == s.Location.Longitude).Any())
+                            if (dal.RequestList<DO.Station>(x => x.Location.Latitude == s.location.Latitude && x.Location.Longitude == s.location.Longitude).Any())
                                 throw new NotPossibleException("A Station already exists in the entered location\n");
 
                             //create station in dal
@@ -42,8 +42,8 @@ namespace BL
                                 ChargeSlots = s.AvailableSlots,
                                 Location = new DO.Location()
                                 {
-                                    Latitude = s.Location.Latitude,
-                                    Longitude = s.Location.Longitude
+                                    Latitude = s.location.Latitude,
+                                    Longitude = s.location.Longitude
                                 }
                             });
                             break;
@@ -58,8 +58,8 @@ namespace BL
                                 Phone = c.Phone,
                                 Location = new DO.Location()
                                 {
-                                    Latitude = c.Location.Latitude,
-                                    Longitude = c.Location.Longitude
+                                    Latitude = c.location.Latitude,
+                                    Longitude = c.location.Longitude
                                 }
                             });
                             break;
@@ -68,7 +68,7 @@ namespace BL
                             Random r = new Random();
 
                             //get the station with the exact location like the drone
-                            Station station = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).FirstOrDefault(s => s.Location.Equals(d.Location));
+                            Station station = RequestList<StationToList>().Select(s => Request<Station>(s.Id)).FirstOrDefault(s => s.location.Equals(d.Location));
 
                             //check if the drone location is the same as exist station
                             //drone must be created with status of maintenance in an exist station
@@ -179,7 +179,7 @@ namespace BL
                             {
                                 AvailableSlots = s.ChargeSlots,
                                 Id = s.Id,
-                                Location = new Location()
+                                location = new Location()
                                 {
                                     Latitude = s.Location.Latitude,
                                     Longitude = s.Location.Longitude
@@ -200,7 +200,7 @@ namespace BL
                             ans = (T)Convert.ChangeType(new Customer()
                             {
                                 Id = c.Id,
-                                Location = new Location()
+                                location = new Location()
                                 {
                                     Longitude = c.Location.Longitude,
                                     Latitude = c.Location.Latitude
@@ -267,8 +267,8 @@ namespace BL
                                     Receiver = p.Receiver,
                                     Sender = p.Sender,
                                     Status = (EnumParcelDeliver)(p.PickedUp == null ? 0 : 1),
-                                    Destination = Request<Customer>(p.Receiver.Id).Location,
-                                    Source = Request<Customer>(p.Sender.Id).Location,
+                                    Destination = Request<Customer>(p.Receiver.Id).location,
+                                    Source = Request<Customer>(p.Sender.Id).location,
                                     Weight = p.Weight,
                                     Distance = p.PickedUp ==null? Location.distance(d.Location, GetCustomerLocation(p.Sender.Id)) : Location.distance(GetCustomerLocation(p.Receiver.Id), GetCustomerLocation(p.Sender.Id))
                                 } : null,
@@ -479,7 +479,7 @@ namespace BL
             lock (dal)
             {
                 DroneToList a = Drones.Find(x => x.Id == id);//get droneToList from bl
-                Location sender = Request<Customer>(d.Parcel.Sender.Id).Location;//ger sender location
+                Location sender = Request<Customer>(d.Parcel.Sender.Id).location;//ger sender location
                 a.Battery -= MinBattery(Location.distance(d.Location, sender), d.Id);//update drone's battery
                 dal.PickUpParcel(d.Parcel.Id);//update data in dals
                 a.Location = sender;//update drone's location
@@ -533,14 +533,14 @@ namespace BL
             var s = ClosestAvailableStation(d.Location);
             if (s == default(Station)) //the function didn't find a station with available slots
                 throw new NotFoundException("Not found a station with available slots\n");
-            double distance = Location.distance(d.Location, s.Location);
+            double distance = Location.distance(d.Location, s.location);
             if (MinBattery(distance, d.Id) <= d.Battery) //if drone has enough battery to get to station
             {
                 lock (dal)
                 {
                     d.Battery -= MinBattery(distance, d.Id);
                     //d.Battery = Math.Round(d.Battery, 3, MidpointRounding.ToPositiveInfinity);//rounding the battery so it won't look ugly
-                    d.Location = s.Location;
+                    d.Location = s.location;
                     d.Status = DroneStatuses.Maintenance;
                     dal.ChargeDrone(d.Id, s.Id); //is this it?
                 }
@@ -563,8 +563,8 @@ namespace BL
                     Name = name == null ? s.Name : name,
                     Location = new DO.Location()
                     {
-                        Latitude = s.Location.Latitude,
-                        Longitude = s.Location.Longitude
+                        Latitude = s.location.Latitude,
+                        Longitude = s.location.Longitude
                     },
                     ChargeSlots = (int)(slots == null ? s.AvailableSlots : (slots - Request<Station>(id).Charging.Count()))
                 }); //creating updated station
@@ -612,8 +612,8 @@ namespace BL
                     Id = id,
                     Location = new DO.Location()
                     {
-                        Latitude = c.Location.Latitude,
-                        Longitude = c.Location.Longitude
+                        Latitude = c.location.Latitude,
+                        Longitude = c.location.Longitude
                     },
                     Name = name == null ? c.Name : name,
                     Phone = phone == null ? c.Phone : phone
@@ -656,8 +656,8 @@ namespace BL
         public Location ClosestStation(Location d)
         { 
             var stations = from s in RequestList<StationToList>() select Request<Station>(s.Id);
-            stations.OrderBy(x => Location.distance(d, x.Location)); //ordering stations by distance
-            return stations.First().Location;
+            stations.OrderBy(x => Location.distance(d, x.location)); //ordering stations by distance
+            return stations.First().location;
         }
         /// <summary>
         /// function the returns the minimum battery needed for a drone to fly a given distance
@@ -685,7 +685,7 @@ namespace BL
         public Location GetCustomerLocation(int id) //get customers location
         {
             var c = Request<Customer>(id);
-            return c.Location;
+            return c.location;
         }
 
         /// <summary>
@@ -706,7 +706,7 @@ namespace BL
         public Station ClosestAvailableStation(Location d)
         {
             var stations = from s in RequestList<StationToList>(x=>x.Available!=0) select (Request<Station>(s.Id)); //getting list of all stations with available spots
-            stations.OrderBy(x => Location.distance(d, x.Location)); //ordering stations by distance
+            stations.OrderBy(x => Location.distance(d, x.location)); //ordering stations by distance
             return stations.FirstOrDefault();
         }
         #endregion InternalMethod
